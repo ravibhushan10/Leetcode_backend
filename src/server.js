@@ -6,6 +6,7 @@ import problemsRouter    from './routes/problems.js';
 import usersRouter       from './routes/users.js';
 import submissionsRouter from './routes/submissions.js';
 import aiRouter          from './routes/ai.js';
+import paymentsRouter    from './routes/payments.js';
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -35,6 +36,9 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
+// ── Razorpay webhook — must be raw body, BEFORE express.json() ───────────
+app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
+
 app.options('*', cors(corsOptions)); // preflight
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
@@ -53,15 +57,19 @@ app.get('/', (_, res) => res.json({
     'POST /api/users',
     'POST /api/submissions',
     'POST /api/ai',
+    'POST /api/payments/order',
+    'POST /api/payments/verify',
+    'POST /api/payments/webhook',
+    'GET  /api/payments/status',
   ],
 }));
-
 
 app.get('/health', (_, res) => res.json({ status: 'ok', time: new Date() }));
 app.use('/api/problems',    problemsRouter);
 app.use('/api/users',       usersRouter);
 app.use('/api/submissions', submissionsRouter);
 app.use('/api/ai',          aiRouter);
+app.use('/api/payments',    paymentsRouter);
 
 // ── MongoDB Connect ───────────────────────────
 mongoose.connect(process.env.MONGODB_URI)

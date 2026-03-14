@@ -18,6 +18,8 @@ const UserSchema = new mongoose.Schema({
   coins:        { type: Number, default: 0 },
   plan:         { type: String, enum: ['free', 'pro'], default: 'free' },
   proSince:     { type: Date, default: null },
+  lastPaymentId:{ type: String, default: null },
+  lastOrderId:  { type: String, default: null },
   langPref:     { type: String, default: 'python' },
   solved:       [{ type: mongoose.Schema.Types.ObjectId, ref: 'Problem' }],
   attempted:    [{ type: mongoose.Schema.Types.ObjectId, ref: 'Problem' }],
