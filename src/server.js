@@ -36,11 +36,26 @@ const corsOptions = {
 };
 
 app.options('*', cors(corsOptions)); // preflight
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // ── Routes ────────────────────────────────────
+
+app.get('/', (_, res) => res.json({
+  name:    'CodeForge API',
+  version: '1.0.0',
+  status:  'running',
+  time:    new Date(),
+  endpoints: [
+    'GET  /health',
+    'GET  /api/problems',
+    'POST /api/users',
+    'POST /api/submissions',
+    'POST /api/ai',
+  ],
+}));
+
 app.get('/health', (_, res) => res.json({ status: 'ok', time: new Date() }));
 app.use('/api/problems',    problemsRouter);
 app.use('/api/users',       usersRouter);
