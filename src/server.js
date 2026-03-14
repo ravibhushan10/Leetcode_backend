@@ -56,6 +56,7 @@ app.get('/', (_, res) => res.json({
   ],
 }));
 
+
 app.get('/health', (_, res) => res.json({ status: 'ok', time: new Date() }));
 app.use('/api/problems',    problemsRouter);
 app.use('/api/users',       usersRouter);
