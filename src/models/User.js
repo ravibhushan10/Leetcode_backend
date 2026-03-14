@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
   linkedin:     { type: String, default: '' },
   avatarUrl:    { type: String, default: '' },
   oauthProvider:{ type: String, enum: ['google', 'github', 'local', 'admin'], default: 'local' },
-  oauthId:      { type: String, default: null },
+  oauthId:      { type: String, default: null, sparse: true },
   rating:       { type: Number, default: 0 },
   ratingTitle:  { type: String, default: 'Newbie' },
   streak:       { type: Number, default: 0 },
@@ -25,7 +25,11 @@ const UserSchema = new mongoose.Schema({
   attempted:    [{ type: mongoose.Schema.Types.ObjectId, ref: 'Problem' }],
   bookmarked:   [{ type: mongoose.Schema.Types.ObjectId, ref: 'Problem' }],
   isAdmin:      { type: Boolean, default: false },
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  // Prevent Mongoose auto-creating indexes on startup (seed.js handles them explicitly)
+  autoIndex: false,
+});
 
 // Compute initials before save
 UserSchema.pre('save', function(next) {

@@ -15,7 +15,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^8.0.3",
     "node-fetch": "^3.3.2",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

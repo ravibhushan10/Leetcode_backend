@@ -14,11 +14,17 @@ const razorpay = new Razorpay({
 
 // ── Plan config ───────────────────────────────
 const PLANS = {
-  pro: {
-    amount:      29900,   // ₹299 in paise
+  monthly: {
+    amount:      10000,   // ₹100 in paise
     currency:    'INR',
     name:        'CodeForge Pro',
     description: 'Monthly Pro — unlimited problems, AI tutor, priority support',
+  },
+  yearly: {
+    amount:      80000,   // ₹800 in paise
+    currency:    'INR',
+    name:        'CodeForge Pro',
+    description: 'Yearly Pro — unlimited problems, AI tutor, priority support',
   },
 };
 
@@ -29,7 +35,7 @@ const PLANS = {
 // ─────────────────────────────────────────────
 router.post('/order', authMiddleware, async (req, res) => {
   try {
-    const { plan = 'pro' } = req.body;
+    const { plan = 'monthly' } = req.body;
 
     const planConfig = PLANS[plan];
     if (!planConfig) return res.status(400).json({ error: 'Invalid plan' });
@@ -77,7 +83,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      plan = 'pro',
+      plan = 'monthly',
     } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -100,7 +106,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.user.id,
       {
-        plan:          plan,
+        plan:          'pro',
         proSince:      new Date(),
         lastPaymentId: razorpay_payment_id,
         lastOrderId:   razorpay_order_id,
@@ -110,7 +116,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
 
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    console.log(`✅ Payment verified — ${user.email} upgraded to ${plan}`);
+    console.log(`✅ Payment verified — ${user.email} upgraded to pro (${plan} plan)`);
     res.json({ success: true, plan: user.plan, user });
   } catch (err) {
     console.error('Verify error:', err);
@@ -121,12 +127,6 @@ router.post('/verify', authMiddleware, async (req, res) => {
 // ─────────────────────────────────────────────
 //  POST /api/payments/webhook
 //  Razorpay calls this server-to-server.
-//  Register URL in Razorpay Dashboard → Webhooks.
-//
-//  Uses express.raw() so we get the raw Buffer
-//  needed for HMAC signature verification.
-//  Must be mounted BEFORE express.json() globally
-//  — handled in server.js with rawBodySaver.
 // ─────────────────────────────────────────────
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
@@ -137,10 +137,9 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       return res.status(400).json({ error: 'Missing webhook secret or signature' });
     }
 
-    // ── Verify webhook signature ──────────────
     const expected = crypto
       .createHmac('sha256', secret)
-      .update(req.body)           // raw Buffer — NOT parsed JSON
+      .update(req.body)
       .digest('hex');
 
     if (expected !== signature) {
@@ -155,33 +154,28 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
     switch (event.event) {
 
-      // ── payment.authorized / payment.captured ──
       case 'payment.authorized':
       case 'payment.captured': {
         const payment = payload.payment?.entity;
         if (!payment) break;
         const userId = payment.notes?.userId;
-        const plan   = payment.notes?.plan || 'pro';
         if (userId) {
           await User.findByIdAndUpdate(userId, {
-            plan,
+            plan: 'pro',
             proSince:      new Date(),
             lastPaymentId: payment.id,
           });
-          console.log(`✅ ${event.event} → user ${userId} is now ${plan}`);
+          console.log(`✅ ${event.event} → user ${userId} is now pro`);
         }
         break;
       }
 
-      // ── payment.failed ──
       case 'payment.failed': {
         const payment = payload.payment?.entity;
         console.warn(`❌ payment.failed — id: ${payment?.id}, reason: ${payment?.error_description}`);
-        // user never charged — no downgrade needed
         break;
       }
 
-      // ── subscription.activated / subscription.charged ──
       case 'subscription.activated':
       case 'subscription.charged': {
         const sub    = payload.subscription?.entity;
@@ -193,15 +187,12 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         break;
       }
 
-      // ── subscription.halted ──
       case 'subscription.halted': {
-        // repeated payment failures — log but don't cut off immediately
         const sub = payload.subscription?.entity;
         console.warn(`⚠️  subscription.halted — id: ${sub?.id}`);
         break;
       }
 
-      // ── subscription.cancelled / completed ──
       case 'subscription.cancelled':
       case 'subscription.completed': {
         const sub    = payload.subscription?.entity;
@@ -213,7 +204,6 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         break;
       }
 
-      // ── subscription.paused ──
       case 'subscription.paused': {
         const sub    = payload.subscription?.entity;
         const userId = sub?.notes?.userId;
@@ -224,7 +214,6 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         break;
       }
 
-      // ── subscription.resumed ──
       case 'subscription.resumed': {
         const sub    = payload.subscription?.entity;
         const userId = sub?.notes?.userId;
@@ -235,7 +224,6 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         break;
       }
 
-      // ── refund.processed ──
       case 'refund.processed': {
         const refund    = payload.refund?.entity;
         const paymentId = refund?.payment_id;
@@ -250,21 +238,18 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         break;
       }
 
-      // ── refund.failed ──
       case 'refund.failed': {
         const refund = payload.refund?.entity;
         console.warn(`❌ refund.failed — id: ${refund?.id}`);
         break;
       }
 
-      // ── order.paid ──
       case 'order.paid': {
         const order  = payload.order?.entity;
         const userId = order?.notes?.userId;
-        const plan   = order?.notes?.plan || 'pro';
         if (userId) {
-          await User.findByIdAndUpdate(userId, { plan, proSince: new Date() });
-          console.log(`✅ order.paid → user ${userId} → ${plan}`);
+          await User.findByIdAndUpdate(userId, { plan: 'pro', proSince: new Date() });
+          console.log(`✅ order.paid → user ${userId} → pro`);
         }
         break;
       }
@@ -273,7 +258,6 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         console.log(`ℹ️  Unhandled webhook event: ${event.event}`);
     }
 
-    // Always 200 so Razorpay doesn't retry
     res.json({ received: true });
   } catch (err) {
     console.error('Webhook error:', err);
@@ -283,8 +267,6 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 
 // ─────────────────────────────────────────────
 //  GET /api/payments/status
-//  Frontend polls this to confirm Pro status
-//  after payment completes.
 // ─────────────────────────────────────────────
 router.get('/status', authMiddleware, async (req, res) => {
   try {

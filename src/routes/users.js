@@ -124,6 +124,156 @@ router.post('/bookmark/:problemId', authMiddleware, async (req, res) => {
   }
 });
 
+// GET /api/users/ml-insights — Premium ML features data
+router.get('/ml-insights', authMiddleware, async (req, res) => {
+  try {
+    const Submission = (await import('../models/Submission.js')).default;
+
+    const user = await User.findById(req.user.id)
+      .populate('solved', 'tags difficulty companies number title slug')
+      .populate('attempted', 'tags difficulty');
+
+    // Fetch all submissions for this user with problem tags
+    const submissions = await Submission.find({ user: req.user.id })
+      .populate('problem', 'tags difficulty companies title slug number')
+      .sort({ createdAt: -1 })
+      .limit(200);
+
+    // ── 1. Weakness Analysis per Tag ─────────────────────────────
+    const tagStats = {};
+    for (const sub of submissions) {
+      if (!sub.problem) continue;
+      for (const tag of (sub.problem.tags || [])) {
+        if (!tagStats[tag]) tagStats[tag] = { total: 0, accepted: 0, tag };
+        tagStats[tag].total++;
+        if (sub.verdict === 'Accepted') tagStats[tag].accepted++;
+      }
+    }
+
+    // Convert to accuracy scores (0–100)
+    const tagScores = Object.values(tagStats)
+      .filter(t => t.total >= 1)
+      .map(t => ({
+        tag:      t.tag,
+        accuracy: Math.round((t.accepted / t.total) * 100),
+        total:    t.total,
+        accepted: t.accepted,
+      }))
+      .sort((a, b) => a.accuracy - b.accuracy); // weakest first
+
+    // Top 8 tags for radar chart
+    const allTags = ['Array', 'Dynamic Programming', 'Graph', 'Tree', 'String', 'Binary Search', 'Hash Table', 'Recursion'];
+    const radarData = allTags.map(tag => {
+      const found = tagScores.find(t => t.tag === tag);
+      return {
+        tag,
+        accuracy: found ? found.accuracy : 0,
+        attempted: found ? found.total : 0,
+      };
+    });
+
+    // ── 2. Interview Readiness Score per Company ─────────────────
+    const companies = ['Google', 'Amazon', 'Microsoft', 'Facebook', 'Apple'];
+    const solvedTitles = new Set((user.solved || []).map(p => p.title));
+
+    const readiness = companies.map(company => {
+      const companyProblems = (user.solved || []).filter(p =>
+        (p.companies || []).includes(company)
+      ).length;
+
+      // Score formula: solved company problems + difficulty weighting + accuracy
+      const diffScore = (user.solved || []).reduce((acc, p) => {
+        if (!(p.companies || []).includes(company)) return acc;
+        return acc + (p.difficulty === 'Easy' ? 1 : p.difficulty === 'Medium' ? 2 : 3);
+      }, 0);
+
+      const maxScore = 50; // assume 50 company problems total
+      const raw = Math.min(100, Math.round((diffScore / maxScore) * 100));
+      return { company, score: Math.max(5, raw), problemsSolved: companyProblems };
+    });
+
+    // ── 3. Smart Recommendations ─────────────────────────────────
+    // Find tags user is weakest at, recommend unsolved problems in those tags
+    const solvedIds = new Set((user.solved || []).map(p => p._id.toString()));
+    const weakTags  = tagScores.slice(0, 3).map(t => t.tag); // 3 weakest tags
+
+    // Also include tags user has never attempted
+    const attemptedTags = new Set(tagScores.map(t => t.tag));
+    const neverTried = allTags.filter(t => !attemptedTags.has(t)).slice(0, 2);
+    const targetTags = [...new Set([...weakTags, ...neverTried])];
+
+    const recommended = await Problem.find({
+      tags:   { $in: targetTags.length ? targetTags : allTags },
+      hidden: false,
+    })
+    .select('number title slug difficulty tags acceptance companies premium')
+    .limit(50);
+
+    // Filter out already solved, sort by difficulty then acceptance
+    const diffOrder = { Easy: 0, Medium: 1, Hard: 2 };
+    const recs = recommended
+      .filter(p => !solvedIds.has(p._id.toString()))
+      .sort((a, b) => diffOrder[a.difficulty] - diffOrder[b.difficulty])
+      .slice(0, 8)
+      .map(p => ({
+        _id:        p._id,
+        number:     p.number,
+        title:      p.title,
+        slug:       p.slug,
+        difficulty: p.difficulty,
+        tags:       p.tags,
+        acceptance: p.acceptance,
+        premium:    p.premium,
+        reason:     targetTags.find(t => p.tags.includes(t)) || p.tags[0],
+      }));
+
+    // ── 4. Study Plan Progress ────────────────────────────────────
+    const totalSolved = user.solved?.length || 0;
+    const easySolved  = (user.solved || []).filter(p => p.difficulty === 'Easy').length;
+    const medSolved   = (user.solved || []).filter(p => p.difficulty === 'Medium').length;
+    const hardSolved  = (user.solved || []).filter(p => p.difficulty === 'Hard').length;
+
+    // 30-day plan milestones
+    const plan = [
+      { label: 'Easy Foundation',   target: 20, current: easySolved,  color: '#00d084' },
+      { label: 'Medium Proficiency',target: 40, current: medSolved,   color: '#ff9f43' },
+      { label: 'Hard Mastery',       target: 10, current: hardSolved,  color: '#ff5c5c' },
+      { label: 'Total Problems',     target: 70, current: totalSolved, color: '#9d6fff' },
+    ];
+
+    // ── 5. Submission Timeline (last 30 days) ─────────────────────
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000);
+    const recentSubs = submissions.filter(s => new Date(s.createdAt) > thirtyDaysAgo);
+    const timelineMap = {};
+    for (const sub of recentSubs) {
+      const day = new Date(sub.createdAt).toLocaleDateString('en-CA'); // YYYY-MM-DD
+      if (!timelineMap[day]) timelineMap[day] = { day, total: 0, accepted: 0 };
+      timelineMap[day].total++;
+      if (sub.verdict === 'Accepted') timelineMap[day].accepted++;
+    }
+    const timeline = Object.values(timelineMap).sort((a, b) => a.day.localeCompare(b.day));
+
+    res.json({
+      radarData,
+      tagScores:       tagScores.slice(0, 10),
+      readiness,
+      recommendations: recs,
+      studyPlan:       plan,
+      timeline,
+      stats: {
+        totalSolved, easySolved, medSolved, hardSolved,
+        totalSubmissions: submissions.length,
+        acceptanceRate: submissions.length
+          ? Math.round((submissions.filter(s => s.verdict === 'Accepted').length / submissions.length) * 100)
+          : 0,
+        streak: user.streak || 0,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/users/leaderboard
 router.get('/leaderboard', async (req, res) => {
   try {

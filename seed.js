@@ -7,20 +7,67 @@ import User from './src/models/User.js';
 await mongoose.connect(process.env.MONGODB_URI);
 console.log('✅ Connected to MongoDB');
 
-// ── Seed Admin User ───────────────────────────
-const adminExists = await User.findOne({ email: 'admin@codeforge.com' });
-if (!adminExists) {
-  const hash = await bcrypt.hash('admin123', 12);
-  await new User({
-    name: 'Admin', email: 'admin@codeforge.com',
-    passwordHash: hash, isAdmin: true, plan: 'pro',
-    ratingTitle: 'Admin', oauthProvider: 'admin',
-  }).save();
-  console.log('✅ Admin user created: admin@codeforge.com / admin123');
+// ── Drop ALL stale indexes from previous projects ─────────────────────
+// This handles the case where the DB was used by an older version of the
+// app that had different field names (e.g. emailId instead of email).
+try {
+  const userCol = mongoose.connection.db.collection('users');
+  const existingIndexes = await userCol.indexes();
+  for (const idx of existingIndexes) {
+    if (idx.name === '_id_') continue; // never drop _id
+    // Drop any index that is NOT on 'email' (our current unique field)
+    // This clears stale indexes like emailId_1, username_1, etc.
+    const keys = Object.keys(idx.key || {});
+    const isOurIndex = keys.length === 1 && keys[0] === 'email';
+    if (!isOurIndex) {
+      await userCol.dropIndex(idx.name);
+      console.log(`🧹 Dropped stale index: ${idx.name}`);
+    }
+  }
+} catch (e) {
+  // Collection may not exist yet — that's fine
+  console.log('ℹ️  No stale indexes to clean (fresh database)');
 }
+
+try {
+  const probCol = mongoose.connection.db.collection('problems');
+  const existingIndexes = await probCol.indexes();
+  for (const idx of existingIndexes) {
+    if (idx.name === '_id_') continue;
+    const keys = Object.keys(idx.key || {});
+    const isOurIndex = (keys.length === 1 && (keys[0] === 'number' || keys[0] === 'slug'));
+    if (!isOurIndex) {
+      await probCol.dropIndex(idx.name);
+      console.log(`🧹 Dropped stale problem index: ${idx.name}`);
+    }
+  }
+} catch (e) {
+  console.log('ℹ️  No stale problem indexes to clean');
+}
+
+// ── Drop and recreate collections cleanly ────────────────────────────
+// Re-sync Mongoose indexes so our new schema indexes are created fresh
+await User.syncIndexes();
+await Problem.syncIndexes();
+console.log('✅ Indexes synced');
+
+// ── Seed Admin User ───────────────────────────
+// Delete any stale admin record first (field name may have changed)
+try {
+  await mongoose.connection.db.collection('users').deleteMany({ email: 'admin@codeforge.com' });
+} catch (e) { /* ignore */ }
+
+const hash = await bcrypt.hash('admin123', 12);
+await new User({
+  name: 'Admin', email: 'admin@codeforge.com',
+  passwordHash: hash, isAdmin: true, plan: 'pro',
+  ratingTitle: 'Admin', oauthProvider: 'admin',
+}).save();
+console.log('✅ Admin user created: admin@codeforge.com / admin123');
 
 // ── Problems ──────────────────────────────────
 await Problem.deleteMany({});
+console.log('🧹 Cleared old problems');
 
 const problems = [
   {

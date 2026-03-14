@@ -39,7 +39,10 @@ const ProblemSchema = new mongoose.Schema({
   hidden:      { type: Boolean, default: false },
   aiContext:   { type: String, default: '' },
   createdBy:   { type: String, default: 'admin' },
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  autoIndex: false,
+});
 
 // Auto-generate slug from title
 ProblemSchema.pre('save', function(next) {
