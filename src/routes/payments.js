@@ -15,13 +15,13 @@ const razorpay = new Razorpay({
 // ── Plan config ───────────────────────────────
 const PLANS = {
   monthly: {
-    amount:      10000,   // ₹100 in paise
+    amount:      100,   // ₹100 in paise
     currency:    'INR',
     name:        'CodeForge Pro',
     description: 'Monthly Pro — unlimited problems, AI tutor, priority support',
   },
   yearly: {
-    amount:      80000,   // ₹800 in paise
+    amount:      800,   // ₹800 in paise
     currency:    'INR',
     name:        'CodeForge Pro',
     description: 'Yearly Pro — unlimited problems, AI tutor, priority support',
