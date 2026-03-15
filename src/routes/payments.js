@@ -12,16 +12,24 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+// ── Fee calculator ────────────────────────────
+// base price (rupees) → total in paise including 2% gateway + 18% GST on gateway
+const calcTotal = (baseRupees) => {
+  const gateway = Math.round(baseRupees * 0.02);
+  const gst     = Math.round(gateway * 0.18);
+  return (baseRupees + gateway + gst) * 100; // convert to paise
+};
+
 // ── Plan config ───────────────────────────────
 const PLANS = {
   monthly: {
-    amount:      100,   // ₹100 in paise
+    amount:      calcTotal(100), // ₹100 + ₹2 gateway + ₹0 GST = ₹102 → 10200 paise
     currency:    'INR',
     name:        'CodeForge Pro',
     description: 'Monthly Pro — unlimited problems, AI tutor, priority support',
   },
   yearly: {
-    amount:      800,   // ₹800 in paise
+    amount:      calcTotal(800), // ₹800 + ₹16 gateway + ₹3 GST = ₹819 → 81900 paise
     currency:    'INR',
     name:        'CodeForge Pro',
     description: 'Yearly Pro — unlimited problems, AI tutor, priority support',
@@ -30,8 +38,6 @@ const PLANS = {
 
 // ─────────────────────────────────────────────
 //  POST /api/payments/order
-//  Creates a Razorpay order. Frontend calls this
-//  first, then opens the Razorpay checkout popup.
 // ─────────────────────────────────────────────
 router.post('/order', authMiddleware, async (req, res) => {
   try {
@@ -47,7 +53,7 @@ router.post('/order', authMiddleware, async (req, res) => {
     const order = await razorpay.orders.create({
       amount:   planConfig.amount,
       currency: planConfig.currency,
-      receipt: `cf_${Date.now()}`,
+      receipt:  `cf_${Date.now()}`,
       notes: {
         userId:    req.user.id.toString(),
         plan,
@@ -73,9 +79,6 @@ router.post('/order', authMiddleware, async (req, res) => {
 
 // ─────────────────────────────────────────────
 //  POST /api/payments/verify
-//  Called by frontend after Razorpay popup
-//  succeeds. Verifies HMAC signature then
-//  upgrades the user to Pro.
 // ─────────────────────────────────────────────
 router.post('/verify', authMiddleware, async (req, res) => {
   try {
@@ -126,7 +129,6 @@ router.post('/verify', authMiddleware, async (req, res) => {
 
 // ─────────────────────────────────────────────
 //  POST /api/payments/webhook
-//  Razorpay calls this server-to-server.
 // ─────────────────────────────────────────────
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
@@ -161,7 +163,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const userId = payment.notes?.userId;
         if (userId) {
           await User.findByIdAndUpdate(userId, {
-            plan: 'pro',
+            plan:          'pro',
             proSince:      new Date(),
             lastPaymentId: payment.id,
           });
