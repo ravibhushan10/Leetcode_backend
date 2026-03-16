@@ -5,7 +5,7 @@ const SubmissionSchema = new mongoose.Schema({
   problem:     { type: mongoose.Schema.Types.ObjectId, ref: 'Problem', required: true },
   language:    { type: String, enum: ['python', 'cpp', 'java', 'javascript'], required: true },
   code:        { type: String, required: true },
-  verdict:     { type: String, enum: ['Accepted', 'Wrong Answer', 'Runtime Error', 'Time Limit Exceeded', 'Compilation Error'], required: true },
+  verdict:     { type: String, enum: ['Accepted', 'Wrong Answer', 'Runtime Error', 'Time Limit Exceeded', 'Compilation Error', 'Error'], required: true },
   runtime:     { type: String, default: 'N/A' },
   memory:      { type: String, default: 'N/A' },
   testsPassed: { type: Number, default: 0 },

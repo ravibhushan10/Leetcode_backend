@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 
 const ExampleSchema = new mongoose.Schema({
-  input:       { type: String, required: true },
-  output:      { type: String, required: true },
+  input:       { type: String, default: '' },
+  output:      { type: String, default: '' },
   explanation: { type: String, default: '' },
 }, { _id: false });
 
 const TestCaseSchema = new mongoose.Schema({
-  input:    { type: String, required: true },
-  expected: { type: String, required: true },
+  input:    { type: String, default: '' },
+  expected: { type: String, default: '' },
   hidden:   { type: Boolean, default: false },
 }, { _id: false });
 

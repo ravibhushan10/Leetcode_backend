@@ -7,29 +7,120 @@ import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-const PISTON_URL = 'https://emkc.org/api/v2/piston/execute';
 const LANG_MAP = {
-  python:     { language: 'python',     version: '3.10.0' },
-  cpp:        { language: 'c++',        version: '10.2.0' },
-  java:       { language: 'java',       version: '15.0.2' },
+  python: { language: 'python', version: '3.10.0' },
+  cpp:    { language: 'c++',    version: '10.2.0' },
+  java:   { language: 'java',   version: '15.0.2' },
   javascript: { language: 'javascript', version: '18.15.0' },
 };
 
-// POST /api/submissions/run — run code (no save)
+const JUDGE0_BATCH_URL = 'https://judge0-ce.p.rapidapi.com/submissions/batch';
+const JUDGE0_LANG = { python: 71, cpp: 54, java: 62, javascript: 63 };
+const judge0Headers = () => ({
+  'Content-Type': 'application/json',
+  'X-RapidAPI-Key': process.env.JUDGE0_API_KEY,
+  'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
+});
+
+const fixInput = s => s.replace(/\\n/g, '\n');
+
+async function runBatch(code, lang, inputs) {
+  try {
+    const start = Date.now();
+    const langKey = lang.language === 'c++' ? 'cpp' : lang.language;
+    const langId = JUDGE0_LANG[langKey];
+
+    const createResp = await fetch(`${JUDGE0_BATCH_URL}?base64_encoded=false`, {
+      method: 'POST',
+      headers: judge0Headers(),
+      body: JSON.stringify({
+        submissions: inputs.map(stdin => ({
+          source_code: code,
+          language_id: langId,
+          stdin,
+          cpu_time_limit: 5,
+          wall_time_limit: 10,
+        })),
+      }),
+    });
+
+    const tokens = await createResp.json();
+    if (!Array.isArray(tokens)) {
+      console.error('Judge0 batch create error:', tokens);
+      return inputs.map(() => ({ stdout: '', stderr: 'Judge0 error: ' + JSON.stringify(tokens), exitCode: 1, runtime: 'N/A', runtimeMs: 0 }));
+    }
+
+    const tokenList = tokens.map(t => t.token).join(',');
+
+    let results = null;
+    for (let i = 0; i < 10; i++) {
+      await new Promise(r => setTimeout(r, 1000));
+      const getResp = await fetch(
+        `${JUDGE0_BATCH_URL}?tokens=${tokenList}&base64_encoded=false&fields=stdout,stderr,compile_output,status`,
+        { headers: judge0Headers() }
+      );
+      const data = await getResp.json();
+      const allDone = data.submissions?.every(s => s.status?.id >= 3);
+      if (allDone) { results = data.submissions; break; }
+    }
+
+    if (!results) return inputs.map(() => ({ stdout: '', stderr: 'Execution timed out', exitCode: 1, runtime: 'N/A', runtimeMs: 0 }));
+
+    const elapsed = Date.now() - start;
+    return results.map(s => ({
+      stdout:    (s.stdout || '').trim(),
+      stderr:    (s.stderr || s.compile_output || '').trim(),
+      exitCode:  s.status?.id === 3 ? 0 : 1,
+      runtime:   `${elapsed}ms`,
+      runtimeMs: elapsed,
+    }));
+  } catch (err) {
+    return inputs.map(() => ({ stdout: '', stderr: 'Execution service unavailable', exitCode: 1, runtime: 'N/A', runtimeMs: 0 }));
+  }
+}
+
+// ── POST /api/submissions/run ─────────────────────────────────────────────────
 router.post('/run', authMiddleware, async (req, res) => {
   try {
-    const { code, language, stdin = '' } = req.body;
+    const { code, language, problemId } = req.body;
     const lang = LANG_MAP[language];
     if (!lang) return res.status(400).json({ error: 'Unsupported language' });
 
-    const result = await runOnPiston(code, lang, stdin);
-    res.json(result);
+    if (!problemId) {
+      const { stdin = '' } = req.body;
+      const [result] = await runBatch(code, lang, [fixInput(stdin)]);
+      return res.json({ results: [{ input: stdin, expected: '', actual: result.stdout, passed: result.exitCode === 0, stderr: result.stderr }] });
+    }
+
+    const problem = await Problem.findById(problemId);
+    if (!problem) return res.status(404).json({ error: 'Problem not found' });
+
+    const testCases = problem.testCases.filter(tc => !tc.hidden);
+    if (testCases.length === 0) return res.json({ results: [] });
+
+    const inputs = testCases.map(tc => fixInput(tc.input));
+    const batchResults = await runBatch(code, lang, inputs);
+
+    const results = testCases.map((tc, i) => {
+      const r = batchResults[i];
+      const actual = r.stdout;
+      const expected = tc.expected.trim();
+      return {
+        input:    tc.input,
+        expected,
+        actual:   r.exitCode !== 0 ? (r.stderr || 'Runtime Error') : actual,
+        passed:   r.exitCode === 0 && actual === expected,
+        stderr:   r.stderr,
+      };
+    });
+
+    res.json({ results });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// POST /api/submissions — submit and judge
+// ── POST /api/submissions ─────────────────────────────────────────────────────
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { code, language, problemId } = req.body;
@@ -39,57 +130,77 @@ router.post('/', authMiddleware, async (req, res) => {
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ error: 'Problem not found' });
 
-    // Run against all non-hidden test cases
-    const testCases = problem.testCases.filter(tc => !tc.hidden);
+    const testCases = problem.testCases;
     if (testCases.length === 0) {
-      // Fallback: run once with no stdin
-      const result = await runOnPiston(code, lang, '');
+      const [result] = await runBatch(code, lang, ['']);
+      const verdict = result.exitCode === 0 ? 'Accepted' : 'Runtime Error';
       const sub = new Submission({
         user: req.user.id, problem: problemId, language, code,
-        verdict: result.exitCode === 0 ? 'Accepted' : 'Runtime Error',
-        runtime: result.runtime, output: result.stdout, stderr: result.stderr,
+        verdict, runtime: result.runtime,
         testsPassed: result.exitCode === 0 ? 1 : 0, testsTotal: 1,
+        output: result.stdout, stderr: result.stderr,
       });
       await sub.save();
-      await updateUserStats(req.user.id, problem, sub.verdict === 'Accepted');
-      return res.json(sub);
+      await updateUserStats(req.user.id, problem, verdict === 'Accepted');
+      return res.json({ ...sub.toObject(), beats: null, failCase: null });
     }
 
-    let passed = 0;
-    let firstFail = null;
-    let totalRuntime = 0;
+    const inputs = testCases.map(tc => fixInput(tc.input));
+    const batchResults = await runBatch(code, lang, inputs);
 
-    for (const tc of testCases) {
-      const result = await runOnPiston(code, lang, tc.input);
-      totalRuntime += result.runtimeMs || 0;
-      const actual = (result.stdout || '').trim();
+    let passed = 0, firstFail = null, totalRuntime = 0;
+    for (let i = 0; i < testCases.length; i++) {
+      const tc = testCases[i];
+      const r = batchResults[i];
+      totalRuntime += r.runtimeMs || 0;
+      const actual = r.stdout;
       const expected = tc.expected.trim();
+
+      if (r.exitCode !== 0) {
+        if (!firstFail) firstFail = {
+          input:    tc.input,
+          expected,
+          actual:   r.stderr || 'Runtime Error',
+          stderr:   r.stderr,
+          isHidden: tc.hidden,
+        };
+        break;
+      }
       if (actual === expected) {
         passed++;
       } else if (!firstFail) {
-        firstFail = { input: tc.input, expected, actual, stderr: result.stderr };
-      }
-      if (result.exitCode !== 0 && !firstFail) {
-        firstFail = { input: tc.input, expected, actual: result.stderr || 'Runtime Error', stderr: result.stderr };
-        break;
+        firstFail = {
+          input:    tc.hidden ? '(hidden)' : tc.input,
+          expected: tc.hidden ? '(hidden)' : expected,
+          actual:   tc.hidden ? '(hidden)' : actual,
+          isHidden: tc.hidden,
+        };
       }
     }
 
-    const verdict = passed === testCases.length ? 'Accepted' :
-                    firstFail?.actual?.includes('Error') ? 'Runtime Error' : 'Wrong Answer';
+    const verdict =
+      passed === testCases.length ? 'Accepted' :
+      firstFail?.stderr ? 'Runtime Error' :
+      'Wrong Answer';
 
     const sub = new Submission({
-      user: req.user.id, problem: problemId, language, code, verdict,
-      runtime: `${Math.round(totalRuntime / testCases.length)}ms`,
-      testsPassed: passed, testsTotal: testCases.length,
-      output: firstFail ? JSON.stringify(firstFail) : '',
+      user:        req.user.id,
+      problem:     problemId,
+      language,
+      code,
+      verdict,
+      runtime:     `${Math.round(totalRuntime / testCases.length)}ms`,
+      testsPassed: passed,
+      testsTotal:  testCases.length,
+      output:      firstFail ? JSON.stringify(firstFail) : '',
+      stderr:      firstFail?.stderr || '',
     });
     await sub.save();
     await updateUserStats(req.user.id, problem, verdict === 'Accepted');
 
     res.json({
       ...sub.toObject(),
-      beats: verdict === 'Accepted' ? Math.floor(Math.random() * 30 + 65) : null,
+      beats:    verdict === 'Accepted' ? Math.floor(Math.random() * 30 + 65) : null,
       failCase: firstFail,
     });
   } catch (err) {
@@ -97,7 +208,7 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// GET /api/submissions/me — my submissions
+// ── GET /api/submissions/me ───────────────────────────────────────────────────
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const { problemId, limit = 20 } = req.query;
@@ -113,62 +224,27 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-// ── Helpers ───────────────────────────────────
-async function runOnPiston(code, lang, stdin) {
-  try {
-    const start = Date.now();
-    const resp = await fetch(PISTON_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language: lang.language, version: '*',
-        files: [{ name: 'solution', content: code }],
-        stdin, run_timeout: 5000, compile_timeout: 10000,
-      }),
-    });
-    const data = await resp.json();
-    return {
-      stdout:    data.run?.stdout || '',
-      stderr:    data.run?.stderr || data.compile?.stderr || '',
-      exitCode:  data.run?.code ?? 0,
-      runtime:   `${Date.now() - start}ms`,
-      runtimeMs: Date.now() - start,
-    };
-  } catch {
-    return { stdout: '', stderr: 'Piston API unavailable', exitCode: 1, runtime: 'N/A', runtimeMs: 0 };
-  }
-}
-
+// ── Helpers ───────────────────────────────────────────────────────────────────
 async function updateUserStats(userId, problem, accepted) {
   try {
     const user = await User.findById(userId);
     if (!user) return;
-
     const pid = problem._id.toString();
     const alreadySolved = user.solved.map(s => s.toString()).includes(pid);
-
-    if (!user.attempted.map(a => a.toString()).includes(pid)) {
-      user.attempted.push(problem._id);
-    }
-
+    if (!user.attempted.map(a => a.toString()).includes(pid)) user.attempted.push(problem._id);
     if (accepted && !alreadySolved) {
       user.solved.push(problem._id);
-      user.rating += problem.points;
+      user.rating += (problem.points || 0);
       user.ratingTitle = getRatingTitle(user.rating);
-
-      // Streak
       const today = new Date().toDateString();
       const yesterday = new Date(Date.now() - 86400000).toDateString();
-      if (user.streakLast === today) { /* same day */ }
+      if (user.streakLast === today) {}
       else if (user.streakLast === yesterday) { user.streak += 1; }
-      else user.streak = 1;
+      else { user.streak = 1; }
       user.streakLast = today;
     }
-
     await user.save();
-  } catch (err) {
-    console.error('updateUserStats error:', err);
-  }
+  } catch (err) { console.error('updateUserStats error:', err); }
 }
 
 function getRatingTitle(r) {
