@@ -22,7 +22,7 @@ router.post('/hint', authMiddleware, async (req, res) => {
         messages: [
           {
             role: 'system',
-            content: `You are CodeForge AI Tutor. Problem: "${problemContext}". 
+            content: `You are CodeForge AI Tutor. Problem: "${problemContext}".
 Give hints NOT full solutions unless asked. Be concise (2-3 sentences). Be encouraging.`,
           },
           ...history.slice(-6),
@@ -41,7 +41,7 @@ Give hints NOT full solutions unless asked. Be concise (2-3 sentences). Be encou
 
 function getFallback(msg, ctx) {
   const lower = (msg || '').toLowerCase();
-  if (lower.includes('hint') || lower.includes('stuck')) return `💡 Think about what data structure lets you look up values in O(1). For "${ctx}", try breaking it into smaller subproblems.`;
+  if (lower.includes('hint') || lower.includes('stuck')) return ` Think about what data structure lets you look up values in O(1). For "${ctx}", try breaking it into smaller subproblems.`;
   if (lower.includes('complex')) return `For "${ctx}", aim for O(n) time. A single pass with a hash map usually does it.`;
   if (lower.includes('approach')) return `Start with a brute force O(n²) approach first, then optimize using a smarter data structure.`;
   return `Great question! For "${ctx}", try working through a small example by hand — the pattern usually becomes obvious.`;

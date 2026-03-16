@@ -64,16 +64,28 @@ async function runBatch(code, lang, inputs) {
       if (allDone) { results = data.submissions; break; }
     }
 
-    if (!results) return inputs.map(() => ({ stdout: '', stderr: 'Execution timed out', exitCode: 1, runtime: 'N/A', runtimeMs: 0 }));
+    if (!results) return inputs.map(() => ({ stdout: '', stderr: 'Execution timed out', exitCode: 1, statusLabel: 'Time Limit Exceeded', runtime: 'N/A', runtimeMs: 0 }));
 
     const elapsed = Date.now() - start;
-    return results.map(s => ({
-      stdout:    (s.stdout || '').trim(),
-      stderr:    (s.stderr || s.compile_output || '').trim(),
-      exitCode:  s.status?.id === 3 ? 0 : 1,
-      runtime:   `${elapsed}ms`,
-      runtimeMs: elapsed,
-    }));
+    return results.map(s => {
+      const id = s.status?.id;
+      const statusLabel =
+        id === 3  ? 'Accepted' :
+        id === 4  ? 'Wrong Answer' :
+        id === 5  ? 'Time Limit Exceeded' :
+        id === 6  ? 'Compilation Error' :
+        id >= 7 && id <= 12 ? 'Runtime Error' :
+        id === 13 ? 'Internal Error' :
+        'Runtime Error';
+      return {
+        stdout:      (s.stdout || '').trim(),
+        stderr:      (s.stderr || s.compile_output || '').trim(),
+        exitCode:    id === 3 ? 0 : 1,
+        statusLabel,
+        runtime:     `${elapsed}ms`,
+        runtimeMs:   elapsed,
+      };
+    });
   } catch (err) {
     return inputs.map(() => ({ stdout: '', stderr: 'Execution service unavailable', exitCode: 1, runtime: 'N/A', runtimeMs: 0 }));
   }
@@ -106,11 +118,12 @@ router.post('/run', authMiddleware, async (req, res) => {
       const actual = r.stdout;
       const expected = tc.expected.trim();
       return {
-        input:    tc.input,
+        input:       tc.input,
         expected,
-        actual:   r.exitCode !== 0 ? (r.stderr || 'Runtime Error') : actual,
-        passed:   r.exitCode === 0 && actual === expected,
-        stderr:   r.stderr,
+        actual:      r.exitCode !== 0 ? (r.stderr || 'Runtime Error') : actual,
+        passed:      r.exitCode === 0 && actual === expected,
+        stderr:      r.stderr,
+        statusLabel: r.statusLabel,
       };
     });
 

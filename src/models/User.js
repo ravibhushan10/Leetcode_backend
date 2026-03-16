@@ -12,7 +12,7 @@ const UserSchema = new mongoose.Schema({
   oauthProvider:{ type: String, enum: ['google', 'github', 'local', 'admin'], default: 'local' },
   oauthId:      { type: String, default: null, sparse: true },
   rating:       { type: Number, default: 0 },
-  ratingTitle:  { type: String, default: 'Newbie' },
+  ratingTitle:  { type: String, default: 'Beginner' },
   streak:       { type: Number, default: 0 },
   streakLast:   { type: String, default: null },
   coins:        { type: Number, default: 0 },
