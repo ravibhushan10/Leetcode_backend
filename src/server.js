@@ -1,10 +1,11 @@
 import 'dotenv/config';
-import express from 'express';
-import cors    from 'cors';
-import mongoose from 'mongoose';
+import express    from 'express';
+import cors       from 'cors';
+import mongoose   from 'mongoose';
+import cookieParser from 'cookie-parser';
 
 import problemsRouter    from './routes/problems.js';
-import usersRouter       from './routes/users.js';
+import usersRouter, { cleanupUnverifiedAccounts } from './routes/users.js';
 import submissionsRouter from './routes/submissions.js';
 import aiRouter          from './routes/ai.js';
 import paymentsRouter    from './routes/payments.js';
@@ -27,21 +28,22 @@ const corsOptions = {
     ) return cb(null, true);
     cb(new Error('Not allowed by CORS'));
   },
-  credentials: true,
+  credentials: true, // Required for cookies
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-// ── Razorpay webhook MUST get raw body — mount BEFORE express.json() ──
+// Razorpay webhook needs raw body — mount BEFORE express.json()
 app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
 app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); // Required for refresh token cookie
 
 // ── Routes ────────────────────────────────────
-app.get('/', (_, res) => res.json({ name: 'CodeForge API', version: '1.0.0', status: 'running', time: new Date() }));
+app.get('/',       (_, res) => res.json({ name: 'CodeForge API', version: '1.0.0', status: 'running', time: new Date() }));
 app.get('/health', (_, res) => res.json({ status: 'ok', time: new Date() }));
 
 app.use('/api/problems',    problemsRouter);
@@ -61,8 +63,13 @@ mongoose.connect(process.env.MONGODB_URI)
       await Problem.syncIndexes();
       console.log('✅ Indexes synced');
     } catch (e) {
-      console.warn('⚠️  Index sync warning (run npm run seed to fix):', e.message);
+      console.warn('⚠️  Index sync warning:', e.message);
     }
+
+    // Run cleanup on startup, then every 6 hours
+    await cleanupUnverifiedAccounts();
+    setInterval(cleanupUnverifiedAccounts, 6 * 60 * 60 * 1000);
+
     app.listen(PORT, () => console.log(`🚀 CodeForge API → http://localhost:${PORT}`));
   })
   .catch(err => {
