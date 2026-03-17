@@ -16,9 +16,11 @@
     "express-rate-limit": "^8.3.1",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^8.0.3",
+    "multer": "^2.1.1",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.9",
-    "razorpay": "^2.9.2"
+    "razorpay": "^2.9.2",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
