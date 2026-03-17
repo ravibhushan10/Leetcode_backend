@@ -1044,8 +1044,8 @@ for (const p of problems) {
   const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   await Problem.create({ ...p, slug, aiContext: p.aiContext || `${p.title} — ${p.tags.join(', ')}` });
   inserted++;
-  console.log(`  ✅ #${p.number} ${p.title}`);
+  console.log(` #${p.number} ${p.title}`);
 }
 
-console.log(`\n🎉 Seeded ${inserted} problems + admin user`);
+console.log(`\nSeeded ${inserted} problems + admin user`);
 await mongoose.disconnect();

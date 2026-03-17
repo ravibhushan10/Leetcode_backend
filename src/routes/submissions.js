@@ -8,14 +8,15 @@ import { authMiddleware } from '../middleware/auth.js';
 const router = express.Router();
 
 const LANG_MAP = {
-  python: { language: 'python', version: '3.10.0' },
   cpp:    { language: 'c++',    version: '10.2.0' },
+  python: { language: 'python', version: '3.10.0' },
   java:   { language: 'java',   version: '15.0.2' },
+  c:          { language: 'c',          version: '10.2.0'  },
   javascript: { language: 'javascript', version: '18.15.0' },
 };
 
 const JUDGE0_BATCH_URL = 'https://judge0-ce.p.rapidapi.com/submissions/batch';
-const JUDGE0_LANG = { python: 71, cpp: 54, java: 62, javascript: 63 };
+const JUDGE0_LANG = {  cpp: 54,python: 71, java: 62, c: 50,javascript: 63  }
 const judge0Headers = () => ({
   'Content-Type': 'application/json',
   'X-RapidAPI-Key': process.env.JUDGE0_API_KEY,
