@@ -1039,14 +1039,15 @@ router.get('/ml-insights', authMiddleware, async (req, res) => {
 router.get('/leaderboard', async (req, res) => {
   try {
     const users = await User.find({ isAdmin: false, isVerified: true })
-      .select('name initials rating ratingTitle plan streak solved')
+      .select('name initials avatarUrl rating ratingTitle plan streak solved')
       .sort({ rating: -1 })
       .limit(50);
-    return res.json(users.map((u, i) => ({
-      rank: i + 1, name: u.name, initials: u.initials,
-      rating: u.rating, ratingTitle: u.ratingTitle,
-      plan: u.plan, streak: u.streak, solved: u.solved.length,
-    })));
+   return res.json(users.map((u, i) => ({
+  rank: i + 1, name: u.name, initials: u.initials,
+  avatarUrl: u.avatarUrl || '',
+  rating: u.rating, ratingTitle: u.ratingTitle,
+  plan: u.plan, streak: u.streak, solved: u.solved.length,
+})));
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong loading the leaderboard.' });
   }
@@ -1072,7 +1073,8 @@ router.patch('/:id/plan', adminMiddleware, async (req, res) => {
     user.plan = user.plan === 'pro' ? 'free' : 'pro';
     if (user.plan === 'pro') user.proSince = new Date();
     await user.save();
-    return res.json({ plan: user.plan });
+const newToken = makeAccessToken(user);
+return res.json({ plan: user.plan, token: newToken });
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong.' });
   }

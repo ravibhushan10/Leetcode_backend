@@ -47,8 +47,6 @@ await new User({
 }).save();
 console.log('✅ Admin user created');
 
-await Problem.deleteMany({});
-console.log('🧹 Cleared old problems');
 
 // ── Problems ──────────────────────────────────────────────────────────────────
 const problems = [
@@ -7761,13 +7759,6349 @@ int main() {
     aiContext: 'First Bad Version — binary search O(log n)',
   },
 
+  // ── PROBLEMS 61–70 ────────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 61. Flood Fill ───────────────────────────────────────────────────────────
+  {
+    number: 61, title: 'Flood Fill', slug: 'flood-fill', difficulty: 'Easy',
+    tags: ['Array', 'DFS', 'BFS', 'Matrix'], companies: ['Facebook', 'Amazon', 'Apple'],
+    acceptance: 61.3, premium: false,
+    description: `An image is represented as an <code>m x n</code> integer grid. Given starting pixel <code>(sr, sc)</code> and a <code>color</code>, perform flood fill. Return the modified image.<br><br>Input: first line is <code>sr sc color</code>, then each row of the grid. Output: modified grid.`,
+    examples: [
+      { input: '1 1 2\n1 1 1\n1 1 0\n1 0 1', output: '2 2 2\n2 2 0\n2 0 1' },
+      { input: '0 0 0\n0 0 0\n0 0 0',         output: '0 0 0\n0 0 0\n0 0 0' },
+    ],
+    constraints: ['1 ≤ m, n ≤ 50', '0 ≤ image[i][j], color ≤ 65535'],
+    testCases: [
+      { input: '1 1 2\n1 1 1\n1 1 0\n1 0 1', expected: '2 2 2\n2 2 0\n2 0 1', hidden: false },
+      { input: '0 0 0\n0 0 0\n0 0 0',         expected: '0 0 0\n0 0 0\n0 0 0', hidden: false },
+      { input: '0 0 2\n0 0 0\n0 0 0',         expected: '2 2 2\n2 2 2\n2 2 2', hidden: true  },
+      { input: '0 0 1\n0 0\n0',               expected: '1\n1\n1',             hidden: true  },
+    ],
+    hints: [
+      'DFS from (sr, sc): fill cells matching the original color.',
+      'Handle edge case: if original color == new color, return early.',
+      'Use 4-directional movement (up, down, left, right).',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+
+    }
+};`,
+      python: `class Solution:
+    def floodFill(self, image: List[List[int]], sr: int, sc: int, color: int) -> List[List[int]]:
+        `,
+      java: `class Solution {
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} image
+ * @param {number} sr
+ * @param {number} sc
+ * @param {number} color
+ * @return {number[][]}
+ */
+var floodFill = function(image, sr, sc, color) {
+
+};`,
+      c: `int** floodFill(int** image, int imageSize, int* imageColSize, int sr, int sc, int color, int* returnSize, int** returnColumnSizes) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int sr, sc, color; cin >> sr >> sc >> color; cin.ignore();
+    vector<vector<int>> image; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        istringstream ss(line); vector<int> row; int x;
+        while (ss >> x) row.push_back(x);
+        image.push_back(row);
+    }
+    Solution sol;
+    auto res = sol.floodFill(image, sr, sc, color);
+    for (auto& row : res) { for (int i = 0; i < (int)row.size(); i++) cout << (i?" ":"") << row[i]; cout << "\\n"; }
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+sr, sc, color = map(int, lines[0].split())
+image = [list(map(int, l.split())) for l in lines[1:]]
+res = Solution().floodFill(image, sr, sc, color)
+for row in res: print(*row)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int sr = sc.nextInt(), scc = sc.nextInt(), color = sc.nextInt(); sc.nextLine();
+        List<int[]> rows = new ArrayList<>();
+        while (sc.hasNextLine()) { String l = sc.nextLine().trim(); if (l.isEmpty()) continue; rows.add(Arrays.stream(l.split(" ")).mapToInt(Integer::parseInt).toArray()); }
+        int[][] image = rows.toArray(new int[0][]);
+        int[][] res = new Solution().floodFill(image, sr, scc, color);
+        for (int[] row : res) { StringBuilder sb = new StringBuilder(); for (int i = 0; i < row.length; i++) sb.append(i>0?" ":"").append(row[i]); System.out.println(sb); }
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const [sr, sc, color] = lines[0].split(' ').map(Number);
+const image = lines.slice(1).map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+const res = floodFill(image, sr, sc, color);
+for (const row of res) console.log(row.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int sr, sc, color; scanf("%d %d %d", &sr, &sc, &color);
+    int m[51][51], rows = 0, cols = 0; char buf[500];
+    fgets(buf, sizeof(buf), stdin); // consume newline
+    while (fgets(buf, sizeof(buf), stdin)) {
+        if (buf[0]=='\\n') continue; char *p=buf; int j=0;
+        while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}m[rows][j++]=strtol(p,&p,10);} cols=j; rows++;
+    }
+    int *ptrs[51]; int colSizes[51];
+    for(int i=0;i<rows;i++){ptrs[i]=m[i];colSizes[i]=cols;}
+    int retSize; int *retColSizes;
+    int **res = floodFill((int**)ptrs,rows,colSizes,sr,sc,color,&retSize,&retColSizes);
+    for(int i=0;i<retSize;i++){for(int j=0;j<retColSizes[i];j++)printf("%s%d",j?" ":"",res[i][j]);printf("\\n");}
+    return 0;
+}`,
+    },
+    aiContext: 'Flood Fill — DFS/BFS grid coloring O(m*n)',
+  },
+
+  // ── 62. Squares of a Sorted Array ────────────────────────────────────────────
+  {
+    number: 62, title: 'Squares of a Sorted Array', slug: 'squares-of-a-sorted-array', difficulty: 'Easy',
+    tags: ['Array', 'Two Pointers', 'Sorting'], companies: ['Google', 'Amazon', 'Facebook'],
+    acceptance: 71.8, premium: false,
+    description: `Given an integer array <code>nums</code> sorted in non-decreasing order, return an array of the squares of each number sorted in non-decreasing order.`,
+    examples: [
+      { input: 'nums = [-4,-1,0,3,10]', output: '0 1 9 16 100' },
+      { input: 'nums = [-7,-3,2,3,11]', output: '4 9 9 49 121' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁴', '-10⁴ ≤ nums[i] ≤ 10⁴', 'nums is sorted in non-decreasing order'],
+    testCases: [
+      { input: '-4 -1 0 3 10',  expected: '0 1 9 16 100',  hidden: false },
+      { input: '-7 -3 2 3 11',  expected: '4 9 9 49 121',  hidden: false },
+      { input: '1',             expected: '1',              hidden: true  },
+      { input: '-3 -2 -1',      expected: '1 4 9',         hidden: true  },
+    ],
+    hints: [
+      'Use two pointers: left at start, right at end.',
+      'The largest square is always at one of the ends.',
+      'Fill result array from the back.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> sortedSquares(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def sortedSquares(self, nums: List[int]) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] sortedSquares(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var sortedSquares = function(nums) {
+
+};`,
+      c: `int* sortedSquares(int* nums, int numsSize, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    vector<int> res = sol.sortedSquares(nums);
+    for (int i = 0; i < (int)res.size(); i++) cout << (i?" ":"") << res[i];
+    cout << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(*Solution().sortedSquares(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        int[] res = new Solution().sortedSquares(nums);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) sb.append(i>0?" ":"").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(sortedSquares(nums).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[10001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    int retSize;
+    int *res = sortedSquares(nums, n, &retSize);
+    for (int i = 0; i < retSize; i++) printf("%s%d", i?" ":"", res[i]);
+    printf("\\n"); free(res); return 0;
+}`,
+    },
+    aiContext: 'Squares of a Sorted Array — two pointers O(n)',
+  },
+
+  // ── 63. Running Sum of 1d Array ──────────────────────────────────────────────
+  {
+    number: 63, title: 'Running Sum of 1d Array', slug: 'running-sum-of-1d-array', difficulty: 'Easy',
+    tags: ['Array', 'Prefix Sum'], companies: ['Amazon', 'Google'],
+    acceptance: 88.2, premium: false,
+    description: `Given an array <code>nums</code>, return the running sum where <code>runningSum[i] = sum(nums[0] ... nums[i])</code>.`,
+    examples: [
+      { input: 'nums = [1,2,3,4]',       output: '1 3 6 10' },
+      { input: 'nums = [1,1,1,1,1]',     output: '1 2 3 4 5' },
+      { input: 'nums = [3,1,2,10,1]',    output: '3 4 6 16 17' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 1000', '-10⁶ ≤ nums[i] ≤ 10⁶'],
+    testCases: [
+      { input: '1 2 3 4',    expected: '1 3 6 10',    hidden: false },
+      { input: '1 1 1 1 1',  expected: '1 2 3 4 5',   hidden: false },
+      { input: '3 1 2 10 1', expected: '3 4 6 16 17', hidden: false },
+      { input: '5',          expected: '5',            hidden: true  },
+    ],
+    hints: [
+      'Iterate through the array.',
+      'Add each element to a running total.',
+      'Store the running total at each index.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> runningSum(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def runningSum(self, nums: List[int]) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] runningSum(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var runningSum = function(nums) {
+
+};`,
+      c: `int* runningSum(int* nums, int numsSize, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    vector<int> res = sol.runningSum(nums);
+    for (int i = 0; i < (int)res.size(); i++) cout << (i?" ":"") << res[i];
+    cout << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(*Solution().runningSum(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        int[] res = new Solution().runningSum(nums);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) sb.append(i>0?" ":"").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(runningSum(nums).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[1001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    int retSize;
+    int *res = runningSum(nums, n, &retSize);
+    for (int i = 0; i < retSize; i++) printf("%s%d", i?" ":"", res[i]);
+    printf("\\n"); free(res); return 0;
+}`,
+    },
+    aiContext: 'Running Sum of 1d Array — prefix sum O(n)',
+  },
+
+  // ── 64. Pivot Index ──────────────────────────────────────────────────────────
+  {
+    number: 64, title: 'Pivot Index', slug: 'pivot-index', difficulty: 'Easy',
+    tags: ['Array', 'Prefix Sum'], companies: ['Amazon', 'Google', 'Facebook'],
+    acceptance: 52.8, premium: false,
+    description: `Given an array <code>nums</code>, return the leftmost pivot index where the sum of all elements to the left equals the sum to the right. Return <code>-1</code> if no such index exists.`,
+    examples: [
+      { input: 'nums = [1,7,3,6,5,6]', output: '3', explanation: 'Left sum = 1+7+3 = 11, Right sum = 5+6 = 11' },
+      { input: 'nums = [1,2,3]',        output: '-1' },
+      { input: 'nums = [2,1,-1]',       output: '0', explanation: 'Left sum = 0, Right sum = 1+(-1) = 0' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁴', '-1000 ≤ nums[i] ≤ 1000'],
+    testCases: [
+      { input: '1 7 3 6 5 6', expected: '3',  hidden: false },
+      { input: '1 2 3',       expected: '-1', hidden: false },
+      { input: '2 1 -1',      expected: '0',  hidden: false },
+      { input: '0',           expected: '0',  hidden: true  },
+      { input: '-1 -1 -1 0 1 1', expected: '0', hidden: true },
+    ],
+    hints: [
+      'Compute total sum first.',
+      'Iterate: leftSum = total - leftSum - nums[i].',
+      'If leftSum == rightSum, return current index.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int pivotIndex(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def pivotIndex(self, nums: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int pivotIndex(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var pivotIndex = function(nums) {
+
+};`,
+      c: `int pivotIndex(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    cout << sol.pivotIndex(nums) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(Solution().pivotIndex(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().pivotIndex(nums));
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(pivotIndex(nums));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[10001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    printf("%d\\n", pivotIndex(nums, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Pivot Index — prefix sum O(n)',
+  },
+
+  // ── 65. Is Subsequence ───────────────────────────────────────────────────────
+  {
+    number: 65, title: 'Is Subsequence', slug: 'is-subsequence', difficulty: 'Easy',
+    tags: ['Two Pointers', 'String', 'Dynamic Programming'], companies: ['Google', 'Airbnb', 'Amazon'],
+    acceptance: 49.4, premium: false,
+    description: `Given two strings <code>s</code> and <code>t</code>, return <code>true</code> if <code>s</code> is a subsequence of <code>t</code>.<br><br>First line: s. Second line: t.`,
+    examples: [
+      { input: 'ace\nabcde', output: 'true',  explanation: 'a, c, e appear in order in "abcde"' },
+      { input: 'axc\nahbgdc', output: 'false' },
+    ],
+    constraints: ['0 ≤ s.length ≤ 100', '0 ≤ t.length ≤ 10⁴', 'Both strings consist of lowercase English letters'],
+    testCases: [
+      { input: 'ace\nabcde',  expected: 'true',  hidden: false },
+      { input: 'axc\nahbgdc', expected: 'false', hidden: false },
+      { input: '\nabc',       expected: 'true',  hidden: true  },
+      { input: 'b\nabc',      expected: 'true',  hidden: true  },
+      { input: 'abc\nab',     expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Use two pointers: one for s, one for t.',
+      'Advance the s pointer only when characters match.',
+      'Always advance the t pointer.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool isSubsequence(string s, string t) {
+
+    }
+};`,
+      python: `class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        `,
+      java: `class Solution {
+    public boolean isSubsequence(String s, String t) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
+ */
+var isSubsequence = function(s, t) {
+
+};`,
+      c: `bool isSubsequence(char* s, char* t) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s, t;
+    getline(cin, s); getline(cin, t);
+    Solution sol;
+    cout << (sol.isSubsequence(s, t) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+s = lines[0] if lines else ''
+t = lines[1] if len(lines) > 1 else ''
+print(str(Solution().isSubsequence(s, t)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.hasNextLine() ? sc.nextLine() : "";
+        String t = sc.hasNextLine() ? sc.nextLine() : "";
+        System.out.println(new Solution().isSubsequence(s, t));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').split('\\n');
+const s = lines[0] || '', t = lines[1] || '';
+
+__USER_CODE__
+
+console.log(String(isSubsequence(s, t)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    char s[101], t[10001];
+    fgets(s, sizeof(s), stdin); fgets(t, sizeof(t), stdin);
+    int ns = strlen(s), nt = strlen(t);
+    if (s[ns-1]=='\\n') s[--ns]='\\0';
+    if (t[nt-1]=='\\n') t[--nt]='\\0';
+    printf("%s\\n", isSubsequence(s, t) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Is Subsequence — two pointers O(n)',
+  },
+
+  // ── 66. Middle of the Linked List ────────────────────────────────────────────
+  {
+    number: 66, title: 'Middle of the Linked List', slug: 'middle-of-the-linked-list', difficulty: 'Easy',
+    tags: ['Linked List', 'Two Pointers'], companies: ['Amazon', 'Apple', 'Microsoft'],
+    acceptance: 73.5, premium: false,
+    description: `Given a singly linked list (space-separated integers), return the value(s) of the middle node(s). If there are two middle nodes, return the second middle. Print all values from the middle to end, space-separated.`,
+    examples: [
+      { input: '1 2 3 4 5', output: '3 4 5', explanation: 'Middle is node 3' },
+      { input: '1 2 3 4 5 6', output: '4 5 6', explanation: 'Two middles (3 and 4), return second' },
+    ],
+    constraints: ['1 ≤ number of nodes ≤ 100', '1 ≤ Node.val ≤ 100'],
+    testCases: [
+      { input: '1 2 3 4 5',   expected: '3 4 5', hidden: false },
+      { input: '1 2 3 4 5 6', expected: '4 5 6', hidden: false },
+      { input: '1',           expected: '1',      hidden: true  },
+      { input: '1 2',         expected: '2',      hidden: true  },
+    ],
+    hints: [
+      "Use Floyd's algorithm: slow and fast pointers.",
+      'Slow moves 1 step, fast moves 2 steps.',
+      'When fast reaches end, slow is at middle.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* middleNode(ListNode* head) {
+
+    }
+};`,
+      python: `# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        `,
+      java: `/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ * }
+ */
+class Solution {
+    public ListNode middleNode(ListNode head) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+var middleNode = function(head) {
+
+};`,
+      c: `/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode* middleNode(struct ListNode* head) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct ListNode {
+    int val; ListNode *next;
+    ListNode(int x) : val(x), next(nullptr) {}
+};
+
+__USER_CODE__
+
+int main() {
+    vector<int> vals; int x;
+    while (cin >> x) vals.push_back(x);
+    if (vals.empty()) return 0;
+    ListNode *head = new ListNode(vals[0]), *cur = head;
+    for (int i = 1; i < (int)vals.size(); i++) { cur->next = new ListNode(vals[i]); cur = cur->next; }
+    Solution sol; ListNode *mid = sol.middleNode(head);
+    bool first = true;
+    while (mid) { if (!first) cout << " "; cout << mid->val; mid = mid->next; first = false; }
+    cout << endl; return 0;
+}`,
+      python: `from typing import Optional
+import sys
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val; self.next = next
+
+__USER_CODE__
+
+vals = list(map(int, sys.stdin.read().split()))
+if not vals: exit()
+head = ListNode(vals[0]); cur = head
+for v in vals[1:]: cur.next = ListNode(v); cur = cur.next
+mid = Solution().middleNode(head)
+out = []
+while mid: out.append(str(mid.val)); mid = mid.next
+print(' '.join(out))`,
+      java: `import java.util.*;
+
+class ListNode {
+    int val; ListNode next;
+    ListNode(int v) { val = v; }
+}
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> vals = new ArrayList<>();
+        while (sc.hasNextInt()) vals.add(sc.nextInt());
+        if (vals.isEmpty()) return;
+        ListNode head = new ListNode(vals.get(0)), cur = head;
+        for (int i = 1; i < vals.size(); i++) { cur.next = new ListNode(vals.get(i)); cur = cur.next; }
+        ListNode mid = new Solution().middleNode(head);
+        StringBuilder sb = new StringBuilder();
+        while (mid != null) { if (sb.length()>0) sb.append(" "); sb.append(mid.val); mid = mid.next; }
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const vals = require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+function ListNode(val, next) { this.val = val??0; this.next = next??null; }
+
+__USER_CODE__
+
+if (!vals.length) process.exit(0);
+let head = new ListNode(vals[0]), cur = head;
+for (let i = 1; i < vals.length; i++) { cur.next = new ListNode(vals[i]); cur = cur.next; }
+let mid = middleNode(head); const out = [];
+while (mid) { out.push(mid.val); mid = mid.next; }
+console.log(out.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode { int val; struct ListNode *next; };
+
+__USER_CODE__
+
+int main() {
+    int vals[101], n = 0;
+    while (scanf("%d", &vals[n]) == 1) n++;
+    if (!n) return 0;
+    struct ListNode *nodes = malloc(n * sizeof(struct ListNode));
+    for (int i = 0; i < n; i++) { nodes[i].val = vals[i]; nodes[i].next = i+1<n?&nodes[i+1]:NULL; }
+    struct ListNode *mid = middleNode(&nodes[0]);
+    int first = 1;
+    while (mid) { if (!first) printf(" "); printf("%d", mid->val); mid = mid->next; first = 0; }
+    printf("\\n"); free(nodes); return 0;
+}`,
+    },
+    aiContext: 'Middle of Linked List — slow/fast pointers O(n)',
+  },
+
+  // ── 67. Maximum Average Subarray I ───────────────────────────────────────────
+  {
+    number: 67, title: 'Maximum Average Subarray I', slug: 'maximum-average-subarray-i', difficulty: 'Easy',
+    tags: ['Array', 'Sliding Window'], companies: ['Google', 'Amazon'],
+    acceptance: 43.5, premium: false,
+    description: `Given an integer array <code>nums</code> and an integer <code>k</code>, find the contiguous subarray of length <code>k</code> that has the maximum average value. Return this value rounded to 5 decimal places.<br><br>First line: space-separated nums. Second line: k.`,
+    examples: [
+      { input: '1 12 -5 -6 50 3\n4', output: '12.75000', explanation: 'Subarray [12,-5,-6,50] has avg 12.75' },
+      { input: '5\n1',               output: '5.00000'  },
+    ],
+    constraints: ['1 ≤ k ≤ nums.length ≤ 10⁵', '-10⁴ ≤ nums[i] ≤ 10⁴'],
+    testCases: [
+      { input: '1 12 -5 -6 50 3\n4', expected: '12.75000', hidden: false },
+      { input: '5\n1',               expected: '5.00000',  hidden: false },
+      { input: '0 4 0 3 2\n1',       expected: '4.00000',  hidden: true  },
+      { input: '4 0 4 3 3\n5',       expected: '2.80000',  hidden: true  },
+    ],
+    hints: [
+      'Compute the sum of the first k elements.',
+      'Slide the window: add the next element, remove the first.',
+      'Track the maximum window sum.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    double findMaxAverage(vector<int>& nums, int k) {
+
+    }
+};`,
+      python: `class Solution:
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        `,
+      java: `class Solution {
+    public double findMaxAverage(int[] nums, int k) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number}
+ */
+var findMaxAverage = function(nums, k) {
+
+};`,
+      c: `double findMaxAverage(int* nums, int numsSize, int k) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line); vector<int> nums; int x;
+    while (ss >> x) nums.push_back(x);
+    int k; cin >> k;
+    Solution sol;
+    printf("%.5f\\n", sol.findMaxAverage(nums, k));
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+nums = list(map(int, lines[0].split()))
+k = int(lines[1].strip())
+print(f"{Solution().findMaxAverage(nums, k):.5f}")`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] nums = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int k = sc.nextInt();
+        System.out.printf("%.5f%n", new Solution().findMaxAverage(nums, k));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const nums = lines[0].split(' ').map(Number);
+const k = parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(findMaxAverage(nums, k).toFixed(5));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[100001], n = 0, k;
+    char buf[2000000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while (*p&&*p!='\\n'){if(*p==' '){p++;continue;}nums[n++]=strtol(p,&p,10);}
+    scanf("%d", &k);
+    printf("%.5f\\n", findMaxAverage(nums, n, k));
+    return 0;
+}`,
+    },
+    aiContext: 'Maximum Average Subarray I — sliding window O(n)',
+  },
+
+  // ── 68. Longest Turbulent Subarray ───────────────────────────────────────────
+  {
+    number: 68, title: 'Longest Turbulent Subarray', slug: 'longest-turbulent-subarray', difficulty: 'Medium',
+    tags: ['Array', 'Dynamic Programming', 'Sliding Window'], companies: ['Google', 'Amazon'],
+    acceptance: 47.5, premium: false,
+    description: `A subarray is turbulent if the comparison sign flips between each adjacent pair of elements. Given integer array <code>nums</code>, return the length of the maximum size turbulent subarray.`,
+    examples: [
+      { input: 'nums = [9,4,2,10,7,8,8,1,9]', output: '5', explanation: '[4,2,10,7,8] is turbulent' },
+      { input: 'nums = [4,8,12,16]',           output: '2' },
+      { input: 'nums = [100]',                  output: '1' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 4×10⁴', '0 ≤ nums[i] ≤ 10⁹'],
+    testCases: [
+      { input: '9 4 2 10 7 8 8 1 9', expected: '5', hidden: false },
+      { input: '4 8 12 16',          expected: '2', hidden: false },
+      { input: '100',                expected: '1', hidden: false },
+      { input: '0 1 0 1',            expected: '4', hidden: true  },
+      { input: '2 2 2',              expected: '1', hidden: true  },
+    ],
+    hints: [
+      'Use sliding window or DP.',
+      'Track inc (length ending with increase) and dec (ending with decrease).',
+      'If nums[i] > nums[i-1]: inc = dec+1, dec = 1. If less: reverse. If equal: both = 1.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int maxTurbulenceSize(vector<int>& arr) {
+
+    }
+};`,
+      python: `class Solution:
+    def maxTurbulenceSize(self, arr: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int maxTurbulenceSize(int[] arr) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} arr
+ * @return {number}
+ */
+var maxTurbulenceSize = function(arr) {
+
+};`,
+      c: `int maxTurbulenceSize(int* arr, int arrSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> arr; int x;
+    while (cin >> x) arr.push_back(x);
+    Solution sol;
+    cout << sol.maxTurbulenceSize(arr) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+arr = list(map(int, sys.stdin.read().split()))
+print(Solution().maxTurbulenceSize(arr))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] arr = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().maxTurbulenceSize(arr));
+    }
+}`,
+      javascript: `const arr = require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(maxTurbulenceSize(arr));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int arr[40001], n = 0;
+    while (scanf("%d", &arr[n]) == 1) n++;
+    printf("%d\\n", maxTurbulenceSize(arr, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Longest Turbulent Subarray — sliding window DP O(n)',
+  },
+
+  // ── 69. Number of 1 Bits ─────────────────────────────────────────────────────
+  {
+    number: 69, title: 'Number of 1 Bits', slug: 'number-of-1-bits', difficulty: 'Easy',
+    tags: ['Divide and Conquer', 'Bit Manipulation'], companies: ['Apple', 'Microsoft', 'Adobe'],
+    acceptance: 66.8, premium: false,
+    description: `Given a positive integer <code>n</code>, write a function that returns the number of set bits in its binary representation (also known as the Hamming weight).`,
+    examples: [
+      { input: 'n = 11',         output: '3', explanation: '11 = 1011, has 3 set bits' },
+      { input: 'n = 128',        output: '1', explanation: '128 = 10000000, has 1 set bit' },
+      { input: 'n = 2147483645', output: '30' },
+    ],
+    constraints: ['1 ≤ n ≤ 2³¹-1'],
+    testCases: [
+      { input: '11',         expected: '3',  hidden: false },
+      { input: '128',        expected: '1',  hidden: false },
+      { input: '2147483645', expected: '30', hidden: false },
+      { input: '1',          expected: '1',  hidden: true  },
+      { input: '4294967293', expected: '31', hidden: true  },
+    ],
+    hints: [
+      'Use n & (n-1) to clear the lowest set bit.',
+      'Count how many times you do this until n = 0.',
+      'Or use built-in __builtin_popcount in C++.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int hammingWeight(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def hammingWeight(self, n: int) -> int:
+        `,
+      java: `class Solution {
+    public int hammingWeight(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n
+ * @return {number}
+ */
+var hammingWeight = function(n) {
+
+};`,
+      c: `int hammingWeight(int n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    long long n; cin >> n;
+    Solution sol;
+    cout << sol.hammingWeight((int)n) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+print(Solution().hammingWeight(n))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        long n = new Scanner(System.in).nextLong();
+        System.out.println(new Solution().hammingWeight((int)n));
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
+
+__USER_CODE__
+
+console.log(hammingWeight(n));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    long long n; scanf("%lld", &n);
+    printf("%d\\n", hammingWeight((int)n));
+    return 0;
+}`,
+    },
+    aiContext: 'Number of 1 Bits — bit manipulation O(log n)',
+  },
+
+  // ── 70. Reverse Bits ─────────────────────────────────────────────────────────
+  {
+    number: 70, title: 'Reverse Bits', slug: 'reverse-bits', difficulty: 'Easy',
+    tags: ['Divide and Conquer', 'Bit Manipulation'], companies: ['Apple', 'Adobe', 'Airbnb'],
+    acceptance: 56.8, premium: false,
+    description: `Reverse bits of a given 32-bit unsigned integer. Input is given as an unsigned decimal integer. Output the decimal value of the reversed bits.`,
+    examples: [
+      { input: '43261596',  output: '964176192', explanation: '00000010100101000001111010011100 reversed is 00111001011110000010100101000000' },
+      { input: '4294967293', output: '3221225471', explanation: '11111111111111111111111111111101 reversed' },
+    ],
+    constraints: ['The input is a 32-bit unsigned integer'],
+    testCases: [
+      { input: '43261596',   expected: '964176192',  hidden: false },
+      { input: '4294967293', expected: '3221225471', hidden: false },
+      { input: '0',          expected: '0',           hidden: true  },
+      { input: '1',          expected: '2147483648',  hidden: true  },
+    ],
+    hints: [
+      'Process bits one at a time: shift result left, add LSB of n.',
+      'Shift n right after extracting each bit.',
+      'Do this exactly 32 times.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    uint32_t reverseBits(uint32_t n) {
+
+    }
+};`,
+      python: `class Solution:
+    def reverseBits(self, n: int) -> int:
+        `,
+      java: `public class Solution {
+    // you need treat n as an unsigned value
+    public int reverseBits(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n - a positive integer
+ * @return {number} - a positive integer
+ */
+var reverseBits = function(n) {
+
+};`,
+      c: `uint32_t reverseBits(uint32_t n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    unsigned long long n; cin >> n;
+    Solution sol;
+    cout << sol.reverseBits((uint32_t)n) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+print(Solution().reverseBits(n))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        long n = new Scanner(System.in).nextLong();
+        System.out.println(Integer.toUnsignedLong(new Solution().reverseBits((int)n)));
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
+
+__USER_CODE__
+
+console.log(reverseBits(n) >>> 0);`,
+      c: `#include <stdio.h>
+#include <stdint.h>
+
+__USER_CODE__
+
+int main() {
+    unsigned long long n; scanf("%llu", &n);
+    printf("%u\\n", reverseBits((uint32_t)n));
+    return 0;
+}`,
+    },
+    aiContext: 'Reverse Bits — bit manipulation 32 iterations O(1)',
+  },
+
+
+  // ── PROBLEMS 71–80 ────────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 71. Power of Two ─────────────────────────────────────────────────────────
+  {
+    number: 71, title: 'Power of Two', slug: 'power-of-two', difficulty: 'Easy',
+    tags: ['Math', 'Bit Manipulation', 'Recursion'], companies: ['Google', 'Apple', 'Amazon'],
+    acceptance: 46.2, premium: false,
+    description: `Given an integer <code>n</code>, return <code>true</code> if it is a power of two, otherwise return <code>false</code>.<br><br>An integer is a power of two if there exists an integer <code>x</code> such that <code>n == 2^x</code>.`,
+    examples: [
+      { input: 'n = 1',  output: 'true',  explanation: '2^0 = 1' },
+      { input: 'n = 16', output: 'true',  explanation: '2^4 = 16' },
+      { input: 'n = 3',  output: 'false' },
+    ],
+    constraints: ['-2³¹ ≤ n ≤ 2³¹-1'],
+    testCases: [
+      { input: '1',  expected: 'true',  hidden: false },
+      { input: '16', expected: 'true',  hidden: false },
+      { input: '3',  expected: 'false', hidden: false },
+      { input: '0',  expected: 'false', hidden: true  },
+      { input: '64', expected: 'true',  hidden: true  },
+    ],
+    hints: [
+      'A power of two has exactly one set bit.',
+      'n & (n-1) clears the lowest set bit.',
+      'If n > 0 and n & (n-1) == 0, it is a power of two.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool isPowerOfTwo(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def isPowerOfTwo(self, n: int) -> bool:
+        `,
+      java: `class Solution {
+    public boolean isPowerOfTwo(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n
+ * @return {boolean}
+ */
+var isPowerOfTwo = function(n) {
+
+};`,
+      c: `bool isPowerOfTwo(int n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int n; cin >> n;
+    Solution sol;
+    cout << (sol.isPowerOfTwo(n) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+print(str(Solution().isPowerOfTwo(n)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int n = new Scanner(System.in).nextInt();
+        System.out.println(new Solution().isPowerOfTwo(n));
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
+
+__USER_CODE__
+
+console.log(String(isPowerOfTwo(n)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int n; scanf("%d", &n);
+    printf("%s\\n", isPowerOfTwo(n) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Power of Two — bit manipulation n & (n-1) O(1)',
+  },
+
+  // ── 72. Fibonacci Number ─────────────────────────────────────────────────────
+  {
+    number: 72, title: 'Fibonacci Number', slug: 'fibonacci-number', difficulty: 'Easy',
+    tags: ['Math', 'Dynamic Programming', 'Recursion', 'Memoization'], companies: ['Apple', 'Amazon'],
+    acceptance: 68.5, premium: false,
+    description: `The Fibonacci numbers form a sequence where each number is the sum of the two preceding ones, starting from 0 and 1.<br><br>Given <code>n</code>, calculate <code>F(n)</code>.`,
+    examples: [
+      { input: 'n = 2', output: '1', explanation: 'F(2) = F(1) + F(0) = 1 + 0 = 1' },
+      { input: 'n = 3', output: '2', explanation: 'F(3) = F(2) + F(1) = 1 + 1 = 2' },
+      { input: 'n = 4', output: '3', explanation: 'F(4) = F(3) + F(2) = 2 + 1 = 3' },
+    ],
+    constraints: ['0 ≤ n ≤ 30'],
+    testCases: [
+      { input: '2',  expected: '1',   hidden: false },
+      { input: '3',  expected: '2',   hidden: false },
+      { input: '4',  expected: '3',   hidden: false },
+      { input: '0',  expected: '0',   hidden: true  },
+      { input: '10', expected: '55',  hidden: true  },
+    ],
+    hints: [
+      'Base cases: F(0) = 0, F(1) = 1.',
+      'Use iterative approach for O(n).',
+      'Or use memoization for top-down approach.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int fib(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def fib(self, n: int) -> int:
+        `,
+      java: `class Solution {
+    public int fib(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n
+ * @return {number}
+ */
+var fib = function(n) {
+
+};`,
+      c: `int fib(int n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int n; cin >> n;
+    Solution sol;
+    cout << sol.fib(n) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+print(Solution().fib(n))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int n = new Scanner(System.in).nextInt();
+        System.out.println(new Solution().fib(n));
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
+
+__USER_CODE__
+
+console.log(fib(n));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int n; scanf("%d", &n);
+    printf("%d\\n", fib(n));
+    return 0;
+}`,
+    },
+    aiContext: 'Fibonacci Number — iterative O(n)',
+  },
+
+  // ── 73. Range Sum Query - Immutable ──────────────────────────────────────────
+  {
+    number: 73, title: 'Range Sum Query - Immutable', slug: 'range-sum-query-immutable', difficulty: 'Easy',
+    tags: ['Array', 'Design', 'Prefix Sum'], companies: ['Google', 'Amazon', 'Bloomberg'],
+    acceptance: 59.2, premium: false,
+    description: `Given an integer array <code>nums</code>, handle multiple queries of the form: calculate the sum of elements between indices <code>left</code> and <code>right</code> inclusive.<br><br>Input: first line is nums, then each query as <code>left right</code>. Print each query result.`,
+    examples: [
+      { input: '-2 0 3 -5 2 -1\n0 2\n2 5\n0 5', output: '1\n-1\n-3' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁴', '-10⁵ ≤ nums[i] ≤ 10⁵', '0 ≤ left ≤ right < nums.length', 'At most 10⁴ calls to sumRange'],
+    testCases: [
+      { input: '-2 0 3 -5 2 -1\n0 2\n2 5\n0 5', expected: '1\n-1\n-3', hidden: false },
+      { input: '1 2 3 4 5\n0 4\n1 3',           expected: '15\n9',      hidden: true  },
+      { input: '5\n0 0',                         expected: '5',          hidden: true  },
+    ],
+    hints: [
+      'Build a prefix sum array in the constructor.',
+      'sumRange(left, right) = prefix[right+1] - prefix[left].',
+      'This gives O(1) per query after O(n) setup.',
+    ],
+    starter: {
+      cpp: `class NumArray {
+public:
+    NumArray(vector<int>& nums) {
+
+    }
+
+    int sumRange(int left, int right) {
+
+    }
+};`,
+      python: `class NumArray:
+
+    def __init__(self, nums: List[int]):
+
+
+    def sumRange(self, left: int, right: int) -> int:
+        `,
+      java: `class NumArray {
+
+    public NumArray(int[] nums) {
+
+    }
+
+    public int sumRange(int left, int right) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ */
+var NumArray = function(nums) {
+
+};
+
+/**
+ * @param {number} left
+ * @param {number} right
+ * @return {number}
+ */
+NumArray.prototype.sumRange = function(left, right) {
+
+};`,
+      c: `typedef struct NumArray NumArray;
+
+NumArray* numArrayCreate(int* nums, int numsSize) {
+
+}
+
+int numArraySumRange(NumArray* obj, int left, int right) {
+
+}
+
+void numArrayFree(NumArray* obj) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line); vector<int> nums; int x;
+    while (ss >> x) nums.push_back(x);
+    NumArray obj(nums);
+    int l, r;
+    while (cin >> l >> r) cout << obj.sumRange(l, r) << "\\n";
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+nums = list(map(int, lines[0].split()))
+obj = NumArray(nums)
+for line in lines[1:]:
+    l, r = map(int, line.split())
+    print(obj.sumRange(l, r))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] nums = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        NumArray obj = new NumArray(nums);
+        while (sc.hasNextInt()) {
+            int l = sc.nextInt(), r = sc.nextInt();
+            System.out.println(obj.sumRange(l, r));
+        }
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const nums = lines[0].split(' ').map(Number);
+
+__USER_CODE__
+
+const obj = new NumArray(nums);
+for (let i = 1; i < lines.length; i++) {
+    const [l, r] = lines[i].split(' ').map(Number);
+    console.log(obj.sumRange(l, r));
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[10001], n = 0;
+    char buf[200000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}nums[n++]=strtol(p,&p,10);}
+    NumArray *obj = numArrayCreate(nums, n);
+    int l, r;
+    while (scanf("%d %d", &l, &r) == 2) printf("%d\\n", numArraySumRange(obj, l, r));
+    numArrayFree(obj); return 0;
+}`,
+    },
+    aiContext: 'Range Sum Query — prefix sum O(1) per query',
+  },
+
+  // ── 74. Search a 2D Matrix ───────────────────────────────────────────────────
+  {
+    number: 74, title: 'Search a 2D Matrix', slug: 'search-a-2d-matrix', difficulty: 'Medium',
+    tags: ['Array', 'Binary Search', 'Matrix'], companies: ['Amazon', 'Apple', 'Microsoft'],
+    acceptance: 44.3, premium: false,
+    description: `Given an <code>m x n</code> integer matrix where each row is sorted and the first integer of each row is greater than the last of the previous row, return <code>true</code> if <code>target</code> is in the matrix.<br><br>First line: target. Then each row of the matrix.`,
+    examples: [
+      { input: '3\n1 3 5 7\n10 11 16 20\n23 30 34 60', output: 'true'  },
+      { input: '13\n1 3 5 7\n10 11 16 20\n23 30 34 60', output: 'false' },
+    ],
+    constraints: ['1 ≤ m, n ≤ 100', '-10⁴ ≤ matrix[i][j], target ≤ 10⁴'],
+    testCases: [
+      { input: '3\n1 3 5 7\n10 11 16 20\n23 30 34 60',  expected: 'true',  hidden: false },
+      { input: '13\n1 3 5 7\n10 11 16 20\n23 30 34 60', expected: 'false', hidden: false },
+      { input: '1\n1',                                   expected: 'true',  hidden: true  },
+      { input: '0\n1',                                   expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Treat the matrix as a sorted 1D array.',
+      'Binary search: mid = (lo + hi) / 2, map to row = mid/cols, col = mid%cols.',
+      'This gives O(log(m*n)).',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+
+    }
+};`,
+      python: `class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        `,
+      java: `class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} matrix
+ * @param {number} target
+ * @return {boolean}
+ */
+var searchMatrix = function(matrix, target) {
+
+};`,
+      c: `bool searchMatrix(int** matrix, int matrixSize, int* matrixColSize, int target) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int target; cin >> target; cin.ignore();
+    vector<vector<int>> matrix; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        istringstream ss(line); vector<int> row; int x;
+        while (ss >> x) row.push_back(x);
+        matrix.push_back(row);
+    }
+    Solution sol;
+    cout << (sol.searchMatrix(matrix, target) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+target = int(lines[0])
+matrix = [list(map(int, l.split())) for l in lines[1:]]
+print(str(Solution().searchMatrix(matrix, target)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int target = sc.nextInt(); sc.nextLine();
+        List<int[]> rows = new ArrayList<>();
+        while (sc.hasNextLine()) { String l = sc.nextLine().trim(); if (l.isEmpty()) continue; rows.add(Arrays.stream(l.split(" ")).mapToInt(Integer::parseInt).toArray()); }
+        int[][] matrix = rows.toArray(new int[0][]);
+        System.out.println(new Solution().searchMatrix(matrix, target));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const target = parseInt(lines[0]);
+const matrix = lines.slice(1).map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+console.log(String(searchMatrix(matrix, target)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int target; scanf("%d", &target);
+    int m[101][101], rows = 0, cols = 0; char buf[500];
+    fgets(buf, sizeof(buf), stdin);
+    while (fgets(buf, sizeof(buf), stdin)) {
+        if (buf[0]=='\\n') continue; char *p=buf; int j=0;
+        while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}m[rows][j++]=strtol(p,&p,10);} cols=j; rows++;
+    }
+    int *ptrs[101]; int colSizes[101];
+    for(int i=0;i<rows;i++){ptrs[i]=m[i];colSizes[i]=cols;}
+    printf("%s\\n", searchMatrix((int**)ptrs,rows,colSizes,target)?"true":"false");
+    return 0;
+}`,
+    },
+    aiContext: 'Search a 2D Matrix — binary search O(log(m*n))',
+  },
+
+  // ── 75. Kth Smallest Element in a BST ───────────────────────────────────────
+  {
+    number: 75, title: 'Kth Smallest Element in a BST', slug: 'kth-smallest-element-in-a-bst', difficulty: 'Medium',
+    tags: ['Tree', 'DFS', 'Binary Search Tree', 'Sorting'], companies: ['Amazon', 'Bloomberg', 'Facebook'],
+    acceptance: 70.2, premium: false,
+    description: `Given a BST in level-order (space-separated, use <code>null</code> for missing nodes) and an integer <code>k</code>, return the <code>k</code>th smallest value in the BST.<br><br>First line: k. Second line: level-order tree.`,
+    examples: [
+      { input: '1\n3 1 4 null 2',       output: '1' },
+      { input: '3\n5 3 6 2 4 null null 1', output: '3' },
+    ],
+    constraints: ['1 ≤ k ≤ n ≤ 10⁴', '0 ≤ Node.val ≤ 10⁴'],
+    testCases: [
+      { input: '1\n3 1 4 null 2',         expected: '1', hidden: false },
+      { input: '3\n5 3 6 2 4 null null 1', expected: '3', hidden: false },
+      { input: '1\n1',                     expected: '1', hidden: true  },
+      { input: '2\n2 1 3',                 expected: '2', hidden: true  },
+    ],
+    hints: [
+      'In-order traversal of BST gives sorted elements.',
+      'Return the k-th element encountered during in-order traversal.',
+      'Can stop early once k elements are visited.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    int kthSmallest(TreeNode* root, int k) {
+
+    }
+};`,
+      python: `# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+        `,
+      java: `/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ * }
+ */
+class Solution {
+    public int kthSmallest(TreeNode root, int k) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} k
+ * @return {number}
+ */
+var kthSmallest = function(root, k) {
+
+};`,
+      c: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+int kthSmallest(struct TreeNode* root, int k) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct TreeNode {
+    int val; TreeNode *left, *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+TreeNode* build(vector<string>& v, int i) {
+    if (i >= (int)v.size() || v[i] == "null") return nullptr;
+    TreeNode* n = new TreeNode(stoi(v[i]));
+    n->left = build(v, 2*i+1); n->right = build(v, 2*i+2);
+    return n;
+}
+
+__USER_CODE__
+
+int main() {
+    int k; cin >> k;
+    vector<string> vals; string s;
+    while (cin >> s) vals.push_back(s);
+    TreeNode* root = vals.empty() || vals[0] == "null" ? nullptr : build(vals, 0);
+    Solution sol;
+    cout << sol.kthSmallest(root, k) << endl;
+    return 0;
+}`,
+      python: `from typing import Optional
+from collections import deque
+import sys
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val; self.left = left; self.right = right
+
+def build(vals):
+    if not vals or vals[0] == 'null': return None
+    root = TreeNode(int(vals[0])); q = deque([root]); i = 1
+    while q and i < len(vals):
+        node = q.popleft()
+        if i < len(vals) and vals[i] != 'null': node.left = TreeNode(int(vals[i])); q.append(node.left)
+        i += 1
+        if i < len(vals) and vals[i] != 'null': node.right = TreeNode(int(vals[i])); q.append(node.right)
+        i += 1
+    return root
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+k = int(lines[0])
+vals = lines[1].split() if len(lines) > 1 else []
+print(Solution().kthSmallest(build(vals), k))`,
+      java: `import java.util.*;
+
+class TreeNode {
+    int val; TreeNode left, right;
+    TreeNode(int v) { val = v; }
+}
+
+__USER_CODE__
+
+public class Main {
+    static TreeNode build(String[] v, int i) {
+        if (i >= v.length || v[i].equals("null")) return null;
+        TreeNode n = new TreeNode(Integer.parseInt(v[i]));
+        n.left = build(v, 2*i+1); n.right = build(v, 2*i+2);
+        return n;
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int k = sc.nextInt(); sc.nextLine();
+        String[] vals = sc.hasNextLine() ? sc.nextLine().trim().split(" ") : new String[]{"null"};
+        TreeNode root = vals[0].equals("null") ? null : build(vals, 0);
+        System.out.println(new Solution().kthSmallest(root, k));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const k = parseInt(lines[0]);
+const vals = lines[1] ? lines[1].split(/\\s+/) : [];
+
+function TreeNode(val, left, right) { this.val=val??0; this.left=left??null; this.right=right??null; }
+
+function build(v, i=0) {
+    if (i>=v.length||v[i]==='null') return null;
+    const n=new TreeNode(+v[i]); n.left=build(v,2*i+1); n.right=build(v,2*i+2); return n;
+}
+
+__USER_CODE__
+
+const root = !vals.length||vals[0]==='null' ? null : build(vals);
+console.log(kthSmallest(root, k));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct TreeNode { int val; struct TreeNode *left, *right; };
+struct TreeNode* newNode(int v) { struct TreeNode* n=malloc(sizeof(struct TreeNode)); n->val=v; n->left=n->right=NULL; return n; }
+
+struct TreeNode* build(char toks[][20], int n, int i) {
+    if (i>=n||strcmp(toks[i],"null")==0) return NULL;
+    struct TreeNode* node=newNode(atoi(toks[i]));
+    node->left=build(toks,n,2*i+1); node->right=build(toks,n,2*i+2);
+    return node;
+}
+
+__USER_CODE__
+
+int main() {
+    int k; scanf("%d",&k);
+    char toks[10000][20]; int tc=0;
+    while(scanf("%s",toks[tc])==1) tc++;
+    struct TreeNode* root=(tc==0||strcmp(toks[0],"null")==0)?NULL:build(toks,tc,0);
+    printf("%d\\n",kthSmallest(root,k));
+    return 0;
+}`,
+    },
+    aiContext: 'Kth Smallest Element in BST — in-order traversal O(n)',
+  },
+
+  // ── 76. Invert Binary Tree ───────────────────────────────────────────────────
+  {
+    number: 76, title: 'Invert Binary Tree', slug: 'invert-binary-tree', difficulty: 'Easy',
+    tags: ['Tree', 'DFS', 'BFS'], companies: ['Google', 'Amazon', 'Apple'],
+    acceptance: 75.4, premium: false,
+    description: `Given the root of a binary tree in level-order (space-separated, use <code>null</code> for missing nodes), invert it and return the level-order representation.`,
+    examples: [
+      { input: '4 2 7 1 3 6 9', output: '4 7 2 9 6 3 1' },
+      { input: '2 1 3',         output: '2 3 1'          },
+      { input: '1',             output: '1'               },
+    ],
+    constraints: ['0 ≤ number of nodes ≤ 100', '-100 ≤ Node.val ≤ 100'],
+    testCases: [
+      { input: '4 2 7 1 3 6 9', expected: '4 7 2 9 6 3 1', hidden: false },
+      { input: '2 1 3',         expected: '2 3 1',          hidden: false },
+      { input: '1',             expected: '1',               hidden: true  },
+      { input: 'null',          expected: '',                hidden: true  },
+    ],
+    hints: [
+      'Swap the left and right children at each node.',
+      'Recurse on both subtrees.',
+      'Works with both DFS and BFS.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+
+    }
+};`,
+      python: `# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        `,
+      java: `/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ * }
+ */
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+var invertTree = function(root) {
+
+};`,
+      c: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+struct TreeNode* invertTree(struct TreeNode* root) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct TreeNode {
+    int val; TreeNode *left, *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+TreeNode* build(vector<string>& v, int i) {
+    if (i>=(int)v.size()||v[i]=="null") return nullptr;
+    TreeNode* n=new TreeNode(stoi(v[i]));
+    n->left=build(v,2*i+1); n->right=build(v,2*i+2); return n;
+}
+
+__USER_CODE__
+
+int main() {
+    vector<string> vals; string s;
+    while(cin>>s) vals.push_back(s);
+    TreeNode* root=vals.empty()||vals[0]=="null"?nullptr:build(vals,0);
+    Solution sol; root=sol.invertTree(root);
+    // BFS level-order output
+    if(!root){cout<<endl;return 0;}
+    queue<TreeNode*> q; q.push(root); bool first=true;
+    while(!q.empty()){
+        TreeNode* n=q.front();q.pop();
+        if(!first) cout<<" "; cout<<n->val; first=false;
+        if(n->left) q.push(n->left);
+        if(n->right) q.push(n->right);
+    }
+    cout<<endl; return 0;
+}`,
+      python: `from typing import Optional
+from collections import deque
+import sys
+
+class TreeNode:
+    def __init__(self,val=0,left=None,right=None): self.val=val;self.left=left;self.right=right
+
+def build(vals):
+    if not vals or vals[0]=='null': return None
+    root=TreeNode(int(vals[0]));q=deque([root]);i=1
+    while q and i<len(vals):
+        node=q.popleft()
+        if i<len(vals) and vals[i]!='null': node.left=TreeNode(int(vals[i]));q.append(node.left)
+        i+=1
+        if i<len(vals) and vals[i]!='null': node.right=TreeNode(int(vals[i]));q.append(node.right)
+        i+=1
+    return root
+
+__USER_CODE__
+
+vals=sys.stdin.read().split()
+root=Solution().invertTree(build(vals))
+if not root: print('');exit()
+q=deque([root]);out=[]
+while q:
+    n=q.popleft();out.append(str(n.val))
+    if n.left: q.append(n.left)
+    if n.right: q.append(n.right)
+print(' '.join(out))`,
+      java: `import java.util.*;
+
+class TreeNode { int val; TreeNode left,right; TreeNode(int v){val=v;} }
+
+__USER_CODE__
+
+public class Main {
+    static TreeNode build(String[] v,int i){
+        if(i>=v.length||v[i].equals("null")) return null;
+        TreeNode n=new TreeNode(Integer.parseInt(v[i]));
+        n.left=build(v,2*i+1);n.right=build(v,2*i+2);return n;
+    }
+    public static void main(String[] args){
+        String[] vals=new Scanner(System.in).useDelimiter("\\\\s+").tokens().toArray(String[]::new);
+        TreeNode root=vals.length==0||vals[0].equals("null")?null:build(vals,0);
+        root=new Solution().invertTree(root);
+        if(root==null){System.out.println();return;}
+        Queue<TreeNode> q=new LinkedList<>();q.add(root);
+        StringBuilder sb=new StringBuilder();
+        while(!q.isEmpty()){TreeNode n=q.poll();if(sb.length()>0)sb.append(" ");sb.append(n.val);if(n.left!=null)q.add(n.left);if(n.right!=null)q.add(n.right);}
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const vals=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/);
+function TreeNode(val,left,right){this.val=val??0;this.left=left??null;this.right=right??null;}
+function build(v,i=0){if(i>=v.length||v[i]==='null')return null;const n=new TreeNode(+v[i]);n.left=build(v,2*i+1);n.right=build(v,2*i+2);return n;}
+
+__USER_CODE__
+
+let root=!vals.length||vals[0]==='null'?null:build(vals);
+root=invertTree(root);
+if(!root){console.log('');process.exit(0);}
+const q=[root],out=[];
+while(q.length){const n=q.shift();out.push(n.val);if(n.left)q.push(n.left);if(n.right)q.push(n.right);}
+console.log(out.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct TreeNode{int val;struct TreeNode *left,*right;};
+struct TreeNode* newNode(int v){struct TreeNode*n=malloc(sizeof(struct TreeNode));n->val=v;n->left=n->right=NULL;return n;}
+struct TreeNode* build(char t[][20],int n,int i){
+    if(i>=n||strcmp(t[i],"null")==0)return NULL;
+    struct TreeNode*node=newNode(atoi(t[i]));
+    node->left=build(t,n,2*i+1);node->right=build(t,n,2*i+2);return node;
+}
+
+__USER_CODE__
+
+int main(){
+    char toks[10000][20];int tc=0;
+    while(scanf("%s",toks[tc])==1)tc++;
+    struct TreeNode*root=(tc==0||strcmp(toks[0],"null")==0)?NULL:build(toks,tc,0);
+    root=invertTree(root);
+    if(!root){printf("\\n");return 0;}
+    struct TreeNode*q[10001];int head=0,tail=0;q[tail++]=root;int first=1;
+    while(head<tail){struct TreeNode*n=q[head++];if(!first)printf(" ");printf("%d",n->val);first=0;if(n->left)q[tail++]=n->left;if(n->right)q[tail++]=n->right;}
+    printf("\\n");return 0;
+}`,
+    },
+    aiContext: 'Invert Binary Tree — DFS swap O(n)',
+  },
+
+  // ── 77. Binary Tree Level Order Traversal ────────────────────────────────────
+  {
+    number: 77, title: 'Binary Tree Level Order Traversal', slug: 'binary-tree-level-order-traversal', difficulty: 'Medium',
+    tags: ['Tree', 'BFS'], companies: ['Amazon', 'Microsoft', 'Facebook'],
+    acceptance: 64.1, premium: false,
+    description: `Given a binary tree in level-order (space-separated, use <code>null</code> for missing), return the level order traversal of its nodes' values. Print each level on a separate line, space-separated.`,
+    examples: [
+      { input: '3 9 20 null null 15 7', output: '3\n9 20\n15 7' },
+      { input: '1',                     output: '1'              },
+      { input: 'null',                  output: ''               },
+    ],
+    constraints: ['0 ≤ number of nodes ≤ 2000', '-1000 ≤ Node.val ≤ 1000'],
+    testCases: [
+      { input: '3 9 20 null null 15 7', expected: '3\n9 20\n15 7', hidden: false },
+      { input: '1',                     expected: '1',              hidden: false },
+      { input: 'null',                  expected: '',               hidden: true  },
+      { input: '1 2 3 4 5',             expected: '1\n2 3\n4 5',   hidden: true  },
+    ],
+    hints: [
+      'Use BFS with a queue.',
+      'At each level, process all nodes currently in the queue.',
+      'Record the level size before processing.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+
+    }
+};`,
+      python: `# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        `,
+      java: `/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> levelOrder(TreeNode root) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[][]}
+ */
+var levelOrder = function(root) {
+
+};`,
+      c: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+int** levelOrder(struct TreeNode* root, int* returnSize, int** returnColumnSizes) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct TreeNode {
+    int val; TreeNode *left, *right;
+    TreeNode(int x):val(x),left(nullptr),right(nullptr){}
+};
+
+TreeNode* build(vector<string>& v,int i){
+    if(i>=(int)v.size()||v[i]=="null")return nullptr;
+    TreeNode*n=new TreeNode(stoi(v[i]));
+    n->left=build(v,2*i+1);n->right=build(v,2*i+2);return n;
+}
+
+__USER_CODE__
+
+int main(){
+    vector<string>vals;string s;
+    while(cin>>s)vals.push_back(s);
+    TreeNode*root=vals.empty()||vals[0]=="null"?nullptr:build(vals,0);
+    Solution sol;
+    auto res=sol.levelOrder(root);
+    for(auto&level:res){for(int i=0;i<(int)level.size();i++)cout<<(i?" ":"")<<level[i];cout<<"\\n";}
+    return 0;
+}`,
+      python: `from typing import Optional,List
+from collections import deque
+import sys
+
+class TreeNode:
+    def __init__(self,val=0,left=None,right=None):self.val=val;self.left=left;self.right=right
+
+def build(vals):
+    if not vals or vals[0]=='null':return None
+    root=TreeNode(int(vals[0]));q=deque([root]);i=1
+    while q and i<len(vals):
+        node=q.popleft()
+        if i<len(vals) and vals[i]!='null':node.left=TreeNode(int(vals[i]));q.append(node.left)
+        i+=1
+        if i<len(vals) and vals[i]!='null':node.right=TreeNode(int(vals[i]));q.append(node.right)
+        i+=1
+    return root
+
+__USER_CODE__
+
+vals=sys.stdin.read().split()
+res=Solution().levelOrder(build(vals))
+for level in res:print(*level)`,
+      java: `import java.util.*;
+
+class TreeNode{int val;TreeNode left,right;TreeNode(int v){val=v;}}
+
+__USER_CODE__
+
+public class Main{
+    static TreeNode build(String[]v,int i){
+        if(i>=v.length||v[i].equals("null"))return null;
+        TreeNode n=new TreeNode(Integer.parseInt(v[i]));
+        n.left=build(v,2*i+1);n.right=build(v,2*i+2);return n;
+    }
+    public static void main(String[]args){
+        String[]vals=new Scanner(System.in).useDelimiter("\\\\s+").tokens().toArray(String[]::new);
+        TreeNode root=vals.length==0||vals[0].equals("null")?null:build(vals,0);
+        List<List<Integer>>res=new Solution().levelOrder(root);
+        for(List<Integer>level:res){StringBuilder sb=new StringBuilder();for(int i=0;i<level.size();i++)sb.append(i>0?" ":"").append(level.get(i));System.out.println(sb);}
+    }
+}`,
+      javascript: `const vals=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/);
+function TreeNode(val,left,right){this.val=val??0;this.left=left??null;this.right=right??null;}
+function build(v,i=0){if(i>=v.length||v[i]==='null')return null;const n=new TreeNode(+v[i]);n.left=build(v,2*i+1);n.right=build(v,2*i+2);return n;}
+
+__USER_CODE__
+
+const root=!vals.length||vals[0]==='null'?null:build(vals);
+const res=levelOrder(root);
+for(const level of res)console.log(level.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct TreeNode{int val;struct TreeNode*left,*right;};
+struct TreeNode*newNode(int v){struct TreeNode*n=malloc(sizeof(struct TreeNode));n->val=v;n->left=n->right=NULL;return n;}
+struct TreeNode*build(char t[][20],int n,int i){
+    if(i>=n||strcmp(t[i],"null")==0)return NULL;
+    struct TreeNode*node=newNode(atoi(t[i]));
+    node->left=build(t,n,2*i+1);node->right=build(t,n,2*i+2);return node;
+}
+
+__USER_CODE__
+
+int main(){
+    char toks[10000][20];int tc=0;
+    while(scanf("%s",toks[tc])==1)tc++;
+    struct TreeNode*root=(tc==0||strcmp(toks[0],"null")==0)?NULL:build(toks,tc,0);
+    int retSize;int*retColSizes;
+    int**res=levelOrder(root,&retSize,&retColSizes);
+    for(int i=0;i<retSize;i++){for(int j=0;j<retColSizes[i];j++)printf("%s%d",j?" ":"",res[i][j]);printf("\\n");}
+    return 0;
+}`,
+    },
+    aiContext: 'Binary Tree Level Order Traversal — BFS O(n)',
+  },
+
+  // ── 78. Lowest Common Ancestor of BST ────────────────────────────────────────
+  {
+    number: 78, title: 'Lowest Common Ancestor of a Binary Search Tree', slug: 'lowest-common-ancestor-of-a-binary-search-tree', difficulty: 'Medium',
+    tags: ['Tree', 'DFS', 'Binary Search Tree'], companies: ['Amazon', 'Facebook', 'Microsoft'],
+    acceptance: 62.3, premium: false,
+    description: `Given a BST in level-order (space-separated, use <code>null</code> for missing nodes) and two values <code>p</code> and <code>q</code>, find their lowest common ancestor.<br><br>First line: p q. Second line: tree.`,
+    examples: [
+      { input: '2 8\n6 2 8 0 4 7 9 null null 3 5', output: '6' },
+      { input: '2 4\n6 2 8 0 4 7 9 null null 3 5', output: '2' },
+    ],
+    constraints: ['2 ≤ number of nodes ≤ 10⁵', '-10⁹ ≤ Node.val ≤ 10⁹', 'p ≠ q, both exist in BST'],
+    testCases: [
+      { input: '2 8\n6 2 8 0 4 7 9 null null 3 5', expected: '6', hidden: false },
+      { input: '2 4\n6 2 8 0 4 7 9 null null 3 5', expected: '2', hidden: false },
+      { input: '1 3\n2 1 3',                        expected: '2', hidden: true  },
+    ],
+    hints: [
+      'In a BST, if both p and q are less than root, LCA is in left subtree.',
+      'If both are greater, LCA is in right subtree.',
+      'Otherwise, root is the LCA.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+
+    }
+};`,
+      python: `# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+class Solution:
+    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        `,
+      java: `/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {TreeNode} p
+ * @param {TreeNode} q
+ * @return {TreeNode}
+ */
+var lowestCommonAncestor = function(root, p, q) {
+
+};`,
+      c: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+struct TreeNode* lowestCommonAncestor(struct TreeNode* root, struct TreeNode* p, struct TreeNode* q) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct TreeNode{int val;TreeNode*left,*right;TreeNode(int x):val(x),left(nullptr),right(nullptr){}};
+
+TreeNode*build(vector<string>&v,int i){
+    if(i>=(int)v.size()||v[i]=="null")return nullptr;
+    TreeNode*n=new TreeNode(stoi(v[i]));n->left=build(v,2*i+1);n->right=build(v,2*i+2);return n;
+}
+
+__USER_CODE__
+
+int main(){
+    int pv,qv;cin>>pv>>qv;
+    vector<string>vals;string s;while(cin>>s)vals.push_back(s);
+    TreeNode*root=vals.empty()||vals[0]=="null"?nullptr:build(vals,0);
+    TreeNode p(pv),q(qv);
+    Solution sol;
+    cout<<sol.lowestCommonAncestor(root,&p,&q)->val<<endl;
+    return 0;
+}`,
+      python: `from collections import deque
+import sys
+
+class TreeNode:
+    def __init__(self,x):self.val=x;self.left=self.right=None
+
+def build(vals):
+    if not vals or vals[0]=='null':return None
+    root=TreeNode(int(vals[0]));q=deque([root]);i=1
+    while q and i<len(vals):
+        node=q.popleft()
+        if i<len(vals) and vals[i]!='null':node.left=TreeNode(int(vals[i]));q.append(node.left)
+        i+=1
+        if i<len(vals) and vals[i]!='null':node.right=TreeNode(int(vals[i]));q.append(node.right)
+        i+=1
+    return root
+
+__USER_CODE__
+
+lines=sys.stdin.read().strip().split('\\n')
+pv,qv=map(int,lines[0].split())
+vals=lines[1].split() if len(lines)>1 else []
+root=build(vals)
+p=TreeNode(pv);q=TreeNode(qv)
+print(Solution().lowestCommonAncestor(root,p,q).val)`,
+      java: `import java.util.*;
+
+class TreeNode{int val;TreeNode left,right;TreeNode(int x){val=x;}}
+
+__USER_CODE__
+
+public class Main{
+    static TreeNode build(String[]v,int i){
+        if(i>=v.length||v[i].equals("null"))return null;
+        TreeNode n=new TreeNode(Integer.parseInt(v[i]));n.left=build(v,2*i+1);n.right=build(v,2*i+2);return n;
+    }
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        int pv=sc.nextInt(),qv=sc.nextInt();sc.nextLine();
+        String[]vals=sc.hasNextLine()?sc.nextLine().trim().split(" "):new String[]{"null"};
+        TreeNode root=vals[0].equals("null")?null:build(vals,0);
+        TreeNode p=new TreeNode(pv),q=new TreeNode(qv);
+        System.out.println(new Solution().lowestCommonAncestor(root,p,q).val);
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const [pv,qv]=lines[0].split(' ').map(Number);
+const vals=lines[1]?lines[1].split(/\\s+/):[];
+
+function TreeNode(val){this.val=val;this.left=this.right=null;}
+function build(v,i=0){if(i>=v.length||v[i]==='null')return null;const n=new TreeNode(+v[i]);n.left=build(v,2*i+1);n.right=build(v,2*i+2);return n;}
+
+__USER_CODE__
+
+const root=!vals.length||vals[0]==='null'?null:build(vals);
+const p=new TreeNode(pv),q=new TreeNode(qv);
+console.log(lowestCommonAncestor(root,p,q).val);`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct TreeNode{int val;struct TreeNode*left,*right;};
+struct TreeNode*newNode(int v){struct TreeNode*n=malloc(sizeof(struct TreeNode));n->val=v;n->left=n->right=NULL;return n;}
+struct TreeNode*build(char t[][20],int n,int i){
+    if(i>=n||strcmp(t[i],"null")==0)return NULL;
+    struct TreeNode*node=newNode(atoi(t[i]));node->left=build(t,n,2*i+1);node->right=build(t,n,2*i+2);return node;
+}
+
+__USER_CODE__
+
+int main(){
+    int pv,qv;scanf("%d %d",&pv,&qv);
+    char toks[10000][20];int tc=0;while(scanf("%s",toks[tc])==1)tc++;
+    struct TreeNode*root=(tc==0||strcmp(toks[0],"null")==0)?NULL:build(toks,tc,0);
+    struct TreeNode p,q;p.val=pv;p.left=p.right=NULL;q.val=qv;q.left=q.right=NULL;
+    printf("%d\\n",lowestCommonAncestor(root,&p,&q)->val);
+    return 0;
+}`,
+    },
+    aiContext: 'LCA of BST — iterative BST traversal O(h)',
+  },
+
+  // ── 79. Construct Binary Tree from Preorder and Inorder Traversal ─────────────
+  {
+    number: 79, title: 'Construct Binary Tree from Preorder and Inorder Traversal', slug: 'construct-binary-tree-from-preorder-and-inorder-traversal', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'Divide and Conquer', 'Tree'], companies: ['Amazon', 'Microsoft', 'Apple'],
+    acceptance: 61.0, premium: false,
+    description: `Given two integer arrays <code>preorder</code> and <code>inorder</code> representing a binary tree, construct and return the binary tree. Print the tree in level-order.<br><br>First line: preorder values. Second line: inorder values.`,
+    examples: [
+      { input: '3 9 20 15 7\n9 3 15 20 7', output: '3 9 20 null null 15 7' },
+      { input: '-1\n-1',                   output: '-1'                      },
+    ],
+    constraints: ['1 ≤ n ≤ 3000', '-3000 ≤ preorder[i], inorder[i] ≤ 3000', 'All values are unique'],
+    testCases: [
+      { input: '3 9 20 15 7\n9 3 15 20 7', expected: '3 9 20 null null 15 7', hidden: false },
+      { input: '-1\n-1',                   expected: '-1',                     hidden: false },
+      { input: '1 2\n2 1',                 expected: '1 2',                    hidden: true  },
+    ],
+    hints: [
+      'The first element of preorder is always the root.',
+      'Find root in inorder to split left/right subtrees.',
+      'Recursively build left then right.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+
+    }
+};`,
+      python: `# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        `,
+      java: `/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {number[]} preorder
+ * @param {number[]} inorder
+ * @return {TreeNode}
+ */
+var buildTree = function(preorder, inorder) {
+
+};`,
+      c: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+struct TreeNode* buildTree(int* preorder, int preorderSize, int* inorder, int inorderSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct TreeNode{int val;TreeNode*left,*right;TreeNode(int x):val(x),left(nullptr),right(nullptr){}};
+
+__USER_CODE__
+
+int main(){
+    string l1,l2;getline(cin,l1);getline(cin,l2);
+    istringstream s1(l1),s2(l2);
+    vector<int>pre,in;int x;
+    while(s1>>x)pre.push_back(x);
+    while(s2>>x)in.push_back(x);
+    Solution sol;TreeNode*root=sol.buildTree(pre,in);
+    if(!root){cout<<endl;return 0;}
+    queue<TreeNode*>q;q.push(root);
+    vector<string>out;
+    while(!q.empty()){
+        TreeNode*n=q.front();q.pop();
+        if(!n){out.push_back("null");continue;}
+        out.push_back(to_string(n->val));
+        q.push(n->left);q.push(n->right);
+    }
+    while(!out.empty()&&out.back()=="null")out.pop_back();
+    for(int i=0;i<(int)out.size();i++)cout<<(i?" ":"")<<out[i];
+    cout<<endl;return 0;
+}`,
+      python: `from typing import Optional,List
+from collections import deque
+import sys
+
+class TreeNode:
+    def __init__(self,val=0,left=None,right=None):self.val=val;self.left=left;self.right=right
+
+__USER_CODE__
+
+lines=sys.stdin.read().strip().split('\\n')
+pre=list(map(int,lines[0].split()))
+ino=list(map(int,lines[1].split()))
+root=Solution().buildTree(pre,ino)
+if not root:print('');exit()
+q=deque([root]);out=[]
+while q:
+    n=q.popleft()
+    if not n:out.append('null');continue
+    out.append(str(n.val));q.append(n.left);q.append(n.right)
+while out and out[-1]=='null':out.pop()
+print(' '.join(out))`,
+      java: `import java.util.*;
+
+class TreeNode{int val;TreeNode left,right;TreeNode(int v){val=v;}}
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        int[]pre=Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int[]in=Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        TreeNode root=new Solution().buildTree(pre,in);
+        if(root==null){System.out.println();return;}
+        Queue<TreeNode>q=new LinkedList<>();q.add(root);
+        List<String>out=new ArrayList<>();
+        while(!q.isEmpty()){TreeNode n=q.poll();if(n==null){out.add("null");continue;}out.add(String.valueOf(n.val));q.add(n.left);q.add(n.right);}
+        while(!out.isEmpty()&&out.get(out.size()-1).equals("null"))out.remove(out.size()-1);
+        System.out.println(String.join(" ",out));
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const pre=lines[0].split(' ').map(Number);
+const ino=lines[1].split(' ').map(Number);
+
+function TreeNode(val,left,right){this.val=val??0;this.left=left??null;this.right=right??null;}
+
+__USER_CODE__
+
+const root=buildTree(pre,ino);
+if(!root){console.log('');process.exit(0);}
+const q=[root],out=[];
+while(q.length){const n=q.shift();if(!n){out.push('null');continue;}out.push(n.val);q.push(n.left);q.push(n.right);}
+while(out.length&&out[out.length-1]==='null')out.pop();
+console.log(out.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct TreeNode{int val;struct TreeNode*left,*right;};
+struct TreeNode*newNode(int v){struct TreeNode*n=malloc(sizeof(struct TreeNode));n->val=v;n->left=n->right=NULL;return n;}
+
+__USER_CODE__
+
+int main(){
+    int pre[3001],in[3001],np=0,ni=0;
+    char buf[50000];
+    fgets(buf,sizeof(buf),stdin);char*p=buf;while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}pre[np++]=strtol(p,&p,10);}
+    fgets(buf,sizeof(buf),stdin);p=buf;while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}in[ni++]=strtol(p,&p,10);}
+    struct TreeNode*root=buildTree(pre,np,in,ni);
+    if(!root){printf("\\n");return 0;}
+    struct TreeNode*q[3001];int head=0,tail=0;q[tail++]=root;
+    char out[3001][15];int oc=0;
+    while(head<tail){struct TreeNode*n=q[head++];if(!n){strcpy(out[oc++],"null");continue;}sprintf(out[oc++],"%d",n->val);q[tail++]=n->left;q[tail++]=n->right;}
+    while(oc>0&&strcmp(out[oc-1],"null")==0)oc--;
+    for(int i=0;i<oc;i++)printf("%s%s",i?" ":"",out[i]);printf("\\n");
+    return 0;
+}`,
+    },
+    aiContext: 'Construct Binary Tree — divide and conquer O(n)',
+  },
+
+  // ── 80. Sort Colors ──────────────────────────────────────────────────────────
+  {
+    number: 80, title: 'Sort Colors', slug: 'sort-colors', difficulty: 'Medium',
+    tags: ['Array', 'Two Pointers', 'Sorting'], companies: ['Facebook', 'Amazon', 'Microsoft'],
+    acceptance: 57.5, premium: false,
+    description: `Given an array with <code>n</code> objects colored red (0), white (1), or blue (2), sort them in-place so that objects of the same color are adjacent, in the order 0, 1, 2. (Dutch National Flag problem)`,
+    examples: [
+      { input: 'nums = [2,0,2,1,1,0]', output: '0 0 1 1 2 2' },
+      { input: 'nums = [2,0,1]',       output: '0 1 2'        },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 300', 'nums[i] is 0, 1, or 2'],
+    testCases: [
+      { input: '2 0 2 1 1 0', expected: '0 0 1 1 2 2', hidden: false },
+      { input: '2 0 1',       expected: '0 1 2',        hidden: false },
+      { input: '0',           expected: '0',             hidden: true  },
+      { input: '1 0',         expected: '0 1',           hidden: true  },
+      { input: '2 1 0',       expected: '0 1 2',         hidden: true  },
+    ],
+    hints: [
+      'Use three pointers: low, mid, high.',
+      'low tracks the boundary of 0s, high tracks boundary of 2s.',
+      'mid scans from left: swap nums[mid] to correct region.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def sortColors(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        `,
+      java: `class Solution {
+    public void sortColors(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var sortColors = function(nums) {
+
+};`,
+      c: `void sortColors(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    vector<int>nums;int x;
+    while(cin>>x)nums.push_back(x);
+    Solution sol;sol.sortColors(nums);
+    for(int i=0;i<(int)nums.size();i++)cout<<(i?" ":"")<<nums[i];
+    cout<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums=list(map(int,sys.stdin.read().split()))
+Solution().sortColors(nums)
+print(*nums)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        List<Integer>list=new ArrayList<>();
+        while(sc.hasNextInt())list.add(sc.nextInt());
+        int[]nums=list.stream().mapToInt(i->i).toArray();
+        new Solution().sortColors(nums);
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<nums.length;i++)sb.append(i>0?" ":"").append(nums[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const nums=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+sortColors(nums);
+console.log(nums.join(' '));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main(){
+    int nums[301],n=0;
+    while(scanf("%d",&nums[n])==1)n++;
+    sortColors(nums,n);
+    for(int i=0;i<n;i++)printf("%s%d",i?" ":"",nums[i]);
+    printf("\\n");return 0;
+}`,
+    },
+    aiContext: 'Sort Colors — Dutch National Flag 3-pointer O(n)',
+  },
+
+
+  // ── PROBLEMS 81–90 ────────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 81. Top K Frequent Elements ──────────────────────────────────────────────
+  {
+    number: 81, title: 'Top K Frequent Elements', slug: 'top-k-frequent-elements', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'Sorting', 'Heap', 'Bucket Sort'], companies: ['Facebook', 'Amazon', 'Google'],
+    acceptance: 65.3, premium: false,
+    description: `Given an integer array <code>nums</code> and an integer <code>k</code>, return the <code>k</code> most frequent elements in any order.<br><br>First line: space-separated nums. Second line: k. Print result space-separated.`,
+    examples: [
+      { input: '1 1 1 2 2 3\n2', output: '1 2', explanation: '1 appears 3 times, 2 appears 2 times' },
+      { input: '1\n1',           output: '1'   },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁵', 'k is in range [1, number of unique elements]', 'Answer is unique'],
+    testCases: [
+      { input: '1 1 1 2 2 3\n2', expected: '1 2', hidden: false },
+      { input: '1\n1',           expected: '1',   hidden: false },
+      { input: '4 1 1 2 2\n2',   expected: '1 2', hidden: true  },
+      { input: '5 5 4 4 3\n1',   expected: '4',   hidden: true  },
+    ],
+    hints: [
+      'Count frequencies with a hash map.',
+      'Use a max-heap or bucket sort by frequency.',
+      'Return the top k elements.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+
+    }
+};`,
+      python: `class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var topKFrequent = function(nums, k) {
+
+};`,
+      c: `int* topKFrequent(int* nums, int numsSize, int k, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line); vector<int> nums; int x;
+    while (ss >> x) nums.push_back(x);
+    int k; cin >> k;
+    Solution sol;
+    vector<int> res = sol.topKFrequent(nums, k);
+    sort(res.begin(), res.end());
+    for (int i = 0; i < (int)res.size(); i++) cout << (i?" ":"") << res[i];
+    cout << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+nums = list(map(int, lines[0].split()))
+k = int(lines[1].strip())
+res = sorted(Solution().topKFrequent(nums, k))
+print(*res)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] nums = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int k = sc.nextInt();
+        int[] res = new Solution().topKFrequent(nums, k);
+        Arrays.sort(res);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) sb.append(i>0?" ":"").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const nums = lines[0].split(' ').map(Number);
+const k = parseInt(lines[1]);
+
+__USER_CODE__
+
+const res = topKFrequent(nums, k).sort((a,b)=>a-b);
+console.log(res.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int cmp(const void*a,const void*b){return *(int*)a-*(int*)b;}
+int main() {
+    int nums[100001], n = 0, k;
+    char buf[2000000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}nums[n++]=strtol(p,&p,10);}
+    scanf("%d", &k);
+    int retSize;
+    int *res = topKFrequent(nums, n, k, &retSize);
+    qsort(res, retSize, sizeof(int), cmp);
+    for (int i = 0; i < retSize; i++) printf("%s%d", i?" ":"", res[i]);
+    printf("\\n"); return 0;
+}`,
+    },
+    aiContext: 'Top K Frequent Elements — bucket sort or heap O(n log k)',
+  },
+
+  // ── 82. Group Anagrams ───────────────────────────────────────────────────────
+  {
+    number: 82, title: 'Group Anagrams', slug: 'group-anagrams', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'String', 'Sorting'], companies: ['Facebook', 'Amazon', 'Bloomberg'],
+    acceptance: 67.1, premium: false,
+    description: `Given an array of strings, group the anagrams together. Print each group sorted alphabetically on a separate line, with words in each group sorted alphabetically.`,
+    examples: [
+      { input: 'eat tan bat\n', output: 'bat\neat tan\n', explanation: 'Groups: [bat] and [eat,tan]' },
+      { input: '\n',            output: '\n'              },
+      { input: 'a\n',          output: 'a\n'             },
+    ],
+    constraints: ['1 ≤ strs.length ≤ 10⁴', '0 ≤ strs[i].length ≤ 100', 'strs[i] consists of lowercase English letters'],
+    testCases: [
+      { input: 'eat tan bat',   expected: 'bat\neat tan',   hidden: false },
+      { input: '',              expected: '',               hidden: false },
+      { input: 'a',            expected: 'a',              hidden: true  },
+      { input: 'abc bca cab x', expected: 'abc bca cab\nx', hidden: true },
+    ],
+    hints: [
+      'Sort each string to get its canonical form.',
+      'Use sorted string as the key in a hash map.',
+      'Group strings with the same key.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+
+    }
+};`,
+      python: `class Solution:
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        `,
+      java: `class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string[]} strs
+ * @return {string[][]}
+ */
+var groupAnagrams = function(strs) {
+
+};`,
+      c: `char*** groupAnagrams(char** strs, int strsSize, int* returnSize, int** returnColumnSizes) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line); vector<string> strs; string w;
+    while (ss >> w) strs.push_back(w);
+    Solution sol;
+    auto res = sol.groupAnagrams(strs);
+    for (auto& g : res) sort(g.begin(), g.end());
+    sort(res.begin(), res.end(), [](auto&a,auto&b){return a[0]<b[0];});
+    for (auto& g : res) {
+        for (int i=0;i<(int)g.size();i++) cout<<(i?" ":"")<<g[i];
+        cout<<"\\n";
+    }
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+line = sys.stdin.read().strip()
+strs = line.split() if line else []
+res = Solution().groupAnagrams(strs)
+for g in res: g.sort()
+res.sort(key=lambda g: g[0])
+for g in res: print(*g)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String line = sc.hasNextLine() ? sc.nextLine().trim() : "";
+        String[] strs = line.isEmpty() ? new String[]{} : line.split(" ");
+        List<List<String>> res = new Solution().groupAnagrams(strs);
+        for (List<String> g : res) Collections.sort(g);
+        res.sort(Comparator.comparing(g -> g.get(0)));
+        for (List<String> g : res) System.out.println(String.join(" ", g));
+    }
+}`,
+      javascript: `const line = require('fs').readFileSync('/dev/stdin','utf8').trim();
+const strs = line ? line.split(' ') : [];
+
+__USER_CODE__
+
+const res = groupAnagrams(strs);
+for (const g of res) g.sort();
+res.sort((a,b) => a[0] < b[0] ? -1 : 1);
+for (const g of res) console.log(g.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char words[10001][101]; int n = 0;
+    char line[1000001]; fgets(line, sizeof(line), stdin);
+    char *p = strtok(line, " \\n");
+    while (p) { strcpy(words[n++], p); p = strtok(NULL, " \\n"); }
+    char *strs[10001]; for(int i=0;i<n;i++) strs[i]=words[i];
+    int retSize; int *retColSizes;
+    char ***res = groupAnagrams(strs, n, &retSize, &retColSizes);
+    for(int i=0;i<retSize;i++){for(int j=0;j<retColSizes[i];j++)printf("%s%s",j?" ":"",res[i][j]);printf("\\n");}
+    return 0;
+}`,
+    },
+    aiContext: 'Group Anagrams — sort key hash map O(n*k*log k)',
+  },
+
+  // ── 83. Valid Anagram ────────────────────────────────────────────────────────
+  {
+    number: 83, title: 'Valid Anagram', slug: 'valid-anagram', difficulty: 'Easy',
+    tags: ['Hash Table', 'String', 'Sorting'], companies: ['Amazon', 'Bloomberg', 'Uber'],
+    acceptance: 63.7, premium: false,
+    description: `Given two strings <code>s</code> and <code>t</code>, return <code>true</code> if <code>t</code> is an anagram of <code>s</code>, <code>false</code> otherwise.<br><br>First line: s. Second line: t.`,
+    examples: [
+      { input: 'anagram\nnagaram', output: 'true'  },
+      { input: 'rat\ncar',        output: 'false' },
+    ],
+    constraints: ['1 ≤ s.length, t.length ≤ 5×10⁴', 's and t consist of lowercase English letters'],
+    testCases: [
+      { input: 'anagram\nnagaram', expected: 'true',  hidden: false },
+      { input: 'rat\ncar',         expected: 'false', hidden: false },
+      { input: 'a\na',             expected: 'true',  hidden: true  },
+      { input: 'ab\nba',           expected: 'true',  hidden: true  },
+      { input: 'abc\nab',          expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Count character frequencies in both strings.',
+      'Compare the frequency arrays.',
+      'Or sort both strings and compare.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool isAnagram(string s, string t) {
+
+    }
+};`,
+      python: `class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        `,
+      java: `class Solution {
+    public boolean isAnagram(String s, String t) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
+ */
+var isAnagram = function(s, t) {
+
+};`,
+      c: `bool isAnagram(char* s, char* t) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s, t;
+    getline(cin, s); getline(cin, t);
+    Solution sol;
+    cout << (sol.isAnagram(s, t) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+s = lines[0].strip(); t = lines[1].strip() if len(lines) > 1 else ''
+print(str(Solution().isAnagram(s, t)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine().trim(), t = sc.nextLine().trim();
+        System.out.println(new Solution().isAnagram(s, t));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').split('\\n');
+const s = lines[0].trim(), t = (lines[1]||'').trim();
+
+__USER_CODE__
+
+console.log(String(isAnagram(s, t)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char s[50001], t[50001];
+    fgets(s, sizeof(s), stdin); fgets(t, sizeof(t), stdin);
+    int ns=strlen(s), nt=strlen(t);
+    if(s[ns-1]=='\\n') s[--ns]='\\0';
+    if(t[nt-1]=='\\n') t[--nt]='\\0';
+    printf("%s\\n", isAnagram(s,t)?"true":"false");
+    return 0;
+}`,
+    },
+    aiContext: 'Valid Anagram — frequency count O(n)',
+  },
+
+  // ── 84. Longest Consecutive Sequence ─────────────────────────────────────────
+  {
+    number: 84, title: 'Longest Consecutive Sequence', slug: 'longest-consecutive-sequence', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'Union Find'], companies: ['Google', 'Facebook', 'Amazon'],
+    acceptance: 46.2, premium: false,
+    description: `Given an unsorted array of integers <code>nums</code>, return the length of the longest consecutive elements sequence. Must run in <code>O(n)</code>.`,
+    examples: [
+      { input: 'nums = [100,4,200,1,3,2]', output: '4', explanation: '[1,2,3,4] has length 4' },
+      { input: 'nums = [0,3,7,2,5,8,4,6,0,1]', output: '9' },
+    ],
+    constraints: ['0 ≤ nums.length ≤ 10⁵', '-10⁹ ≤ nums[i] ≤ 10⁹'],
+    testCases: [
+      { input: '100 4 200 1 3 2',     expected: '4', hidden: false },
+      { input: '0 3 7 2 5 8 4 6 0 1', expected: '9', hidden: false },
+      { input: '',                    expected: '0', hidden: true  },
+      { input: '1',                   expected: '1', hidden: true  },
+      { input: '1 2 3',               expected: '3', hidden: true  },
+    ],
+    hints: [
+      'Put all numbers in a hash set.',
+      'Only start counting from numbers where n-1 is NOT in the set.',
+      'Count consecutive from that start point.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int longestConsecutive(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var longestConsecutive = function(nums) {
+
+};`,
+      c: `int longestConsecutive(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    cout << sol.longestConsecutive(nums) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+data = sys.stdin.read().strip()
+nums = list(map(int, data.split())) if data else []
+print(Solution().longestConsecutive(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().longestConsecutive(nums));
+    }
+}`,
+      javascript: `const data = require('fs').readFileSync('/dev/stdin','utf8').trim();
+const nums = data ? data.split(/\\s+/).map(Number) : [];
+
+__USER_CODE__
+
+console.log(longestConsecutive(nums));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[100001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    printf("%d\\n", longestConsecutive(nums, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Longest Consecutive Sequence — hash set O(n)',
+  },
+
+  // ── 85. Set Matrix Zeroes ────────────────────────────────────────────────────
+  {
+    number: 85, title: 'Set Matrix Zeroes', slug: 'set-matrix-zeroes', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'Matrix'], companies: ['Amazon', 'Microsoft', 'Apple'],
+    acceptance: 51.5, premium: false,
+    description: `Given an <code>m x n</code> integer matrix, if an element is 0, set its entire row and column to 0. Do it in-place.<br><br>Input: m rows of n space-separated integers. Output: modified matrix.`,
+    examples: [
+      { input: '1 1 1\n1 0 1\n1 1 1',          output: '1 0 1\n0 0 0\n1 0 1'          },
+      { input: '0 1 2 0\n3 4 5 2\n1 3 1 5',    output: '0 0 0 0\n0 4 5 0\n0 3 1 0'    },
+    ],
+    constraints: ['1 ≤ m, n ≤ 200', '-2³¹ ≤ matrix[i][j] ≤ 2³¹-1'],
+    testCases: [
+      { input: '1 1 1\n1 0 1\n1 1 1',       expected: '1 0 1\n0 0 0\n1 0 1',       hidden: false },
+      { input: '0 1 2 0\n3 4 5 2\n1 3 1 5', expected: '0 0 0 0\n0 4 5 0\n0 3 1 0', hidden: false },
+      { input: '1',                          expected: '1',                          hidden: true  },
+      { input: '0',                          expected: '0',                          hidden: true  },
+    ],
+    hints: [
+      'Record which rows and columns contain a zero.',
+      'Then set those rows and columns to zero.',
+      'Use O(1) space by using first row/column as markers.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+
+    }
+};`,
+      python: `class Solution:
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        `,
+      java: `class Solution {
+    public void setZeroes(int[][] matrix) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} matrix
+ * @return {void} Do not return anything, modify matrix in-place instead.
+ */
+var setZeroes = function(matrix) {
+
+};`,
+      c: `void setZeroes(int** matrix, int matrixSize, int* matrixColSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<vector<int>> matrix; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        istringstream ss(line); vector<int> row; int x;
+        while (ss >> x) row.push_back(x);
+        matrix.push_back(row);
+    }
+    Solution sol; sol.setZeroes(matrix);
+    for (auto& row : matrix) { for (int i=0;i<(int)row.size();i++) cout<<(i?" ":"")<<row[i]; cout<<"\\n"; }
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+matrix = [list(map(int, l.split())) for l in lines]
+Solution().setZeroes(matrix)
+for row in matrix: print(*row)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<int[]> rows = new ArrayList<>();
+        while (sc.hasNextLine()) { String l=sc.nextLine().trim(); if(l.isEmpty())continue; rows.add(Arrays.stream(l.split(" ")).mapToInt(Integer::parseInt).toArray()); }
+        int[][] m = rows.toArray(new int[0][]);
+        new Solution().setZeroes(m);
+        for (int[] row : m) { StringBuilder sb=new StringBuilder(); for(int i=0;i<row.length;i++) sb.append(i>0?" ":"").append(row[i]); System.out.println(sb); }
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const matrix = lines.map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+setZeroes(matrix);
+for (const row of matrix) console.log(row.join(' '));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int m[201][201], rows=0, cols=0; char buf[5000];
+    while (fgets(buf,sizeof(buf),stdin)) {
+        if(buf[0]=='\\n')continue; char*p=buf; int j=0;
+        while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}m[rows][j++]=strtol(p,&p,10);} cols=j; rows++;
+    }
+    int *ptrs[201]; int colSizes[201];
+    for(int i=0;i<rows;i++){ptrs[i]=m[i];colSizes[i]=cols;}
+    setZeroes((int**)ptrs,rows,colSizes);
+    for(int i=0;i<rows;i++){for(int j=0;j<cols;j++)printf("%s%d",j?" ":"",m[i][j]);printf("\\n");}
+    return 0;
+}`,
+    },
+    aiContext: 'Set Matrix Zeroes — first row/col marker O(1) space O(m*n)',
+  },
+
+  // ── 86. Container With Most Water ────────────────────────────────────────────
+  {
+    number: 86, title: 'Container With Most Water', slug: 'container-with-most-water', difficulty: 'Medium',
+    tags: ['Array', 'Two Pointers', 'Greedy'], companies: ['Amazon', 'Google', 'Facebook'],
+    acceptance: 54.5, premium: false,
+    description: `Given an integer array <code>height</code> of length <code>n</code>, find two lines that form a container with the most water. Return the maximum amount of water the container can store.`,
+    examples: [
+      { input: 'height = [1,8,6,2,5,4,8,3,7]', output: '49', explanation: 'Lines at index 1 and 8 with height 7' },
+      { input: 'height = [1,1]',                output: '1'  },
+    ],
+    constraints: ['2 ≤ n ≤ 10⁵', '0 ≤ height[i] ≤ 10⁴'],
+    testCases: [
+      { input: '1 8 6 2 5 4 8 3 7', expected: '49', hidden: false },
+      { input: '1 1',               expected: '1',  hidden: false },
+      { input: '4 3 2 1 4',         expected: '16', hidden: true  },
+      { input: '1 2 1',             expected: '2',  hidden: true  },
+    ],
+    hints: [
+      'Use two pointers: left at 0, right at end.',
+      'Area = min(height[l], height[r]) * (r - l).',
+      'Move the pointer with the smaller height inward.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int maxArea(vector<int>& height) {
+
+    }
+};`,
+      python: `class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int maxArea(int[] height) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} height
+ * @return {number}
+ */
+var maxArea = function(height) {
+
+};`,
+      c: `int maxArea(int* height, int heightSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> height; int x;
+    while (cin >> x) height.push_back(x);
+    Solution sol;
+    cout << sol.maxArea(height) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+height = list(map(int, sys.stdin.read().split()))
+print(Solution().maxArea(height))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] height = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().maxArea(height));
+    }
+}`,
+      javascript: `const height = require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(maxArea(height));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int h[100001], n=0;
+    while (scanf("%d",&h[n])==1) n++;
+    printf("%d\\n", maxArea(h,n));
+    return 0;
+}`,
+    },
+    aiContext: 'Container With Most Water — two pointers O(n)',
+  },
+
+  // ── 87. Minimum Path Sum ─────────────────────────────────────────────────────
+  {
+    number: 87, title: 'Minimum Path Sum', slug: 'minimum-path-sum', difficulty: 'Medium',
+    tags: ['Array', 'Dynamic Programming', 'Matrix'], companies: ['Amazon', 'Google', 'Microsoft'],
+    acceptance: 61.5, premium: false,
+    description: `Given an <code>m x n</code> grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum. You can only move right or down.<br><br>Input: m rows of n space-separated integers.`,
+    examples: [
+      { input: '1 3 1\n1 5 1\n4 2 1', output: '7', explanation: '1→3→1→1→1 = 7' },
+      { input: '1 2 3\n4 5 6',        output: '12' },
+    ],
+    constraints: ['1 ≤ m, n ≤ 200', '0 ≤ grid[i][j] ≤ 200'],
+    testCases: [
+      { input: '1 3 1\n1 5 1\n4 2 1', expected: '7',  hidden: false },
+      { input: '1 2 3\n4 5 6',        expected: '12', hidden: false },
+      { input: '1',                   expected: '1',  hidden: true  },
+      { input: '5 1\n2 3',            expected: '8',  hidden: true  },
+    ],
+    hints: [
+      'dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1]).',
+      'Initialize first row and first column as prefix sums.',
+      'Can optimize to 1D DP array.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int minPathSum(vector<vector<int>>& grid) {
+
+    }
+};`,
+      python: `class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        `,
+      java: `class Solution {
+    public int minPathSum(int[][] grid) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var minPathSum = function(grid) {
+
+};`,
+      c: `int minPathSum(int** grid, int gridSize, int* gridColSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<vector<int>> grid; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        istringstream ss(line); vector<int> row; int x;
+        while (ss >> x) row.push_back(x);
+        grid.push_back(row);
+    }
+    Solution sol;
+    cout << sol.minPathSum(grid) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+grid = [list(map(int, l.split())) for l in lines]
+print(Solution().minPathSum(grid))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<int[]> rows = new ArrayList<>();
+        while (sc.hasNextLine()) { String l=sc.nextLine().trim(); if(l.isEmpty())continue; rows.add(Arrays.stream(l.split(" ")).mapToInt(Integer::parseInt).toArray()); }
+        System.out.println(new Solution().minPathSum(rows.toArray(new int[0][])));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const grid = lines.map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+console.log(minPathSum(grid));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int m[201][201], rows=0, cols=0; char buf[5000];
+    while(fgets(buf,sizeof(buf),stdin)){
+        if(buf[0]=='\\n')continue; char*p=buf; int j=0;
+        while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}m[rows][j++]=strtol(p,&p,10);} cols=j; rows++;
+    }
+    int *ptrs[201]; int colSizes[201];
+    for(int i=0;i<rows;i++){ptrs[i]=m[i];colSizes[i]=cols;}
+    printf("%d\\n",minPathSum((int**)ptrs,rows,colSizes));
+    return 0;
+}`,
+    },
+    aiContext: 'Minimum Path Sum — 2D DP O(m*n)',
+  },
+
+  // ── 88. Number of Provinces ──────────────────────────────────────────────────
+  {
+    number: 88, title: 'Number of Provinces', slug: 'number-of-provinces', difficulty: 'Medium',
+    tags: ['DFS', 'BFS', 'Union Find', 'Graph'], companies: ['Amazon', 'Bloomberg', 'Facebook'],
+    acceptance: 65.5, premium: false,
+    description: `There are <code>n</code> cities. Given an <code>n x n</code> matrix <code>isConnected</code> where <code>isConnected[i][j] = 1</code> if city i and j are directly connected, return the total number of provinces (groups of directly or indirectly connected cities).<br><br>Input: n rows of n space-separated values (0 or 1).`,
+    examples: [
+      { input: '1 1 0\n1 1 0\n0 0 1', output: '2' },
+      { input: '1 0 0\n0 1 0\n0 0 1', output: '3' },
+    ],
+    constraints: ['1 ≤ n ≤ 200', 'isConnected[i][i] == 1', 'isConnected[i][j] == isConnected[j][i]'],
+    testCases: [
+      { input: '1 1 0\n1 1 0\n0 0 1', expected: '2', hidden: false },
+      { input: '1 0 0\n0 1 0\n0 0 1', expected: '3', hidden: false },
+      { input: '1',                   expected: '1', hidden: true  },
+      { input: '1 1\n1 1',            expected: '1', hidden: true  },
+    ],
+    hints: [
+      'Use DFS/BFS to traverse connected cities.',
+      'Mark visited cities and count connected components.',
+      'Or use Union-Find.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int findCircleNum(vector<vector<int>>& isConnected) {
+
+    }
+};`,
+      python: `class Solution:
+    def findCircleNum(self, isConnected: List[List[int]]) -> int:
+        `,
+      java: `class Solution {
+    public int findCircleNum(int[][] isConnected) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} isConnected
+ * @return {number}
+ */
+var findCircleNum = function(isConnected) {
+
+};`,
+      c: `int findCircleNum(int** isConnected, int isConnectedSize, int* isConnectedColSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<vector<int>> grid; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        istringstream ss(line); vector<int> row; int x;
+        while (ss >> x) row.push_back(x);
+        grid.push_back(row);
+    }
+    Solution sol;
+    cout << sol.findCircleNum(grid) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+isConnected = [list(map(int, l.split())) for l in lines]
+print(Solution().findCircleNum(isConnected))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<int[]> rows = new ArrayList<>();
+        while (sc.hasNextLine()) { String l=sc.nextLine().trim(); if(l.isEmpty())continue; rows.add(Arrays.stream(l.split(" ")).mapToInt(Integer::parseInt).toArray()); }
+        System.out.println(new Solution().findCircleNum(rows.toArray(new int[0][])));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const isConnected = lines.map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+console.log(findCircleNum(isConnected));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int m[201][201], n=0; char buf[5000];
+    while(fgets(buf,sizeof(buf),stdin)){
+        if(buf[0]=='\\n')continue; char*p=buf; int j=0;
+        while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}m[n][j++]=strtol(p,&p,10);} n++;
+    }
+    int *ptrs[201]; int colSizes[201];
+    for(int i=0;i<n;i++){ptrs[i]=m[i];colSizes[i]=n;}
+    printf("%d\\n",findCircleNum((int**)ptrs,n,colSizes));
+    return 0;
+}`,
+    },
+    aiContext: 'Number of Provinces — DFS connected components O(n²)',
+  },
+
+  // ── 89. Rotting Oranges ──────────────────────────────────────────────────────
+  {
+    number: 89, title: 'Rotting Oranges', slug: 'rotting-oranges', difficulty: 'Medium',
+    tags: ['Array', 'BFS', 'Matrix'], companies: ['Amazon', 'Google', 'Facebook'],
+    acceptance: 52.9, premium: false,
+    description: `You are given an <code>m x n</code> grid where cells can be 0 (empty), 1 (fresh orange), or 2 (rotten orange). Every minute, fresh oranges adjacent to rotten ones become rotten. Return the minimum minutes until no fresh orange remains, or -1 if impossible.<br><br>Input: m rows of n space-separated values.`,
+    examples: [
+      { input: '2 1 1\n1 1 0\n0 1 1', output: '4' },
+      { input: '2 1 1\n0 1 1\n1 0 1', output: '-1' },
+      { input: '0 2',                 output: '0'  },
+    ],
+    constraints: ['1 ≤ m, n ≤ 10', '0 ≤ grid[i][j] ≤ 2'],
+    testCases: [
+      { input: '2 1 1\n1 1 0\n0 1 1', expected: '4',  hidden: false },
+      { input: '2 1 1\n0 1 1\n1 0 1', expected: '-1', hidden: false },
+      { input: '0 2',                 expected: '0',  hidden: false },
+      { input: '1',                   expected: '-1', hidden: true  },
+      { input: '2',                   expected: '0',  hidden: true  },
+    ],
+    hints: [
+      'Multi-source BFS from all rotten oranges simultaneously.',
+      'Count fresh oranges initially.',
+      'BFS level by level = minutes. Return -1 if fresh oranges remain.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int orangesRotting(vector<vector<int>>& grid) {
+
+    }
+};`,
+      python: `class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+        `,
+      java: `class Solution {
+    public int orangesRotting(int[][] grid) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var orangesRotting = function(grid) {
+
+};`,
+      c: `int orangesRotting(int** grid, int gridSize, int* gridColSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<vector<int>> grid; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        istringstream ss(line); vector<int> row; int x;
+        while (ss >> x) row.push_back(x);
+        grid.push_back(row);
+    }
+    Solution sol;
+    cout << sol.orangesRotting(grid) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+grid = [list(map(int, l.split())) for l in lines]
+print(Solution().orangesRotting(grid))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<int[]> rows = new ArrayList<>();
+        while (sc.hasNextLine()) { String l=sc.nextLine().trim(); if(l.isEmpty())continue; rows.add(Arrays.stream(l.split(" ")).mapToInt(Integer::parseInt).toArray()); }
+        System.out.println(new Solution().orangesRotting(rows.toArray(new int[0][])));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const grid = lines.map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+console.log(orangesRotting(grid));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int m[11][11], rows=0, cols=0; char buf[500];
+    while(fgets(buf,sizeof(buf),stdin)){
+        if(buf[0]=='\\n')continue; char*p=buf; int j=0;
+        while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}m[rows][j++]=strtol(p,&p,10);} cols=j; rows++;
+    }
+    int *ptrs[11]; int colSizes[11];
+    for(int i=0;i<rows;i++){ptrs[i]=m[i];colSizes[i]=cols;}
+    printf("%d\\n",orangesRotting((int**)ptrs,rows,colSizes));
+    return 0;
+}`,
+    },
+    aiContext: 'Rotting Oranges — multi-source BFS O(m*n)',
+  },
+
+  // ── 90. Generate Parentheses ─────────────────────────────────────────────────
+  {
+    number: 90, title: 'Generate Parentheses', slug: 'generate-parentheses', difficulty: 'Medium',
+    tags: ['String', 'Dynamic Programming', 'Backtracking'], companies: ['Google', 'Amazon', 'Facebook'],
+    acceptance: 73.2, premium: false,
+    description: `Given <code>n</code> pairs of parentheses, generate all combinations of well-formed parentheses. Print each combination on a separate line in lexicographic order.`,
+    examples: [
+      { input: 'n = 3', output: '((()))\n(()())\n(())()\n()(())\n()()()' },
+      { input: 'n = 1', output: '()' },
+    ],
+    constraints: ['1 ≤ n ≤ 8'],
+    testCases: [
+      { input: '3', expected: '((()))\n(()())\n(())()\n()(())\n()()()', hidden: false },
+      { input: '1', expected: '()',                                      hidden: false },
+      { input: '2', expected: '(())\n()()',                              hidden: true  },
+    ],
+    hints: [
+      'Backtrack: add "(" if open count < n.',
+      'Add ")" if close count < open count.',
+      'Base case: string length == 2*n.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        `,
+      java: `class Solution {
+    public List<String> generateParenthesis(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function(n) {
+
+};`,
+      c: `char** generateParenthesis(int n, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int n; cin >> n;
+    Solution sol;
+    vector<string> res = sol.generateParenthesis(n);
+    sort(res.begin(), res.end());
+    for (auto& s : res) cout << s << "\\n";
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+res = sorted(Solution().generateParenthesis(n))
+for s in res: print(s)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int n = new Scanner(System.in).nextInt();
+        List<String> res = new Solution().generateParenthesis(n);
+        Collections.sort(res);
+        for (String s : res) System.out.println(s);
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
+
+__USER_CODE__
+
+const res = generateParenthesis(n).sort();
+for (const s of res) console.log(s);`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+__USER_CODE__
+
+int cmpStr(const void*a,const void*b){return strcmp(*(char**)a,*(char**)b);}
+int main() {
+    int n; scanf("%d",&n);
+    int retSize;
+    char **res = generateParenthesis(n, &retSize);
+    qsort(res, retSize, sizeof(char*), cmpStr);
+    for (int i=0;i<retSize;i++) printf("%s\\n",res[i]);
+    return 0;
+}`,
+    },
+    aiContext: 'Generate Parentheses — backtracking O(4^n/sqrt(n))',
+  },
+
+
+  // ── PROBLEMS 91–100 ───────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 91. Pascal's Triangle ────────────────────────────────────────────────────
+  {
+    number: 91, title: "Pascal's Triangle", slug: 'pascals-triangle', difficulty: 'Easy',
+    tags: ['Array', 'Dynamic Programming'], companies: ['Amazon', 'Apple', 'Adobe'],
+    acceptance: 70.6, premium: false,
+    description: `Given an integer <code>numRows</code>, return the first <code>numRows</code> of Pascal's triangle. Print each row space-separated on a new line.`,
+    examples: [
+      { input: 'numRows = 5', output: '1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1' },
+      { input: 'numRows = 1', output: '1' },
+    ],
+    constraints: ['1 ≤ numRows ≤ 30'],
+    testCases: [
+      { input: '5', expected: '1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1', hidden: false },
+      { input: '1', expected: '1',                                   hidden: false },
+      { input: '3', expected: '1\n1 1\n1 2 1',                      hidden: true  },
+      { input: '6', expected: '1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1\n1 5 10 10 5 1', hidden: true },
+    ],
+    hints: [
+      'Each row starts and ends with 1.',
+      'Inner elements: triangle[i][j] = triangle[i-1][j-1] + triangle[i-1][j].',
+      'Build row by row.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<vector<int>> generate(int numRows) {
+
+    }
+};`,
+      python: `class Solution:
+    def generate(self, numRows: int) -> List[List[int]]:
+        `,
+      java: `class Solution {
+    public List<List<Integer>> generate(int numRows) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} numRows
+ * @return {number[][]}
+ */
+var generate = function(numRows) {
+
+};`,
+      c: `int** generate(int numRows, int* returnSize, int** returnColumnSizes) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int n; cin >> n;
+    Solution sol;
+    auto res = sol.generate(n);
+    for (auto& row : res) {
+        for (int i=0;i<(int)row.size();i++) cout<<(i?" ":"")<<row[i];
+        cout<<"\\n";
+    }
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+for row in Solution().generate(n):
+    print(*row)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int n = new Scanner(System.in).nextInt();
+        for (List<Integer> row : new Solution().generate(n)) {
+            StringBuilder sb = new StringBuilder();
+            for (int i=0;i<row.size();i++) sb.append(i>0?" ":"").append(row.get(i));
+            System.out.println(sb);
+        }
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
+
+__USER_CODE__
+
+for (const row of generate(n)) console.log(row.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int n; scanf("%d",&n);
+    int retSize; int *retColSizes;
+    int **res = generate(n, &retSize, &retColSizes);
+    for (int i=0;i<retSize;i++) {
+        for (int j=0;j<retColSizes[i];j++) printf("%s%d",j?" ":"",res[i][j]);
+        printf("\\n");
+    }
+    return 0;
+}`,
+    },
+    aiContext: "Pascal's Triangle — DP row by row O(n²)",
+  },
+
+  // ── 92. Best Time to Buy and Sell Stock II ────────────────────────────────────
+  {
+    number: 92, title: 'Best Time to Buy and Sell Stock II', slug: 'best-time-to-buy-and-sell-stock-ii', difficulty: 'Medium',
+    tags: ['Array', 'Dynamic Programming', 'Greedy'], companies: ['Amazon', 'Bloomberg', 'Facebook'],
+    acceptance: 65.2, premium: false,
+    description: `Given an array <code>prices</code> where <code>prices[i]</code> is the price on day <code>i</code>, return the maximum profit from as many transactions as you like (but you can only hold one stock at a time).`,
+    examples: [
+      { input: 'prices = [7,1,5,3,6,4]', output: '7',  explanation: 'Buy day 2 sell day 3 (4), buy day 4 sell day 5 (3) = 7' },
+      { input: 'prices = [1,2,3,4,5]',   output: '4',  explanation: 'Buy day 1, sell day 5' },
+      { input: 'prices = [7,6,4,3,1]',   output: '0',  explanation: 'No profit possible' },
+    ],
+    constraints: ['1 ≤ prices.length ≤ 3×10⁴', '0 ≤ prices[i] ≤ 10⁴'],
+    testCases: [
+      { input: '7 1 5 3 6 4', expected: '7', hidden: false },
+      { input: '1 2 3 4 5',   expected: '4', hidden: false },
+      { input: '7 6 4 3 1',   expected: '0', hidden: false },
+      { input: '1 2',         expected: '1', hidden: true  },
+      { input: '2 1 4',       expected: '3', hidden: true  },
+    ],
+    hints: [
+      'Greedy: collect every upward slope.',
+      'If prices[i] > prices[i-1], add the difference to profit.',
+      'This is equivalent to buying and selling every consecutive profitable pair.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+
+    }
+};`,
+      python: `class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int maxProfit(int[] prices) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} prices
+ * @return {number}
+ */
+var maxProfit = function(prices) {
+
+};`,
+      c: `int maxProfit(int* prices, int pricesSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> prices; int x;
+    while (cin>>x) prices.push_back(x);
+    Solution sol;
+    cout << sol.maxProfit(prices) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+prices = list(map(int, sys.stdin.read().split()))
+print(Solution().maxProfit(prices))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] prices = list.stream().mapToInt(i->i).toArray();
+        System.out.println(new Solution().maxProfit(prices));
+    }
+}`,
+      javascript: `const prices = require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(maxProfit(prices));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int p[30001],n=0;
+    while(scanf("%d",&p[n])==1) n++;
+    printf("%d\\n",maxProfit(p,n));
+    return 0;
+}`,
+    },
+    aiContext: 'Best Time to Buy and Sell Stock II — greedy collect every gain O(n)',
+  },
+
+  // ── 93. Add Two Numbers ──────────────────────────────────────────────────────
+  {
+    number: 93, title: 'Add Two Numbers', slug: 'add-two-numbers', difficulty: 'Medium',
+    tags: ['Linked List', 'Math', 'Recursion'], companies: ['Amazon', 'Microsoft', 'Bloomberg'],
+    acceptance: 43.0, premium: false,
+    description: `You are given two non-empty linked lists representing non-negative integers stored in reverse order. Add the two numbers and return the sum as a linked list.<br><br>First line: digits of l1 (space-separated, already in reverse). Second line: digits of l2. Print sum digits space-separated (in reverse order).`,
+    examples: [
+      { input: '2 4 3\n5 6 4',  output: '7 0 8',  explanation: '342 + 465 = 807, stored as 7→0→8' },
+      { input: '0\n0',          output: '0'        },
+      { input: '9 9 9 9 9 9 9\n9 9 9 9', output: '8 9 9 9 0 0 0 1' },
+    ],
+    constraints: ['1 ≤ l1.length, l2.length ≤ 100', '0 ≤ Node.val ≤ 9', 'No leading zeros except number 0'],
+    testCases: [
+      { input: '2 4 3\n5 6 4',           expected: '7 0 8',           hidden: false },
+      { input: '0\n0',                   expected: '0',               hidden: false },
+      { input: '9 9 9 9 9 9 9\n9 9 9 9', expected: '8 9 9 9 0 0 0 1', hidden: false },
+      { input: '1\n9 9',                 expected: '0 0 1',           hidden: true  },
+    ],
+    hints: [
+      'Simulate addition digit by digit with a carry.',
+      'Advance both lists simultaneously.',
+      'Continue if carry remains after both lists are exhausted.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+
+    }
+};`,
+      python: `# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+        `,
+      java: `/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+var addTwoNumbers = function(l1, l2) {
+
+};`,
+      c: `/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct ListNode { int val; ListNode *next; ListNode(int x):val(x),next(nullptr){} };
+
+ListNode* makeList(string& line) {
+    istringstream ss(line); vector<int> v; int x;
+    while(ss>>x) v.push_back(x);
+    if(v.empty()) return nullptr;
+    ListNode *h=new ListNode(v[0]),*c=h;
+    for(int i=1;i<(int)v.size();i++){c->next=new ListNode(v[i]);c=c->next;}
+    return h;
+}
+
+__USER_CODE__
+
+int main() {
+    string l1s,l2s; getline(cin,l1s); getline(cin,l2s);
+    ListNode *res=Solution().addTwoNumbers(makeList(l1s),makeList(l2s));
+    bool first=true;
+    while(res){if(!first)cout<<" ";cout<<res->val;res=res->next;first=false;}
+    cout<<endl; return 0;
+}`,
+      python: `from typing import Optional
+import sys
+
+class ListNode:
+    def __init__(self,val=0,next=None): self.val=val;self.next=next
+
+def makeList(line):
+    vals=list(map(int,line.split())) if line.strip() else []
+    if not vals: return None
+    h=ListNode(vals[0]);c=h
+    for v in vals[1:]: c.next=ListNode(v);c=c.next
+    return h
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+l1=makeList(lines[0]);l2=makeList(lines[1] if len(lines)>1 else '')
+res=Solution().addTwoNumbers(l1,l2)
+out=[]
+while res: out.append(str(res.val));res=res.next
+print(' '.join(out))`,
+      java: `import java.util.*;
+
+class ListNode { int val; ListNode next; ListNode(int v){val=v;} }
+
+__USER_CODE__
+
+public class Main {
+    static ListNode makeList(String line){
+        if(line==null||line.trim().isEmpty()) return null;
+        String[]parts=line.trim().split(" ");
+        ListNode h=new ListNode(Integer.parseInt(parts[0])),c=h;
+        for(int i=1;i<parts.length;i++){c.next=new ListNode(Integer.parseInt(parts[i]));c=c.next;}
+        return h;
+    }
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        String l1s=sc.hasNextLine()?sc.nextLine():"";
+        String l2s=sc.hasNextLine()?sc.nextLine():"";
+        ListNode res=new Solution().addTwoNumbers(makeList(l1s),makeList(l2s));
+        StringBuilder sb=new StringBuilder();
+        while(res!=null){if(sb.length()>0)sb.append(" ");sb.append(res.val);res=res.next;}
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').split('\\n');
+function ListNode(val,next){this.val=val??0;this.next=next??null;}
+function makeList(line){
+    const vals=line&&line.trim()?line.trim().split(' ').map(Number):[];
+    if(!vals.length)return null;
+    const h=new ListNode(vals[0]);let c=h;
+    for(let i=1;i<vals.length;i++){c.next=new ListNode(vals[i]);c=c.next;}
+    return h;
+}
+
+__USER_CODE__
+
+let res=addTwoNumbers(makeList(lines[0]||''),makeList(lines[1]||''));
+const out=[];while(res){out.push(res.val);res=res.next;}
+console.log(out.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct ListNode{int val;struct ListNode*next;};
+struct ListNode*newNode(int v){struct ListNode*n=malloc(sizeof(struct ListNode));n->val=v;n->next=NULL;return n;}
+struct ListNode*makeList(char*buf){
+    struct ListNode*h=NULL,**t=&h;char*p=buf;
+    while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}*t=newNode(strtol(p,&p,10));t=&(*t)->next;}
+    return h;
+}
+
+__USER_CODE__
+
+int main(){
+    char b1[500],b2[500];
+    fgets(b1,sizeof(b1),stdin);fgets(b2,sizeof(b2),stdin);
+    struct ListNode*res=addTwoNumbers(makeList(b1),makeList(b2));
+    int first=1;
+    while(res){if(!first)printf(" ");printf("%d",res->val);res=res->next;first=0;}
+    printf("\\n");return 0;
+}`,
+    },
+    aiContext: 'Add Two Numbers — linked list carry simulation O(max(m,n))',
+  },
+
+  // ── 94. Next Permutation ─────────────────────────────────────────────────────
+  {
+    number: 94, title: 'Next Permutation', slug: 'next-permutation', difficulty: 'Medium',
+    tags: ['Array', 'Two Pointers'], companies: ['Google', 'Amazon', 'Microsoft'],
+    acceptance: 38.5, premium: false,
+    description: `Given an array of integers <code>nums</code>, find the next permutation in lexicographic order. If no next permutation exists (last permutation), rearrange as the lowest possible order (sorted ascending). Do it in-place.`,
+    examples: [
+      { input: '1 2 3', output: '1 3 2' },
+      { input: '3 2 1', output: '1 2 3' },
+      { input: '1 1 5', output: '1 5 1' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 100', '0 ≤ nums[i] ≤ 100'],
+    testCases: [
+      { input: '1 2 3', expected: '1 3 2', hidden: false },
+      { input: '3 2 1', expected: '1 2 3', hidden: false },
+      { input: '1 1 5', expected: '1 5 1', hidden: false },
+      { input: '1',     expected: '1',     hidden: true  },
+      { input: '2 3 1', expected: '3 1 2', hidden: true  },
+    ],
+    hints: [
+      'Find the largest index i such that nums[i] < nums[i+1].',
+      'Find the largest index j > i such that nums[j] > nums[i].',
+      'Swap nums[i] and nums[j], then reverse suffix after i.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def nextPermutation(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        `,
+      java: `class Solution {
+    public void nextPermutation(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var nextPermutation = function(nums) {
+
+};`,
+      c: `void nextPermutation(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while(cin>>x) nums.push_back(x);
+    Solution sol; sol.nextPermutation(nums);
+    for(int i=0;i<(int)nums.size();i++) cout<<(i?" ":"")<<nums[i];
+    cout<<endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums=list(map(int,sys.stdin.read().split()))
+Solution().nextPermutation(nums)
+print(*nums)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        List<Integer>list=new ArrayList<>();
+        while(sc.hasNextInt()) list.add(sc.nextInt());
+        int[]nums=list.stream().mapToInt(i->i).toArray();
+        new Solution().nextPermutation(nums);
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<nums.length;i++) sb.append(i>0?" ":"").append(nums[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const nums=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+nextPermutation(nums);
+console.log(nums.join(' '));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main(){
+    int nums[101],n=0;
+    while(scanf("%d",&nums[n])==1) n++;
+    nextPermutation(nums,n);
+    for(int i=0;i<n;i++) printf("%s%d",i?" ":"",nums[i]);
+    printf("\\n"); return 0;
+}`,
+    },
+    aiContext: 'Next Permutation — find pivot, swap, reverse O(n)',
+  },
+
+  // ── 95. Minimum Window Substring ─────────────────────────────────────────────
+  {
+    number: 95, title: 'Minimum Window Substring', slug: 'minimum-window-substring', difficulty: 'Hard',
+    tags: ['Hash Table', 'String', 'Sliding Window'], companies: ['Facebook', 'LinkedIn', 'Snapchat'],
+    acceptance: 40.9, premium: false,
+    description: `Given strings <code>s</code> and <code>t</code>, return the minimum window substring of <code>s</code> such that every character in <code>t</code> is included. Return empty string if no such window exists.<br><br>First line: s. Second line: t.`,
+    examples: [
+      { input: 'ADOBECODEBANC\nABC', output: 'BANC',  explanation: 'Minimum window containing A, B, C' },
+      { input: 'a\na',              output: 'a'       },
+      { input: 'a\naa',             output: '',       explanation: 'Not enough As' },
+    ],
+    constraints: ['1 ≤ s.length, t.length ≤ 10⁵', 's and t consist of uppercase and lowercase English letters'],
+    testCases: [
+      { input: 'ADOBECODEBANC\nABC', expected: 'BANC', hidden: false },
+      { input: 'a\na',              expected: 'a',     hidden: false },
+      { input: 'a\naa',             expected: '',      hidden: false },
+      { input: 'ab\nb',             expected: 'b',     hidden: true  },
+      { input: 'bba\nab',           expected: 'ba',    hidden: true  },
+    ],
+    hints: [
+      'Use sliding window with two pointers.',
+      'Expand right to include all chars of t, then shrink left.',
+      'Track character counts with a hash map.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string minWindow(string s, string t) {
+
+    }
+};`,
+      python: `class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        `,
+      java: `class Solution {
+    public String minWindow(String s, String t) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @param {string} t
+ * @return {string}
+ */
+var minWindow = function(s, t) {
+
+};`,
+      c: `char* minWindow(char* s, char* t) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    string s,t; getline(cin,s); getline(cin,t);
+    Solution sol; cout<<sol.minWindow(s,t)<<endl; return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+s=lines[0];t=lines[1] if len(lines)>1 else ''
+print(Solution().minWindow(s,t))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        String s=sc.nextLine(),t=sc.nextLine();
+        System.out.println(new Solution().minWindow(s,t));
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').split('\\n');
+const s=lines[0],t=lines[1]||'';
+
+__USER_CODE__
+
+console.log(minWindow(s,t));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main(){
+    char s[100001],t[100001];
+    fgets(s,sizeof(s),stdin);fgets(t,sizeof(t),stdin);
+    int ns=strlen(s),nt=strlen(t);
+    if(s[ns-1]=='\\n')s[--ns]='\\0';
+    if(t[nt-1]=='\\n')t[--nt]='\\0';
+    printf("%s\\n",minWindow(s,t));
+    return 0;
+}`,
+    },
+    aiContext: 'Minimum Window Substring — sliding window O(n)',
+  },
+
+  // ── 96. Subarray Sum Equals K ────────────────────────────────────────────────
+  {
+    number: 96, title: 'Subarray Sum Equals K', slug: 'subarray-sum-equals-k', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'Prefix Sum'], companies: ['Facebook', 'Google', 'Amazon'],
+    acceptance: 43.7, premium: false,
+    description: `Given an array of integers <code>nums</code> and an integer <code>k</code>, return the total number of subarrays whose sum equals to <code>k</code>.<br><br>First line: space-separated nums. Second line: k.`,
+    examples: [
+      { input: '1 1 1\n2', output: '2' },
+      { input: '1 2 3\n3', output: '2' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 2×10⁴', '-1000 ≤ nums[i] ≤ 1000', '-10⁷ ≤ k ≤ 10⁷'],
+    testCases: [
+      { input: '1 1 1\n2', expected: '2', hidden: false },
+      { input: '1 2 3\n3', expected: '2', hidden: false },
+      { input: '1\n1',     expected: '1', hidden: true  },
+      { input: '-1 -1 1\n0', expected: '1', hidden: true },
+    ],
+    hints: [
+      'Use prefix sums and a hash map.',
+      'For each prefix sum, check how many previous prefix sums differ by k.',
+      'This gives O(n) time.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+
+    }
+};`,
+      python: `class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        `,
+      java: `class Solution {
+    public int subarraySum(int[] nums, int k) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number}
+ */
+var subarraySum = function(nums, k) {
+
+};`,
+      c: `int subarraySum(int* nums, int numsSize, int k) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    string line; getline(cin,line);
+    istringstream ss(line); vector<int>nums; int x;
+    while(ss>>x) nums.push_back(x);
+    int k; cin>>k;
+    Solution sol; cout<<sol.subarraySum(nums,k)<<endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+nums=list(map(int,lines[0].split()))
+k=int(lines[1].strip())
+print(Solution().subarraySum(nums,k))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        int[]nums=Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int k=sc.nextInt();
+        System.out.println(new Solution().subarraySum(nums,k));
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const nums=lines[0].split(' ').map(Number);
+const k=parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(subarraySum(nums,k));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main(){
+    int nums[20001],n=0,k;
+    char buf[500000]; fgets(buf,sizeof(buf),stdin);
+    char*p=buf; while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}nums[n++]=strtol(p,&p,10);}
+    scanf("%d",&k);
+    printf("%d\\n",subarraySum(nums,n,k)); return 0;
+}`,
+    },
+    aiContext: 'Subarray Sum Equals K — prefix sum + hash map O(n)',
+  },
+
+  // ── 97. Maximum Depth of N-ary Tree ──────────────────────────────────────────
+  {
+    number: 97, title: 'Maximum Depth of N-ary Tree', slug: 'maximum-depth-of-n-ary-tree', difficulty: 'Easy',
+    tags: ['Tree', 'DFS', 'BFS'], companies: ['Facebook', 'Amazon', 'LinkedIn'],
+    acceptance: 70.0, premium: false,
+    description: `Given an N-ary tree root serialized as level-order (space-separated values with <code>null</code> for separator between children groups), return its maximum depth.<br><br>Input format: level-order with null separating children groups of each node.`,
+    examples: [
+      { input: '1 null 3 2 4 null 5 6', output: '3' },
+      { input: '1 null 2 3 4 5 null null 6 7 null 8 null 9 10 null null 11 null 12 null 13 null null 14', output: '5' },
+    ],
+    constraints: ['0 ≤ depth ≤ 1000', '0 ≤ number of nodes ≤ 10⁴'],
+    testCases: [
+      { input: '1 null 3 2 4 null 5 6', expected: '3', hidden: false },
+      { input: '1 null 2 3 4 5 null null 6 7 null 8 null 9 10 null null 11 null 12 null 13 null null 14', expected: '5', hidden: false },
+      { input: '1',               expected: '1', hidden: true },
+      { input: '1 null 2',        expected: '2', hidden: true },
+    ],
+    hints: [
+      'DFS: depth = 1 + max depth of all children.',
+      'BFS: count levels.',
+      'Handle empty tree (depth = 0).',
+    ],
+    starter: {
+      cpp: `/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> children;
+    Node() {}
+    Node(int _val) { val = _val; }
+    Node(int _val, vector<Node*> _children) { val = _val; children = _children; }
+};
+*/
+class Solution {
+public:
+    int maxDepth(Node* root) {
+
+    }
+};`,
+      python: `"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val=None, children=None):
+        self.val = val
+        self.children = children
+"""
+class Solution:
+    def maxDepth(self, root: 'Node') -> int:
+        `,
+      java: `/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public List<Node> children;
+    public Node() {}
+    public Node(int _val) { val = _val; }
+    public Node(int _val, List<Node> _children) { val = _val; children = _children; }
+}
+*/
+class Solution {
+    public int maxDepth(Node root) {
+
+    }
+}`,
+      javascript: `/**
+ * // Definition for a Node.
+ * function Node(val, children) {
+ *     this.val = val;
+ *     this.children = children;
+ * };
+ */
+/**
+ * @param {Node|null} root
+ * @return {number}
+ */
+var maxDepth = function(root) {
+
+};`,
+      c: `/*
+struct Node {
+    int val;
+    int numChildren;
+    struct Node** children;
+};
+*/
+int maxDepth(struct Node* root) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+class Node {
+public:
+    int val; vector<Node*> children;
+    Node(int v):val(v){}
+};
+
+Node* buildNary(vector<string>&v){
+    if(v.empty()||v[0]=="null")return nullptr;
+    Node*root=new Node(stoi(v[0]));
+    queue<Node*>q; q.push(root);
+    int i=2; // skip first null separator
+    while(!q.empty()&&i<(int)v.size()){
+        Node*node=q.front();q.pop();
+        while(i<(int)v.size()&&v[i]!="null"){
+            Node*child=new Node(stoi(v[i++]));
+            node->children.push_back(child);
+            q.push(child);
+        }
+        i++; // skip null
+    }
+    return root;
+}
+
+__USER_CODE__
+
+int main(){
+    vector<string>vals;string s;
+    while(cin>>s) vals.push_back(s);
+    Node*root=buildNary(vals);
+    Solution sol; cout<<sol.maxDepth(root)<<endl; return 0;
+}`,
+      python: `import sys
+from collections import deque
+
+class Node:
+    def __init__(self,val=None,children=None):
+        self.val=val;self.children=children or []
+
+def buildNary(vals):
+    if not vals or vals[0]=='null':return None
+    root=Node(int(vals[0]));q=deque([root]);i=2
+    while q and i<len(vals):
+        node=q.popleft()
+        while i<len(vals) and vals[i]!='null':
+            child=Node(int(vals[i]));node.children.append(child);q.append(child);i+=1
+        i+=1
+    return root
+
+__USER_CODE__
+
+vals=sys.stdin.read().split()
+print(Solution().maxDepth(buildNary(vals)))`,
+      java: `import java.util.*;
+
+class Node {
+    int val; List<Node> children;
+    Node(int v){val=v;children=new ArrayList<>();}
+}
+
+__USER_CODE__
+
+public class Main {
+    static Node buildNary(String[]vals){
+        if(vals.length==0||vals[0].equals("null"))return null;
+        Node root=new Node(Integer.parseInt(vals[0]));
+        Queue<Node>q=new LinkedList<>();q.add(root);int i=2;
+        while(!q.isEmpty()&&i<vals.length){
+            Node node=q.poll();
+            while(i<vals.length&&!vals[i].equals("null")){
+                Node child=new Node(Integer.parseInt(vals[i++]));
+                node.children.add(child);q.add(child);
+            }
+            i++;
+        }
+        return root;
+    }
+    public static void main(String[]args){
+        String[]vals=new Scanner(System.in).useDelimiter("\\\\s+").tokens().toArray(String[]::new);
+        System.out.println(new Solution().maxDepth(buildNary(vals)));
+    }
+}`,
+      javascript: `const vals=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/);
+
+function Node(val,children){this.val=val;this.children=children||[];}
+
+function buildNary(vals){
+    if(!vals.length||vals[0]==='null')return null;
+    const root=new Node(+vals[0]);const q=[root];let i=2;
+    while(q.length&&i<vals.length){
+        const node=q.shift();
+        while(i<vals.length&&vals[i]!=='null'){
+            const child=new Node(+vals[i++]);node.children.push(child);q.push(child);
+        }
+        i++;
+    }
+    return root;
+}
+
+__USER_CODE__
+
+console.log(maxDepth(buildNary(vals)));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node{int val;int numChildren;struct Node**children;};
+struct Node*newNode(int v){struct Node*n=malloc(sizeof(struct Node));n->val=v;n->numChildren=0;n->children=malloc(100*sizeof(struct Node*));return n;}
+
+int maxDepthHelper(struct Node*root){
+    if(!root)return 0;
+    int maxD=0;
+    for(int i=0;i<root->numChildren;i++){int d=maxDepthHelper(root->children[i]);if(d>maxD)maxD=d;}
+    return 1+maxD;
+}
+
+int maxDepth(struct Node*root){return maxDepthHelper(root);}
+
+int main(){
+    char toks[10000][20];int tc=0;while(scanf("%s",toks[tc])==1)tc++;
+    if(tc==0||strcmp(toks[0],"null")==0){printf("0\\n");return 0;}
+    struct Node*root=newNode(atoi(toks[0]));
+    struct Node*q[10000];int head=0,tail=0;q[tail++]=root;int i=2;
+    while(head<tail&&i<tc){
+        struct Node*node=q[head++];
+        while(i<tc&&strcmp(toks[i],"null")!=0){
+            struct Node*child=newNode(atoi(toks[i++]));
+            node->children[node->numChildren++]=child;q[tail++]=child;
+        }
+        i++;
+    }
+    printf("%d\\n",maxDepth(root));return 0;
+}`,
+    },
+    aiContext: 'Maximum Depth of N-ary Tree — DFS O(n)',
+  },
+
+  // ── 98. Increasing Order Search Tree ─────────────────────────────────────────
+  {
+    number: 98, title: 'Increasing Order Search Tree', slug: 'increasing-order-search-tree', difficulty: 'Easy',
+    tags: ['Stack', 'Tree', 'DFS', 'Binary Search Tree'], companies: ['Amazon', 'Google'],
+    acceptance: 77.8, premium: false,
+    description: `Given a binary search tree in level-order (space-separated, use <code>null</code> for missing), rearrange the tree to a right-skewed tree where nodes appear in increasing order. Print the in-order values space-separated.`,
+    examples: [
+      { input: '5 3 6 2 4 null 8 1 null null null null null 7 9', output: '1 2 3 4 5 6 7 8 9' },
+      { input: '5 1 7', output: '1 5 7' },
+    ],
+    constraints: ['1 ≤ number of nodes ≤ 100', '0 ≤ Node.val ≤ 1000'],
+    testCases: [
+      { input: '5 3 6 2 4 null 8 1 null null null null null 7 9', expected: '1 2 3 4 5 6 7 8 9', hidden: false },
+      { input: '5 1 7',                                           expected: '1 5 7',             hidden: false },
+      { input: '1',                                               expected: '1',                  hidden: true  },
+      { input: '3 1 4',                                           expected: '1 3 4',             hidden: true  },
+    ],
+    hints: [
+      'In-order traversal gives sorted values.',
+      'Build a new right-skewed tree during traversal.',
+      'Use a dummy head and a cur pointer.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* increasingBST(TreeNode* root) {
+
+    }
+};`,
+      python: `# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def increasingBST(self, root: TreeNode) -> TreeNode:
+        `,
+      java: `/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ * }
+ */
+class Solution {
+    public TreeNode increasingBST(TreeNode root) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+var increasingBST = function(root) {
+
+};`,
+      c: `/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+struct TreeNode* increasingBST(struct TreeNode* root) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct TreeNode{int val;TreeNode*left,*right;TreeNode(int x):val(x),left(nullptr),right(nullptr){}};
+
+TreeNode*build(vector<string>&v,int i){
+    if(i>=(int)v.size()||v[i]=="null")return nullptr;
+    TreeNode*n=new TreeNode(stoi(v[i]));n->left=build(v,2*i+1);n->right=build(v,2*i+2);return n;
+}
+
+__USER_CODE__
+
+int main(){
+    vector<string>vals;string s;while(cin>>s)vals.push_back(s);
+    TreeNode*root=vals.empty()||vals[0]=="null"?nullptr:build(vals,0);
+    Solution sol; TreeNode*res=sol.increasingBST(root);
+    bool first=true;
+    while(res){if(!first)cout<<" ";cout<<res->val;res=res->right;first=false;}
+    cout<<endl;return 0;
+}`,
+      python: `from collections import deque
+import sys
+
+class TreeNode:
+    def __init__(self,val=0,left=None,right=None):self.val=val;self.left=left;self.right=right
+
+def build(vals):
+    if not vals or vals[0]=='null':return None
+    root=TreeNode(int(vals[0]));q=deque([root]);i=1
+    while q and i<len(vals):
+        node=q.popleft()
+        if i<len(vals) and vals[i]!='null':node.left=TreeNode(int(vals[i]));q.append(node.left)
+        i+=1
+        if i<len(vals) and vals[i]!='null':node.right=TreeNode(int(vals[i]));q.append(node.right)
+        i+=1
+    return root
+
+__USER_CODE__
+
+vals=sys.stdin.read().split()
+res=Solution().increasingBST(build(vals))
+out=[]
+while res:out.append(str(res.val));res=res.right
+print(' '.join(out))`,
+      java: `import java.util.*;
+
+class TreeNode{int val;TreeNode left,right;TreeNode(int v){val=v;}}
+
+__USER_CODE__
+
+public class Main{
+    static TreeNode build(String[]v,int i){
+        if(i>=v.length||v[i].equals("null"))return null;
+        TreeNode n=new TreeNode(Integer.parseInt(v[i]));n.left=build(v,2*i+1);n.right=build(v,2*i+2);return n;
+    }
+    public static void main(String[]args){
+        String[]vals=new Scanner(System.in).useDelimiter("\\\\s+").tokens().toArray(String[]::new);
+        TreeNode root=vals.length==0||vals[0].equals("null")?null:build(vals,0);
+        TreeNode res=new Solution().increasingBST(root);
+        StringBuilder sb=new StringBuilder();
+        while(res!=null){if(sb.length()>0)sb.append(" ");sb.append(res.val);res=res.right;}
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const vals=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/);
+function TreeNode(val,left,right){this.val=val??0;this.left=left??null;this.right=right??null;}
+function build(v,i=0){if(i>=v.length||v[i]==='null')return null;const n=new TreeNode(+v[i]);n.left=build(v,2*i+1);n.right=build(v,2*i+2);return n;}
+
+__USER_CODE__
+
+let res=increasingBST(!vals.length||vals[0]==='null'?null:build(vals));
+const out=[];while(res){out.push(res.val);res=res.right;}
+console.log(out.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct TreeNode{int val;struct TreeNode*left,*right;};
+struct TreeNode*newNode(int v){struct TreeNode*n=malloc(sizeof(struct TreeNode));n->val=v;n->left=n->right=NULL;return n;}
+struct TreeNode*build(char t[][20],int n,int i){
+    if(i>=n||strcmp(t[i],"null")==0)return NULL;
+    struct TreeNode*node=newNode(atoi(t[i]));node->left=build(t,n,2*i+1);node->right=build(t,n,2*i+2);return node;
+}
+
+__USER_CODE__
+
+int main(){
+    char toks[10000][20];int tc=0;while(scanf("%s",toks[tc])==1)tc++;
+    struct TreeNode*root=(tc==0||strcmp(toks[0],"null")==0)?NULL:build(toks,tc,0);
+    struct TreeNode*res=increasingBST(root);
+    int first=1;while(res){if(!first)printf(" ");printf("%d",res->val);res=res->right;first=0;}
+    printf("\\n");return 0;
+}`,
+    },
+    aiContext: 'Increasing Order Search Tree — in-order traversal O(n)',
+  },
+
+  // ── 99. Remove Nth Node From End of List ─────────────────────────────────────
+  {
+    number: 99, title: 'Remove Nth Node From End of List', slug: 'remove-nth-node-from-end-of-list', difficulty: 'Medium',
+    tags: ['Linked List', 'Two Pointers'], companies: ['Facebook', 'Amazon', 'Microsoft'],
+    acceptance: 42.4, premium: false,
+    description: `Given the head of a linked list (space-separated integers) and <code>n</code>, remove the nth node from the end of the list and return the result.<br><br>First line: list values. Second line: n.`,
+    examples: [
+      { input: '1 2 3 4 5\n2', output: '1 2 3 5' },
+      { input: '1\n1',         output: ''          },
+      { input: '1 2\n1',       output: '1'          },
+    ],
+    constraints: ['1 ≤ sz ≤ 30', '0 ≤ Node.val ≤ 100', '1 ≤ n ≤ sz'],
+    testCases: [
+      { input: '1 2 3 4 5\n2', expected: '1 2 3 5', hidden: false },
+      { input: '1\n1',         expected: '',          hidden: false },
+      { input: '1 2\n1',       expected: '1',         hidden: true  },
+      { input: '1 2 3\n3',     expected: '2 3',       hidden: true  },
+    ],
+    hints: [
+      'Use two pointers separated by n nodes.',
+      'When fast reaches end, slow is at the node before the target.',
+      'Use a dummy head to handle edge cases.',
+    ],
+    starter: {
+      cpp: `/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+
+    }
+};`,
+      python: `# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
+        `,
+      java: `/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ * }
+ */
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+
+    }
+}`,
+      javascript: `/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} n
+ * @return {ListNode}
+ */
+var removeNthFromEnd = function(head, n) {
+
+};`,
+      c: `/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+struct ListNode{int val;ListNode*next;ListNode(int x):val(x),next(nullptr){}};
+
+__USER_CODE__
+
+int main(){
+    string line; getline(cin,line);
+    istringstream ss(line);vector<int>vals;int x;while(ss>>x)vals.push_back(x);
+    int n;cin>>n;
+    if(vals.empty()){cout<<endl;return 0;}
+    ListNode*head=new ListNode(vals[0]),*cur=head;
+    for(int i=1;i<(int)vals.size();i++){cur->next=new ListNode(vals[i]);cur=cur->next;}
+    ListNode*res=Solution().removeNthFromEnd(head,n);
+    bool first=true;
+    while(res){if(!first)cout<<" ";cout<<res->val;res=res->next;first=false;}
+    cout<<endl;return 0;
+}`,
+      python: `from typing import Optional
+import sys
+
+class ListNode:
+    def __init__(self,val=0,next=None):self.val=val;self.next=next
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+vals=list(map(int,lines[0].split())) if lines[0].strip() else []
+n=int(lines[1].strip())
+if not vals:print('');exit()
+head=ListNode(vals[0]);cur=head
+for v in vals[1:]:cur.next=ListNode(v);cur=cur.next
+res=Solution().removeNthFromEnd(head,n)
+out=[]
+while res:out.append(str(res.val));res=res.next
+print(' '.join(out))`,
+      java: `import java.util.*;
+
+class ListNode{int val;ListNode next;ListNode(int v){val=v;}}
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        String line=sc.nextLine().trim();
+        int n=sc.nextInt();
+        if(line.isEmpty()){System.out.println();return;}
+        String[]parts=line.split(" ");
+        ListNode head=new ListNode(Integer.parseInt(parts[0])),cur=head;
+        for(int i=1;i<parts.length;i++){cur.next=new ListNode(Integer.parseInt(parts[i]));cur=cur.next;}
+        ListNode res=new Solution().removeNthFromEnd(head,n);
+        StringBuilder sb=new StringBuilder();
+        while(res!=null){if(sb.length()>0)sb.append(" ");sb.append(res.val);res=res.next;}
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').split('\\n');
+const vals=lines[0]&&lines[0].trim()?lines[0].trim().split(' ').map(Number):[];
+const n=parseInt(lines[1]);
+
+function ListNode(val,next){this.val=val??0;this.next=next??null;}
+
+__USER_CODE__
+
+if(!vals.length){console.log('');process.exit(0);}
+let head=new ListNode(vals[0]),cur=head;
+for(let i=1;i<vals.length;i++){cur.next=new ListNode(vals[i]);cur=cur.next;}
+let res=removeNthFromEnd(head,n);
+const out=[];while(res){out.push(res.val);res=res.next;}
+console.log(out.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct ListNode{int val;struct ListNode*next;};
+struct ListNode*newNode(int v){struct ListNode*n=malloc(sizeof(struct ListNode));n->val=v;n->next=NULL;return n;}
+
+__USER_CODE__
+
+int main(){
+    int vals[31],nv=0,n;
+    char buf[500];fgets(buf,sizeof(buf),stdin);
+    char*p=buf;while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}vals[nv++]=strtol(p,&p,10);}
+    scanf("%d",&n);
+    if(!nv){printf("\\n");return 0;}
+    struct ListNode*nodes=malloc(nv*sizeof(struct ListNode));
+    for(int i=0;i<nv;i++){nodes[i].val=vals[i];nodes[i].next=i+1<nv?&nodes[i+1]:NULL;}
+    struct ListNode*res=removeNthFromEnd(&nodes[0],n);
+    int first=1;while(res){if(!first)printf(" ");printf("%d",res->val);res=res->next;first=0;}
+    printf("\\n");free(nodes);return 0;
+}`,
+    },
+    aiContext: 'Remove Nth Node From End — two pointers O(n)',
+  },
+
+  // ── 100. Counting Bits ───────────────────────────────────────────────────────
+  {
+    number: 100, title: 'Counting Bits', slug: 'counting-bits', difficulty: 'Easy',
+    tags: ['Dynamic Programming', 'Bit Manipulation'], companies: ['Google', 'Facebook', 'Apple'],
+    acceptance: 74.8, premium: false,
+    description: `Given an integer <code>n</code>, return an array of length <code>n+1</code> where <code>ans[i]</code> is the number of 1s in the binary representation of <code>i</code>. Print space-separated.`,
+    examples: [
+      { input: 'n = 2', output: '0 1 1',   explanation: '0→0, 1→1, 2→10' },
+      { input: 'n = 5', output: '0 1 1 2 1 2' },
+    ],
+    constraints: ['0 ≤ n ≤ 10⁵'],
+    testCases: [
+      { input: '2', expected: '0 1 1',       hidden: false },
+      { input: '5', expected: '0 1 1 2 1 2', hidden: false },
+      { input: '0', expected: '0',            hidden: true  },
+      { input: '1', expected: '0 1',          hidden: true  },
+    ],
+    hints: [
+      'dp[i] = dp[i >> 1] + (i & 1).',
+      'Shifting right removes the last bit; add 1 if last bit was set.',
+      'Build dp array from 0 to n.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> countBits(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def countBits(self, n: int) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] countBits(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n
+ * @return {number[]}
+ */
+var countBits = function(n) {
+
+};`,
+      c: `int* countBits(int n, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    int n;cin>>n;
+    Solution sol;
+    vector<int>res=sol.countBits(n);
+    for(int i=0;i<(int)res.size();i++) cout<<(i?" ":"")<<res[i];
+    cout<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+n=int(sys.stdin.read().strip())
+print(*Solution().countBits(n))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        int n=new Scanner(System.in).nextInt();
+        int[]res=new Solution().countBits(n);
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<res.length;i++) sb.append(i>0?" ":"").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const n=parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
+
+__USER_CODE__
+
+console.log(countBits(n).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main(){
+    int n;scanf("%d",&n);
+    int retSize;
+    int*res=countBits(n,&retSize);
+    for(int i=0;i<retSize;i++) printf("%s%d",i?" ":"",res[i]);
+    printf("\\n");free(res);return 0;
+}`,
+    },
+    aiContext: 'Counting Bits — DP with bit shift O(n)',
+  },
+
+  // ── PROBLEMS 101–110 ──────────────────────────────────────────────────────────
+// Each problem has starter (function signature) + codeWrapper (__USER_CODE__)
+
+  // ── 101. Delete Node in a Linked List ────────────────────────────────────────
+  {
+    number: 101, title: 'Delete Node in a Linked List', slug: 'delete-node-in-a-linked-list', difficulty: 'Medium',
+    tags: ['Linked List'], companies: ['Adobe', 'Amazon', 'Microsoft'],
+    acceptance: 76.5, premium: false,
+    description: `Given access to a node in a singly-linked list (not the tail), delete that node in-place.<br><br>Input: space-separated list, then target value. Output: resulting list.`,
+    examples: [
+      { input: '4 5 1 9\n5', output: '4 1 9' },
+      { input: '4 5 1 9\n1', output: '4 5 9' },
+    ],
+    constraints: ['2 ≤ list size ≤ 1000', 'Node to delete is not the tail'],
+    testCases: [
+      { input: '4 5 1 9\n5', expected: '4 1 9', hidden: false },
+      { input: '4 5 1 9\n1', expected: '4 5 9', hidden: false },
+      { input: '1 2 3 4\n2', expected: '1 3 4', hidden: true  },
+      { input: '0 1\n0',     expected: '1',     hidden: true  },
+    ],
+    hints: [
+      'Copy the value of the next node into the current node.',
+      'Skip the next node by updating the pointer.',
+    ],
+    starter: {
+      cpp: `/**
+ * struct ListNode { int val; ListNode *next; ListNode(int x) : val(x), next(nullptr) {} };
+ */
+class Solution {
+public:
+    void deleteNode(ListNode* node) {
+
+    }
+};`,
+      python: `class Solution:
+    def deleteNode(self, node):
+        `,
+      java: `class Solution {
+    public void deleteNode(ListNode node) {
+
+    }
+}`,
+      javascript: `var deleteNode = function(node) {
+
+};`,
+      c: `void deleteNode(struct ListNode* node) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+struct ListNode{int val;ListNode*next;ListNode(int x):val(x),next(nullptr){}};
+
+__USER_CODE__
+
+int main(){
+    string line;getline(cin,line);
+    istringstream ss(line);vector<int>v;int x;while(ss>>x)v.push_back(x);
+    int target;cin>>target;
+    ListNode*head=new ListNode(v[0]),*cur=head;
+    for(int i=1;i<(int)v.size();i++){cur->next=new ListNode(v[i]);cur=cur->next;}
+    cur=head;while(cur&&cur->next){if(cur->val==target){Solution().deleteNode(cur);break;}cur=cur->next;}
+    bool first=true;cur=head;while(cur){if(!first)cout<<" ";cout<<cur->val;cur=cur->next;first=false;}
+    cout<<endl;return 0;
+}`,
+      python: `import sys
+class ListNode:
+    def __init__(self,x):self.val=x;self.next=None
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+v=list(map(int,lines[0].split()));target=int(lines[1].strip())
+head=ListNode(v[0]);cur=head
+for val in v[1:]:cur.next=ListNode(val);cur=cur.next
+cur=head
+while cur and cur.next:
+    if cur.val==target:Solution().deleteNode(cur);break
+    cur=cur.next
+out=[];cur=head
+while cur:out.append(str(cur.val));cur=cur.next
+print(' '.join(out))`,
+      java: `import java.util.*;
+class ListNode{int val;ListNode next;ListNode(int x){val=x;}}
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        int[]v=Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int target=sc.nextInt();
+        ListNode head=new ListNode(v[0]),cur=head;
+        for(int i=1;i<v.length;i++){cur.next=new ListNode(v[i]);cur=cur.next;}
+        cur=head;while(cur!=null&&cur.next!=null){if(cur.val==target){new Solution().deleteNode(cur);break;}cur=cur.next;}
+        StringBuilder sb=new StringBuilder();cur=head;
+        while(cur!=null){if(sb.length()>0)sb.append(" ");sb.append(cur.val);cur=cur.next;}
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').split('\\n');
+const v=lines[0].trim().split(' ').map(Number),target=parseInt(lines[1]);
+function ListNode(val){this.val=val;this.next=null;}
+
+__USER_CODE__
+
+let head=new ListNode(v[0]),cur=head;
+for(let i=1;i<v.length;i++){cur.next=new ListNode(v[i]);cur=cur.next;}
+cur=head;while(cur&&cur.next){if(cur.val===target){deleteNode(cur);break;}cur=cur.next;}
+const out=[];cur=head;while(cur){out.push(cur.val);cur=cur.next;}
+console.log(out.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+struct ListNode{int val;struct ListNode*next;};
+
+__USER_CODE__
+
+int main(){
+    int v[1001],nv=0,target;
+    char buf[10000];fgets(buf,sizeof(buf),stdin);
+    char*p=buf;while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}v[nv++]=strtol(p,&p,10);}
+    scanf("%d",&target);
+    struct ListNode*nodes=malloc(nv*sizeof(struct ListNode));
+    for(int i=0;i<nv;i++){nodes[i].val=v[i];nodes[i].next=i+1<nv?&nodes[i+1]:NULL;}
+    for(int i=0;i<nv;i++){if(nodes[i].val==target&&nodes[i].next){deleteNode(&nodes[i]);break;}}
+    int first=1;struct ListNode*cur=&nodes[0];
+    while(cur){if(!first)printf(" ");printf("%d",cur->val);cur=cur->next;first=0;}
+    printf("\\n");free(nodes);return 0;
+}`,
+    },
+    aiContext: 'Delete Node in Linked List — copy-next-delete O(1)',
+  },
+
+  // ── 102. Find Peak Element ────────────────────────────────────────────────────
+  {
+    number: 102, title: 'Find Peak Element', slug: 'find-peak-element', difficulty: 'Medium',
+    tags: ['Array', 'Binary Search'], companies: ['Google', 'Facebook', 'Microsoft'],
+    acceptance: 46.4, premium: false,
+    description: `A peak element is strictly greater than its neighbors. Find any peak and return its index. Must be <code>O(log n)</code>.`,
+    examples: [
+      { input: '1 2 3 1',       output: '2' },
+      { input: '1 2 1 3 5 6 4', output: '5' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 1000', 'nums[i] ≠ nums[i+1]'],
+    testCases: [
+      { input: '1 2 3 1',       expected: '2', hidden: false },
+      { input: '1 2 1 3 5 6 4', expected: '5', hidden: false },
+      { input: '1',             expected: '0', hidden: true  },
+      { input: '1 2',           expected: '1', hidden: true  },
+    ],
+    hints: [
+      'If nums[mid] < nums[mid+1], peak is in right half.',
+      'Otherwise peak is in left half (including mid).',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def findPeakElement(self, nums: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int findPeakElement(int[] nums) {
+
+    }
+}`,
+      javascript: `var findPeakElement = function(nums) {
+
+};`,
+      c: `int findPeakElement(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    vector<int>nums;int x;while(cin>>x)nums.push_back(x);
+    cout<<Solution().findPeakElement(nums)<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums=list(map(int,sys.stdin.read().split()))
+print(Solution().findPeakElement(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        List<Integer>list=new ArrayList<>();while(sc.hasNextInt())list.add(sc.nextInt());
+        System.out.println(new Solution().findPeakElement(list.stream().mapToInt(i->i).toArray()));
+    }
+}`,
+      javascript: `const nums=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(findPeakElement(nums));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main(){
+    int nums[1001],n=0;while(scanf("%d",&nums[n])==1)n++;
+    printf("%d\\n",findPeakElement(nums,n));return 0;
+}`,
+    },
+    aiContext: 'Find Peak Element — binary search O(log n)',
+  },
+
+  // ── 103. Kth Largest Element in an Array ─────────────────────────────────────
+  {
+    number: 103, title: 'Kth Largest Element in an Array', slug: 'kth-largest-element-in-an-array', difficulty: 'Medium',
+    tags: ['Array', 'Divide and Conquer', 'Sorting', 'Heap', 'Quickselect'], companies: ['Facebook', 'Amazon', 'Microsoft'],
+    acceptance: 64.8, premium: false,
+    description: `Return the <code>k</code>th largest element in the array.<br><br>First line: space-separated nums. Second line: k.`,
+    examples: [
+      { input: '3 2 1 5 6 4\n2',       output: '5' },
+      { input: '3 2 3 1 2 4 5 5 6\n4', output: '4' },
+    ],
+    constraints: ['1 ≤ k ≤ nums.length ≤ 10⁵'],
+    testCases: [
+      { input: '3 2 1 5 6 4\n2',       expected: '5', hidden: false },
+      { input: '3 2 3 1 2 4 5 5 6\n4', expected: '4', hidden: false },
+      { input: '1\n1',                 expected: '1', hidden: true  },
+      { input: '5 2 4 1 3\n3',         expected: '3', hidden: true  },
+    ],
+    hints: [
+      'Sort descending and return index k-1.',
+      'Or use min-heap of size k.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+
+    }
+};`,
+      python: `class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        `,
+      java: `class Solution {
+    public int findKthLargest(int[] nums, int k) {
+
+    }
+}`,
+      javascript: `var findKthLargest = function(nums, k) {
+
+};`,
+      c: `int findKthLargest(int* nums, int numsSize, int k) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    string line;getline(cin,line);
+    istringstream ss(line);vector<int>nums;int x;while(ss>>x)nums.push_back(x);
+    int k;cin>>k;
+    cout<<Solution().findKthLargest(nums,k)<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+nums=list(map(int,lines[0].split()));k=int(lines[1].strip())
+print(Solution().findKthLargest(nums,k))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        int[]nums=Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int k=sc.nextInt();
+        System.out.println(new Solution().findKthLargest(nums,k));
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const nums=lines[0].split(' ').map(Number),k=parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(findKthLargest(nums,k));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main(){
+    int nums[100001],n=0,k;
+    char buf[2000000];fgets(buf,sizeof(buf),stdin);
+    char*p=buf;while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}nums[n++]=strtol(p,&p,10);}
+    scanf("%d",&k);
+    printf("%d\\n",findKthLargest(nums,n,k));return 0;
+}`,
+    },
+    aiContext: 'Kth Largest Element — min-heap or quickselect O(n log k)',
+  },
+
+  // ── 104. Daily Temperatures ───────────────────────────────────────────────────
+  {
+    number: 104, title: 'Daily Temperatures', slug: 'daily-temperatures', difficulty: 'Medium',
+    tags: ['Array', 'Stack', 'Monotonic Stack'], companies: ['Amazon', 'Uber', 'Facebook'],
+    acceptance: 66.5, premium: false,
+    description: `Given temperatures, return an array where each element is the number of days until a warmer temperature (0 if none). Print space-separated.`,
+    examples: [
+      { input: '73 74 75 71 69 72 76 73', output: '1 1 4 2 1 1 0 0' },
+      { input: '30 40 50 60',             output: '1 1 1 0'           },
+    ],
+    constraints: ['1 ≤ temperatures.length ≤ 10⁵', '30 ≤ temperatures[i] ≤ 100'],
+    testCases: [
+      { input: '73 74 75 71 69 72 76 73', expected: '1 1 4 2 1 1 0 0', hidden: false },
+      { input: '30 40 50 60',             expected: '1 1 1 0',           hidden: false },
+      { input: '30 60 90',                expected: '1 1 0',             hidden: true  },
+    ],
+    hints: [
+      'Use a monotonic decreasing stack of indices.',
+      'When current temp > top, pop and record the difference.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& temperatures) {
+
+    }
+};`,
+      python: `class Solution:
+    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] dailyTemperatures(int[] temperatures) {
+
+    }
+}`,
+      javascript: `var dailyTemperatures = function(temperatures) {
+
+};`,
+      c: `int* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    vector<int>t;int x;while(cin>>x)t.push_back(x);
+    auto res=Solution().dailyTemperatures(t);
+    for(int i=0;i<(int)res.size();i++)cout<<(i?" ":"")<<res[i];
+    cout<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+t=list(map(int,sys.stdin.read().split()))
+print(*Solution().dailyTemperatures(t))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        List<Integer>list=new ArrayList<>();while(sc.hasNextInt())list.add(sc.nextInt());
+        int[]t=list.stream().mapToInt(i->i).toArray();
+        int[]res=new Solution().dailyTemperatures(t);
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<res.length;i++)sb.append(i>0?" ":"").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const t=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(dailyTemperatures(t).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main(){
+    int t[100001],n=0;while(scanf("%d",&t[n])==1)n++;
+    int retSize;int*res=dailyTemperatures(t,n,&retSize);
+    for(int i=0;i<retSize;i++)printf("%s%d",i?" ":"",res[i]);
+    printf("\\n");free(res);return 0;
+}`,
+    },
+    aiContext: 'Daily Temperatures — monotonic stack O(n)',
+  },
+
+  // ── 105. Palindrome Linked List ───────────────────────────────────────────────
+  {
+    number: 105, title: 'Palindrome Linked List', slug: 'palindrome-linked-list', difficulty: 'Easy',
+    tags: ['Linked List', 'Two Pointers', 'Recursion'], companies: ['Amazon', 'Facebook', 'Apple'],
+    acceptance: 50.2, premium: false,
+    description: `Given the head of a singly linked list (space-separated values), return <code>true</code> if it is a palindrome, <code>false</code> otherwise.`,
+    examples: [
+      { input: '1 2 2 1', output: 'true'  },
+      { input: '1 2',     output: 'false' },
+    ],
+    constraints: ['1 ≤ n ≤ 10⁵', '0 ≤ Node.val ≤ 9'],
+    testCases: [
+      { input: '1 2 2 1',   expected: 'true',  hidden: false },
+      { input: '1 2',       expected: 'false', hidden: false },
+      { input: '1',         expected: 'true',  hidden: true  },
+      { input: '1 2 1',     expected: 'true',  hidden: true  },
+      { input: '1 2 3 2 1', expected: 'true',  hidden: true  },
+    ],
+    hints: [
+      'Find the middle using slow/fast pointers.',
+      'Reverse the second half, then compare.',
+    ],
+    starter: {
+      cpp: `/**
+ * struct ListNode { int val; ListNode *next; ... };
+ */
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+
+    }
+};`,
+      python: `class Solution:
+    def isPalindrome(self, head: Optional[ListNode]) -> bool:
+        `,
+      java: `class Solution {
+    public boolean isPalindrome(ListNode head) {
+
+    }
+}`,
+      javascript: `var isPalindrome = function(head) {
+
+};`,
+      c: `bool isPalindrome(struct ListNode* head) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+struct ListNode{int val;ListNode*next;ListNode(int x):val(x),next(nullptr){}};
+
+__USER_CODE__
+
+int main(){
+    vector<int>v;int x;while(cin>>x)v.push_back(x);
+    ListNode*head=new ListNode(v[0]),*cur=head;
+    for(int i=1;i<(int)v.size();i++){cur->next=new ListNode(v[i]);cur=cur->next;}
+    cout<<(Solution().isPalindrome(head)?"true":"false")<<endl;return 0;
+}`,
+      python: `from typing import Optional
+import sys
+class ListNode:
+    def __init__(self,val=0,next=None):self.val=val;self.next=next
+
+__USER_CODE__
+
+v=list(map(int,sys.stdin.read().split()))
+head=ListNode(v[0]);cur=head
+for val in v[1:]:cur.next=ListNode(val);cur=cur.next
+print(str(Solution().isPalindrome(head)).lower())`,
+      java: `import java.util.*;
+class ListNode{int val;ListNode next;ListNode(int v){val=v;}}
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        List<Integer>list=new ArrayList<>();while(sc.hasNextInt())list.add(sc.nextInt());
+        ListNode head=new ListNode(list.get(0)),cur=head;
+        for(int i=1;i<list.size();i++){cur.next=new ListNode(list.get(i));cur=cur.next;}
+        System.out.println(new Solution().isPalindrome(head));
+    }
+}`,
+      javascript: `const v=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+function ListNode(val,next){this.val=val??0;this.next=next??null;}
+
+__USER_CODE__
+
+let head=new ListNode(v[0]),cur=head;
+for(let i=1;i<v.length;i++){cur.next=new ListNode(v[i]);cur=cur.next;}
+console.log(String(isPalindrome(head)));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+struct ListNode{int val;struct ListNode*next;};
+
+__USER_CODE__
+
+int main(){
+    int v[100001],n=0;while(scanf("%d",&v[n])==1)n++;
+    struct ListNode*nodes=malloc(n*sizeof(struct ListNode));
+    for(int i=0;i<n;i++){nodes[i].val=v[i];nodes[i].next=i+1<n?&nodes[i+1]:NULL;}
+    printf("%s\\n",isPalindrome(&nodes[0])?"true":"false");
+    free(nodes);return 0;
+}`,
+    },
+    aiContext: 'Palindrome Linked List — slow/fast + reverse O(n)',
+  },
+
+  // ── 106. Reverse Linked List II ───────────────────────────────────────────────
+  {
+    number: 106, title: 'Reverse Linked List II', slug: 'reverse-linked-list-ii', difficulty: 'Medium',
+    tags: ['Linked List'], companies: ['Amazon', 'Facebook', 'Microsoft'],
+    acceptance: 46.1, premium: false,
+    description: `Reverse nodes of a linked list from position <code>left</code> to <code>right</code>.<br><br>First line: list values. Second line: left right.`,
+    examples: [
+      { input: '1 2 3 4 5\n2 4', output: '1 4 3 2 5' },
+      { input: '5\n1 1',         output: '5'           },
+    ],
+    constraints: ['1 ≤ n ≤ 500', '1 ≤ left ≤ right ≤ n'],
+    testCases: [
+      { input: '1 2 3 4 5\n2 4', expected: '1 4 3 2 5', hidden: false },
+      { input: '5\n1 1',         expected: '5',           hidden: false },
+      { input: '1 2 3\n1 3',     expected: '3 2 1',      hidden: true  },
+    ],
+    hints: [
+      'Use a dummy head.',
+      'Navigate to left-1, then reverse in-place from left to right.',
+    ],
+    starter: {
+      cpp: `/**
+ * struct ListNode { int val; ListNode *next; ... };
+ */
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
+
+    }
+};`,
+      python: `class Solution:
+    def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+        `,
+      java: `class Solution {
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+
+    }
+}`,
+      javascript: `var reverseBetween = function(head, left, right) {
+
+};`,
+      c: `struct ListNode* reverseBetween(struct ListNode* head, int left, int right) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+struct ListNode{int val;ListNode*next;ListNode(int x):val(x),next(nullptr){}};
+
+__USER_CODE__
+
+int main(){
+    string line;getline(cin,line);
+    istringstream ss(line);vector<int>v;int x;while(ss>>x)v.push_back(x);
+    int l,r;cin>>l>>r;
+    ListNode*head=new ListNode(v[0]),*cur=head;
+    for(int i=1;i<(int)v.size();i++){cur->next=new ListNode(v[i]);cur=cur->next;}
+    ListNode*res=Solution().reverseBetween(head,l,r);
+    bool first=true;while(res){if(!first)cout<<" ";cout<<res->val;res=res->next;first=false;}
+    cout<<endl;return 0;
+}`,
+      python: `from typing import Optional
+import sys
+class ListNode:
+    def __init__(self,val=0,next=None):self.val=val;self.next=next
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+v=list(map(int,lines[0].split()));l,r=map(int,lines[1].split())
+head=ListNode(v[0]);cur=head
+for val in v[1:]:cur.next=ListNode(val);cur=cur.next
+res=Solution().reverseBetween(head,l,r)
+out=[]
+while res:out.append(str(res.val));res=res.next
+print(' '.join(out))`,
+      java: `import java.util.*;
+class ListNode{int val;ListNode next;ListNode(int v){val=v;}}
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        int[]v=Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int l=sc.nextInt(),r=sc.nextInt();
+        ListNode head=new ListNode(v[0]),cur=head;
+        for(int i=1;i<v.length;i++){cur.next=new ListNode(v[i]);cur=cur.next;}
+        ListNode res=new Solution().reverseBetween(head,l,r);
+        StringBuilder sb=new StringBuilder();
+        while(res!=null){if(sb.length()>0)sb.append(" ");sb.append(res.val);res=res.next;}
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').split('\\n');
+const v=lines[0].trim().split(' ').map(Number);
+const[l,r]=lines[1].trim().split(' ').map(Number);
+function ListNode(val,next){this.val=val??0;this.next=next??null;}
+
+__USER_CODE__
+
+let head=new ListNode(v[0]),cur=head;
+for(let i=1;i<v.length;i++){cur.next=new ListNode(v[i]);cur=cur.next;}
+let res=reverseBetween(head,l,r);
+const out=[];while(res){out.push(res.val);res=res.next;}
+console.log(out.join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+struct ListNode{int val;struct ListNode*next;};
+struct ListNode*newNode(int v){struct ListNode*n=malloc(sizeof(struct ListNode));n->val=v;n->next=NULL;return n;}
+
+__USER_CODE__
+
+int main(){
+    int v[501],nv=0,l,r;
+    char buf[10000];fgets(buf,sizeof(buf),stdin);
+    char*p=buf;while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}v[nv++]=strtol(p,&p,10);}
+    scanf("%d %d",&l,&r);
+    struct ListNode*head=newNode(v[0]),*cur=head;
+    for(int i=1;i<nv;i++){cur->next=newNode(v[i]);cur=cur->next;}
+    struct ListNode*res=reverseBetween(head,l,r);
+    int first=1;while(res){if(!first)printf(" ");printf("%d",res->val);res=res->next;first=0;}
+    printf("\\n");return 0;
+}`,
+    },
+    aiContext: 'Reverse Linked List II — one pass with dummy head O(n)',
+  },
+
+  // ── 107. Next Permutation ─────────────────────────────────────────────────────
+  {
+    number: 107, title: 'Next Permutation', slug: 'next-permutation', difficulty: 'Medium',
+    tags: ['Array', 'Two Pointers'], companies: ['Google', 'Amazon', 'Microsoft'],
+    acceptance: 38.5, premium: false,
+    description: `Given an array, find the next permutation in lexicographic order. If it is the last permutation, rearrange to the smallest. Do it in-place.`,
+    examples: [
+      { input: '1 2 3', output: '1 3 2' },
+      { input: '3 2 1', output: '1 2 3' },
+      { input: '1 1 5', output: '1 5 1' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 100'],
+    testCases: [
+      { input: '1 2 3', expected: '1 3 2', hidden: false },
+      { input: '3 2 1', expected: '1 2 3', hidden: false },
+      { input: '1 1 5', expected: '1 5 1', hidden: false },
+      { input: '2 3 1', expected: '3 1 2', hidden: true  },
+    ],
+    hints: [
+      'Find largest i where nums[i] < nums[i+1].',
+      'Find largest j > i where nums[j] > nums[i]. Swap.',
+      'Reverse suffix after index i.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def nextPermutation(self, nums: List[int]) -> None:
+        `,
+      java: `class Solution {
+    public void nextPermutation(int[] nums) {
+
+    }
+}`,
+      javascript: `var nextPermutation = function(nums) {
+
+};`,
+      c: `void nextPermutation(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    vector<int>nums;int x;while(cin>>x)nums.push_back(x);
+    Solution().nextPermutation(nums);
+    for(int i=0;i<(int)nums.size();i++)cout<<(i?" ":"")<<nums[i];
+    cout<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums=list(map(int,sys.stdin.read().split()))
+Solution().nextPermutation(nums)
+print(*nums)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        List<Integer>list=new ArrayList<>();while(sc.hasNextInt())list.add(sc.nextInt());
+        int[]nums=list.stream().mapToInt(i->i).toArray();
+        new Solution().nextPermutation(nums);
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<nums.length;i++)sb.append(i>0?" ":"").append(nums[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const nums=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+nextPermutation(nums);
+console.log(nums.join(' '));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main(){
+    int nums[101],n=0;while(scanf("%d",&nums[n])==1)n++;
+    nextPermutation(nums,n);
+    for(int i=0;i<n;i++)printf("%s%d",i?" ":"",nums[i]);
+    printf("\\n");return 0;
+}`,
+    },
+    aiContext: 'Next Permutation — find pivot, swap, reverse O(n)',
+  },
+
+  // ── 108. Subarray Sum Equals K ────────────────────────────────────────────────
+  {
+    number: 108, title: 'Subarray Sum Equals K', slug: 'subarray-sum-equals-k', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'Prefix Sum'], companies: ['Facebook', 'Google', 'Amazon'],
+    acceptance: 43.7, premium: false,
+    description: `Return the total number of subarrays whose sum equals <code>k</code>.<br><br>First line: space-separated nums. Second line: k.`,
+    examples: [
+      { input: '1 1 1\n2', output: '2' },
+      { input: '1 2 3\n3', output: '2' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 2×10⁴', '-1000 ≤ nums[i] ≤ 1000'],
+    testCases: [
+      { input: '1 1 1\n2',   expected: '2', hidden: false },
+      { input: '1 2 3\n3',   expected: '2', hidden: false },
+      { input: '1\n1',       expected: '1', hidden: true  },
+      { input: '-1 -1 1\n0', expected: '1', hidden: true  },
+    ],
+    hints: [
+      'Use prefix sums and a hash map.',
+      'For each prefix sum s, add count of (s - k) from map.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+
+    }
+};`,
+      python: `class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        `,
+      java: `class Solution {
+    public int subarraySum(int[] nums, int k) {
+
+    }
+}`,
+      javascript: `var subarraySum = function(nums, k) {
+
+};`,
+      c: `int subarraySum(int* nums, int numsSize, int k) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    string line;getline(cin,line);
+    istringstream ss(line);vector<int>nums;int x;while(ss>>x)nums.push_back(x);
+    int k;cin>>k;
+    cout<<Solution().subarraySum(nums,k)<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+nums=list(map(int,lines[0].split()));k=int(lines[1].strip())
+print(Solution().subarraySum(nums,k))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        int[]nums=Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int k=sc.nextInt();
+        System.out.println(new Solution().subarraySum(nums,k));
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const nums=lines[0].split(' ').map(Number),k=parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(subarraySum(nums,k));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main(){
+    int nums[20001],n=0,k;
+    char buf[500000];fgets(buf,sizeof(buf),stdin);
+    char*p=buf;while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}nums[n++]=strtol(p,&p,10);}
+    scanf("%d",&k);
+    printf("%d\\n",subarraySum(nums,n,k));return 0;
+}`,
+    },
+    aiContext: 'Subarray Sum Equals K — prefix sum hash map O(n)',
+  },
+
+  // ── 109. Task Scheduler ──────────────────────────────────────────────────────
+  {
+    number: 109, title: 'Task Scheduler', slug: 'task-scheduler', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'Greedy', 'Counting'], companies: ['Facebook', 'Amazon', 'Google'],
+    acceptance: 57.6, premium: false,
+    description: `Given tasks and cooldown <code>n</code>, return the least number of time units needed (same task must be at least <code>n</code> apart).<br><br>First line: space-separated tasks. Second line: n.`,
+    examples: [
+      { input: 'A A A B B B\n2',   output: '8'  },
+      { input: 'A A A B B B\n0',   output: '6'  },
+      { input: 'A A A A B B C\n2', output: '10' },
+    ],
+    constraints: ['1 ≤ tasks.length ≤ 10⁴', '0 ≤ n ≤ 100'],
+    testCases: [
+      { input: 'A A A B B B\n2',   expected: '8',  hidden: false },
+      { input: 'A A A B B B\n0',   expected: '6',  hidden: false },
+      { input: 'A A A A B B C\n2', expected: '10', hidden: false },
+      { input: 'A\n0',             expected: '1',  hidden: true  },
+    ],
+    hints: [
+      'Count frequency of each task.',
+      'Result = max(tasks.length, (maxFreq-1)*(n+1) + countMaxFreq).',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        `,
+      java: `class Solution {
+    public int leastInterval(char[] tasks, int n) {
+
+    }
+}`,
+      javascript: `var leastInterval = function(tasks, n) {
+
+};`,
+      c: `int leastInterval(char* tasks, int tasksSize, int n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    string line;getline(cin,line);
+    istringstream ss(line);vector<char>tasks;string w;
+    while(ss>>w)tasks.push_back(w[0]);
+    int n;cin>>n;
+    cout<<Solution().leastInterval(tasks,n)<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines=sys.stdin.read().split('\\n')
+tasks=lines[0].split();n=int(lines[1].strip())
+print(Solution().leastInterval(tasks,n))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        Scanner sc=new Scanner(System.in);
+        String[]parts=sc.nextLine().trim().split(" ");
+        char[]tasks=new char[parts.length];for(int i=0;i<parts.length;i++)tasks[i]=parts[i].charAt(0);
+        int n=sc.nextInt();
+        System.out.println(new Solution().leastInterval(tasks,n));
+    }
+}`,
+      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
+const tasks=lines[0].split(' '),n=parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(leastInterval(tasks,n));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main(){
+    char flat[10001];int nt=0,n;
+    char buf[200000];fgets(buf,sizeof(buf),stdin);
+    char*p=strtok(buf," \\n");while(p&&nt<10000){flat[nt++]=p[0];p=strtok(NULL," \\n");}
+    scanf("%d",&n);
+    printf("%d\\n",leastInterval(flat,nt,n));return 0;
+}`,
+    },
+    aiContext: 'Task Scheduler — greedy formula O(n)',
+  },
+
+  // ── 110. Counting Bits ────────────────────────────────────────────────────────
+  {
+    number: 110, title: 'Counting Bits', slug: 'counting-bits', difficulty: 'Easy',
+    tags: ['Dynamic Programming', 'Bit Manipulation'], companies: ['Google', 'Facebook', 'Apple'],
+    acceptance: 74.8, premium: false,
+    description: `Given <code>n</code>, return an array of length <code>n+1</code> where <code>ans[i]</code> is the number of 1s in the binary representation of <code>i</code>. Print space-separated.`,
+    examples: [
+      { input: 'n = 2', output: '0 1 1'       },
+      { input: 'n = 5', output: '0 1 1 2 1 2' },
+    ],
+    constraints: ['0 ≤ n ≤ 10⁵'],
+    testCases: [
+      { input: '2', expected: '0 1 1',       hidden: false },
+      { input: '5', expected: '0 1 1 2 1 2', hidden: false },
+      { input: '0', expected: '0',            hidden: true  },
+      { input: '1', expected: '0 1',          hidden: true  },
+    ],
+    hints: [
+      'dp[i] = dp[i >> 1] + (i & 1).',
+      'Build from 0 to n.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> countBits(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def countBits(self, n: int) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] countBits(int n) {
+
+    }
+}`,
+      javascript: `var countBits = function(n) {
+
+};`,
+      c: `int* countBits(int n, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main(){
+    int n;cin>>n;
+    auto res=Solution().countBits(n);
+    for(int i=0;i<(int)res.size();i++)cout<<(i?" ":"")<<res[i];
+    cout<<endl;return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+n=int(sys.stdin.read().strip())
+print(*Solution().countBits(n))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main{
+    public static void main(String[]args){
+        int n=new Scanner(System.in).nextInt();
+        int[]res=new Solution().countBits(n);
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<res.length;i++)sb.append(i>0?" ":"").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const n=parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
+
+__USER_CODE__
+
+console.log(countBits(n).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main(){
+    int n;scanf("%d",&n);
+    int retSize;int*res=countBits(n,&retSize);
+    for(int i=0;i<retSize;i++)printf("%s%d",i?" ":"",res[i]);
+    printf("\\n");free(res);return 0;
+}`,
+    },
+    aiContext: 'Counting Bits — DP bit shift O(n)',
+  },
+
 ];
 
 // ── Seed ─────────────────────────────────────────────────────────────────────
 let inserted = 0;
 for (const p of problems) {
   const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  await Problem.create({ ...p, slug, aiContext: p.aiContext || `${p.title} — ${p.tags.join(', ')}` });
+  await Problem.findOneAndUpdate(
+    { slug },                    // ← match by slug (unique, stable)
+    { ...p, slug, aiContext: p.aiContext || `${p.title} — ${p.tags.join(', ')}` },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
   inserted++;
   console.log(` #${p.number} ${p.title}`);
 }
