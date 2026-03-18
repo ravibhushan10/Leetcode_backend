@@ -8,15 +8,16 @@ import { authMiddleware } from '../middleware/auth.js';
 const router = express.Router();
 
 const LANG_MAP = {
-  cpp:    { language: 'c++',    version: '10.2.0' },
-  python: { language: 'python', version: '3.10.0' },
-  java:   { language: 'java',   version: '15.0.2' },
+  cpp:        { language: 'c++',        version: '10.2.0'  },
+  python:     { language: 'python',     version: '3.10.0'  },
+  java:       { language: 'java',       version: '15.0.2'  },
   c:          { language: 'c',          version: '10.2.0'  },
   javascript: { language: 'javascript', version: '18.15.0' },
 };
 
 const JUDGE0_BATCH_URL = 'https://judge0-ce.p.rapidapi.com/submissions/batch';
-const JUDGE0_LANG = {  cpp: 54,python: 71, java: 62, c: 50,javascript: 63  }
+const JUDGE0_LANG = { cpp: 54, python: 71, java: 62, c: 50, javascript: 63 };
+
 const judge0Headers = () => ({
   'Content-Type': 'application/json',
   'X-RapidAPI-Key': process.env.JUDGE0_API_KEY,
@@ -24,6 +25,14 @@ const judge0Headers = () => ({
 });
 
 const fixInput = s => s.replace(/\\n/g, '\n');
+
+// ── NEW: inject user code into wrapper template ───────────────────────────────
+// If the problem has a codeWrapper for this language, replace __USER_CODE__
+// with the user's Solution class. Otherwise fall back to raw code (old behavior).
+const applyWrapper = (userCode, wrapper) => {
+  if (!wrapper || !wrapper.trim()) return userCode;
+  return wrapper.replace('__USER_CODE__', userCode);
+};
 
 async function runBatch(code, lang, inputs) {
   try {
@@ -108,11 +117,16 @@ router.post('/run', authMiddleware, async (req, res) => {
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ error: 'Problem not found' });
 
+    // ── inject wrapper ──────────────────────────────────────────────────────
+    const wrapper = problem.codeWrapper?.[language] || '';
+    const finalCode = applyWrapper(code, wrapper);
+    // ───────────────────────────────────────────────────────────────────────
+
     const testCases = problem.testCases.filter(tc => !tc.hidden);
     if (testCases.length === 0) return res.json({ results: [] });
 
     const inputs = testCases.map(tc => fixInput(tc.input));
-    const batchResults = await runBatch(code, lang, inputs);
+    const batchResults = await runBatch(finalCode, lang, inputs);
 
     const results = testCases.map((tc, i) => {
       const r = batchResults[i];
@@ -144,9 +158,14 @@ router.post('/', authMiddleware, async (req, res) => {
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ error: 'Problem not found' });
 
+    // ── inject wrapper ──────────────────────────────────────────────────────
+    const wrapper = problem.codeWrapper?.[language] || '';
+    const finalCode = applyWrapper(code, wrapper);
+    // ───────────────────────────────────────────────────────────────────────
+
     const testCases = problem.testCases;
     if (testCases.length === 0) {
-      const [result] = await runBatch(code, lang, ['']);
+      const [result] = await runBatch(finalCode, lang, ['']);
       const verdict = result.exitCode === 0 ? 'Accepted' : 'Runtime Error';
       const sub = new Submission({
         user: req.user.id, problem: problemId, language, code,
@@ -160,7 +179,7 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 
     const inputs = testCases.map(tc => fixInput(tc.input));
-    const batchResults = await runBatch(code, lang, inputs);
+    const batchResults = await runBatch(finalCode, lang, inputs);
 
     let passed = 0, firstFail = null, totalRuntime = 0;
     for (let i = 0; i < testCases.length; i++) {
@@ -201,7 +220,7 @@ router.post('/', authMiddleware, async (req, res) => {
       user:        req.user.id,
       problem:     problemId,
       language,
-      code,
+      code,          // ← save original user code (not wrapped)
       verdict,
       runtime:     `${Math.round(totalRuntime / testCases.length)}ms`,
       testsPassed: passed,
@@ -262,14 +281,16 @@ async function updateUserStats(userId, problem, accepted) {
 }
 
 function getRatingTitle(r) {
-  if (r < 400)  return 'Newbie';
-  if (r < 800)  return 'Pupil';
-  if (r < 1200) return 'Specialist';
-  if (r < 1600) return 'Expert';
-  if (r < 2000) return 'Candidate Master';
-  if (r < 2400) return 'Master';
-  if (r < 2800) return 'Grandmaster';
-  return 'Legendary';
+ if (r < 400)  return 'Beginner';
+    if (r < 800)  return 'Coder';
+    if (r < 1200) return 'Problem Solver';
+    if (r < 1600) return 'Algorithmist';
+    if (r < 2000) return 'Code Expert';
+    if (r < 2400) return 'Senior Algorithmist';
+    if (r < 2800) return 'Elite Programmer';
+    return 'Legendary Coder';
 }
 
 export default router;
+
+

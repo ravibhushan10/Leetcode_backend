@@ -17,6 +17,17 @@ const StarterCodeSchema = new mongoose.Schema({
   cpp:        { type: String, default: 'class Solution {\npublic:\n    void solve() {}\n};' },
   java:       { type: String, default: 'class Solution {\n    public void solve() {}\n}' },
   javascript: { type: String, default: 'var solve = function() {};' },
+  c:          { type: String, default: 'void solve() {\n    // your code here\n}' },
+}, { _id: false });
+
+// ── NEW: wrapper template per language ────────────────────────────────────────
+// __USER_CODE__ is replaced with the user's Solution class at runtime
+const CodeWrapperSchema = new mongoose.Schema({
+  python:     { type: String, default: '' },
+  cpp:        { type: String, default: '' },
+  java:       { type: String, default: '' },
+  javascript: { type: String, default: '' },
+  c:          { type: String, default: '' },
 }, { _id: false });
 
 const ProblemSchema = new mongoose.Schema({
@@ -28,7 +39,8 @@ const ProblemSchema = new mongoose.Schema({
   examples:    { type: [ExampleSchema], required: true },
   constraints: { type: [String], default: [] },
   testCases:   { type: [TestCaseSchema], default: [] },
-  starter:     { type: StarterCodeSchema, default: () => ({}) },
+  starter:     { type: StarterCodeSchema,    default: () => ({}) },
+  codeWrapper: { type: CodeWrapperSchema,    default: () => ({}) }, // ← NEW
   hints:       { type: [String], default: [] },
   tags:        { type: [String], default: [] },
   companies:   { type: [String], default: [] },
