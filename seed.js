@@ -14091,6 +14091,5343 @@ int main(){
     aiContext: 'Counting Bits — DP bit shift O(n)',
   },
 
+  // ── PROBLEMS 111–120 ──────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 111. Number of Islands II (Union Find) ────────────────────────────────────
+  {
+    number: 111, title: 'Island Perimeter', slug: 'island-perimeter', difficulty: 'Easy',
+    tags: ['Array', 'DFS', 'BFS', 'Matrix'], companies: ['Google', 'Facebook', 'Palantir'],
+    acceptance: 69.5, premium: false,
+    description: `You are given a grid where each cell is either land (1) or water (0). Each row is on a separate line. Compute the perimeter of the island.`,
+    examples: [
+      { input: '0 1 0 0\n1 1 1 0\n0 1 0 0\n1 1 0 0', output: '16' },
+      { input: '1',                                   output: '4'  },
+      { input: '1 0',                                 output: '4'  },
+    ],
+    constraints: ['1 ≤ m, n ≤ 100', 'grid[i][j] is 0 or 1', 'There is exactly one island'],
+    testCases: [
+      { input: '0 1 0 0\n1 1 1 0\n0 1 0 0\n1 1 0 0', expected: '16', hidden: false },
+      { input: '1',                                   expected: '4',  hidden: false },
+      { input: '1 0',                                 expected: '4',  hidden: true  },
+      { input: '1 1\n1 1',                            expected: '8',  hidden: true  },
+    ],
+    hints: [
+      'Each land cell contributes 4 to perimeter.',
+      'Each shared edge between two land cells removes 2.',
+      'Count land cells and shared edges separately.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int islandPerimeter(vector<vector<int>>& grid) {
+
+    }
+};`,
+      python: `class Solution:
+    def islandPerimeter(self, grid: List[List[int]]) -> int:
+        `,
+      java: `class Solution {
+    public int islandPerimeter(int[][] grid) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var islandPerimeter = function(grid) {
+
+};`,
+      c: `int islandPerimeter(int** grid, int gridSize, int* gridColSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<vector<int>> grid; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        istringstream ss(line); vector<int> row; int x;
+        while (ss >> x) row.push_back(x);
+        grid.push_back(row);
+    }
+    Solution sol;
+    cout << sol.islandPerimeter(grid) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+grid = [list(map(int, l.split())) for l in lines]
+print(Solution().islandPerimeter(grid))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<int[]> rows = new ArrayList<>();
+        while (sc.hasNextLine()) {
+            String l = sc.nextLine().trim();
+            if (!l.isEmpty()) rows.add(Arrays.stream(l.split(" ")).mapToInt(Integer::parseInt).toArray());
+        }
+        int[][] grid = rows.toArray(new int[0][]);
+        System.out.println(new Solution().islandPerimeter(grid));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');
+const grid = lines.map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+console.log(islandPerimeter(grid));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int m[101][101], rows = 0, cols = 0; char buf[500];
+    while (fgets(buf, sizeof(buf), stdin)) {
+        if (buf[0] == '\\n') continue;
+        char *p = buf; int j = 0;
+        while (*p && *p != '\\n') { if (*p == ' ') { p++; continue; } m[rows][j++] = strtol(p, &p, 10); }
+        cols = j; rows++;
+    }
+    int *ptrs[101]; int colSizes[101];
+    for (int i = 0; i < rows; i++) { ptrs[i] = m[i]; colSizes[i] = cols; }
+    printf("%d\\n", islandPerimeter((int**)ptrs, rows, colSizes));
+    return 0;
+}`,
+    },
+    aiContext: 'Island Perimeter — count edges O(m*n)',
+  },
+
+  // ── 112. Ransom Note ─────────────────────────────────────────────────────────
+  {
+    number: 112, title: 'Ransom Note', slug: 'ransom-note', difficulty: 'Easy',
+    tags: ['Hash Table', 'String', 'Counting'], companies: ['Amazon', 'Apple', 'Bloomberg'],
+    acceptance: 58.3, premium: false,
+    description: `Given two strings <code>ransomNote</code> and <code>magazine</code>, return <code>true</code> if <code>ransomNote</code> can be constructed using letters from <code>magazine</code>.<br><br>First line: ransomNote. Second line: magazine.`,
+    examples: [
+      { input: 'a\nb',   output: 'false' },
+      { input: 'aa\nab', output: 'false' },
+      { input: 'aa\naab', output: 'true' },
+    ],
+    constraints: ['1 ≤ ransomNote.length, magazine.length ≤ 10⁵', 'Both consist of lowercase English letters'],
+    testCases: [
+      { input: 'a\nb',    expected: 'false', hidden: false },
+      { input: 'aa\nab',  expected: 'false', hidden: false },
+      { input: 'aa\naab', expected: 'true',  hidden: false },
+      { input: 'bg\nefjbdfbdgfjhhaiigfhbaejahgfbbgbjagbddfgdiaigdadhcfcj', expected: 'true', hidden: true },
+    ],
+    hints: [
+      'Count character frequencies in magazine.',
+      'Check if ransomNote can be satisfied by those counts.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool canConstruct(string ransomNote, string magazine) {
+
+    }
+};`,
+      python: `class Solution:
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        `,
+      java: `class Solution {
+    public boolean canConstruct(String ransomNote, String magazine) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} ransomNote
+ * @param {string} magazine
+ * @return {boolean}
+ */
+var canConstruct = function(ransomNote, magazine) {
+
+};`,
+      c: `bool canConstruct(char* ransomNote, char* magazine) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string r, m;
+    getline(cin, r); getline(cin, m);
+    Solution sol;
+    cout << (sol.canConstruct(r, m) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+r = lines[0]; m = lines[1] if len(lines) > 1 else ''
+print(str(Solution().canConstruct(r, m)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String r = sc.nextLine(), m = sc.nextLine();
+        System.out.println(new Solution().canConstruct(r, m));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').split('\\n');
+const r = lines[0], m = lines[1] || '';
+
+__USER_CODE__
+
+console.log(String(canConstruct(r, m)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char r[100001], m[100001];
+    fgets(r, sizeof(r), stdin); fgets(m, sizeof(m), stdin);
+    int nr = strlen(r), nm = strlen(m);
+    if (r[nr-1] == '\\n') r[--nr] = '\\0';
+    if (m[nm-1] == '\\n') m[--nm] = '\\0';
+    printf("%s\\n", canConstruct(r, m) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Ransom Note — character frequency count O(n)',
+  },
+
+  // ── 113. Maximum Number of Vowels in a Substring of Given Length ──────────────
+  {
+    number: 113, title: 'Maximum Number of Vowels in a Substring of Given Length', slug: 'maximum-number-of-vowels-in-a-substring-of-given-length', difficulty: 'Medium',
+    tags: ['String', 'Sliding Window'], companies: ['Google', 'Amazon'],
+    acceptance: 57.2, premium: false,
+    description: `Given a string <code>s</code> and integer <code>k</code>, return the maximum number of vowel letters in any substring of length <code>k</code>.<br><br>First line: s. Second line: k.`,
+    examples: [
+      { input: 'abciiidef\n3', output: '3', explanation: '"iii" has 3 vowels' },
+      { input: 'aeiou\n2',     output: '2' },
+      { input: 'leetcode\n3',  output: '2' },
+    ],
+    constraints: ['1 ≤ s.length ≤ 10⁵', 's consists of lowercase English letters', '1 ≤ k ≤ s.length'],
+    testCases: [
+      { input: 'abciiidef\n3', expected: '3', hidden: false },
+      { input: 'aeiou\n2',     expected: '2', hidden: false },
+      { input: 'leetcode\n3',  expected: '2', hidden: false },
+      { input: 'rhythms\n4',   expected: '0', hidden: true  },
+    ],
+    hints: [
+      'Use a sliding window of size k.',
+      'Count vowels in the window.',
+      'Slide: add new char, remove old char, update count.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int maxVowels(string s, int k) {
+
+    }
+};`,
+      python: `class Solution:
+    def maxVowels(self, s: str, k: int) -> int:
+        `,
+      java: `class Solution {
+    public int maxVowels(String s, int k) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @param {number} k
+ * @return {number}
+ */
+var maxVowels = function(s, k) {
+
+};`,
+      c: `int maxVowels(char* s, int k) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s; getline(cin, s);
+    int k; cin >> k;
+    Solution sol;
+    cout << sol.maxVowels(s, k) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+s = lines[0]; k = int(lines[1].strip())
+print(Solution().maxVowels(s, k))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine().trim();
+        int k = sc.nextInt();
+        System.out.println(new Solution().maxVowels(s, k));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');
+const s = lines[0], k = parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(maxVowels(s, k));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char s[100001]; int k;
+    fgets(s, sizeof(s), stdin);
+    int n = strlen(s); if (s[n-1] == '\\n') s[--n] = '\\0';
+    scanf("%d", &k);
+    printf("%d\\n", maxVowels(s, k));
+    return 0;
+}`,
+    },
+    aiContext: 'Maximum Vowels in Substring — sliding window O(n)',
+  },
+
+  // ── 114. Number of Zero-Filled Subarrays ──────────────────────────────────────
+  {
+    number: 114, title: 'Number of Zero-Filled Subarrays', slug: 'number-of-zero-filled-subarrays', difficulty: 'Medium',
+    tags: ['Array', 'Math'], companies: ['Google', 'Amazon'],
+    acceptance: 79.0, premium: false,
+    description: `Given an integer array <code>nums</code>, return the number of subarrays filled with zeros.`,
+    examples: [
+      { input: '1 3 0 0 2 0 0 4', output: '6', explanation: '4 single zeros + 2 pairs of zeros = 6' },
+      { input: '0 0 0 2 0 0',     output: '9' },
+      { input: '2 10 2019',       output: '0' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁵', '-10⁹ ≤ nums[i] ≤ 10⁹'],
+    testCases: [
+      { input: '1 3 0 0 2 0 0 4', expected: '6', hidden: false },
+      { input: '0 0 0 2 0 0',     expected: '9', hidden: false },
+      { input: '2 10 2019',       expected: '0', hidden: false },
+      { input: '0',               expected: '1', hidden: true  },
+    ],
+    hints: [
+      'Count consecutive zeros as a run of length L.',
+      'A run of L zeros contributes L*(L+1)/2 subarrays.',
+      'Sum contributions from all runs.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    long long zeroFilledSubarray(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def zeroFilledSubarray(self, nums: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public long zeroFilledSubarray(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var zeroFilledSubarray = function(nums) {
+
+};`,
+      c: `long long zeroFilledSubarray(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    cout << sol.zeroFilledSubarray(nums) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(Solution().zeroFilledSubarray(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().zeroFilledSubarray(nums));
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(zeroFilledSubarray(nums));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[100001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    printf("%lld\\n", zeroFilledSubarray(nums, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Zero-Filled Subarrays — run-length math O(n)',
+  },
+
+  // ── 115. Largest Perimeter Triangle ──────────────────────────────────────────
+  {
+    number: 115, title: 'Largest Perimeter Triangle', slug: 'largest-perimeter-triangle', difficulty: 'Easy',
+    tags: ['Array', 'Math', 'Greedy', 'Sorting'], companies: ['Amazon', 'Google'],
+    acceptance: 56.6, premium: false,
+    description: `Given an integer array <code>nums</code>, return the largest perimeter of a triangle with a non-zero area formed from three of these lengths. Return 0 if impossible.`,
+    examples: [
+      { input: '2 1 2',       output: '5' },
+      { input: '1 2 1 10',    output: '0' },
+    ],
+    constraints: ['3 ≤ nums.length ≤ 10⁴', '1 ≤ nums[i] ≤ 10⁶'],
+    testCases: [
+      { input: '2 1 2',    expected: '5', hidden: false },
+      { input: '1 2 1 10', expected: '0', hidden: false },
+      { input: '3 2 3 4',  expected: '10', hidden: true },
+      { input: '1 1 1',    expected: '3', hidden: true  },
+    ],
+    hints: [
+      'Sort descending.',
+      'For any triple (a, b, c) sorted descending: valid if b + c > a.',
+      'Check consecutive triples after sorting.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int largestPerimeter(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def largestPerimeter(self, nums: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int largestPerimeter(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var largestPerimeter = function(nums) {
+
+};`,
+      c: `int largestPerimeter(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    cout << sol.largestPerimeter(nums) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(Solution().largestPerimeter(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().largestPerimeter(nums));
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(largestPerimeter(nums));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[10001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    printf("%d\\n", largestPerimeter(nums, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Largest Perimeter Triangle — sort + greedy O(n log n)',
+  },
+
+  // ── 116. Find the Difference ──────────────────────────────────────────────────
+  {
+    number: 116, title: 'Find the Difference', slug: 'find-the-difference', difficulty: 'Easy',
+    tags: ['Hash Table', 'String', 'Bit Manipulation', 'Sorting'], companies: ['Google', 'Amazon'],
+    acceptance: 60.5, premium: false,
+    description: `You are given two strings <code>s</code> and <code>t</code> where <code>t</code> is generated by random shuffling of <code>s</code> plus one extra letter. Return the extra letter.<br><br>First line: s. Second line: t.`,
+    examples: [
+      { input: 'abcd\nabcde', output: 'e' },
+      { input: '\ny',         output: 'y' },
+    ],
+    constraints: ['0 ≤ s.length ≤ 1000', 't.length == s.length + 1'],
+    testCases: [
+      { input: 'abcd\nabcde', expected: 'e', hidden: false },
+      { input: '\ny',         expected: 'y', hidden: false },
+      { input: 'a\naa',       expected: 'a', hidden: true  },
+      { input: 'ae\naee',     expected: 'e', hidden: true  },
+    ],
+    hints: [
+      'XOR all characters in both strings.',
+      'Or use character counts.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    char findTheDifference(string s, string t) {
+
+    }
+};`,
+      python: `class Solution:
+    def findTheDifference(self, s: str, t: str) -> str:
+        `,
+      java: `class Solution {
+    public char findTheDifference(String s, String t) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @param {string} t
+ * @return {character}
+ */
+var findTheDifference = function(s, t) {
+
+};`,
+      c: `char findTheDifference(char* s, char* t) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s, t;
+    getline(cin, s); getline(cin, t);
+    Solution sol;
+    cout << sol.findTheDifference(s, t) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+s = lines[0]; t = lines[1] if len(lines) > 1 else ''
+print(Solution().findTheDifference(s, t))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.hasNextLine() ? sc.nextLine() : "";
+        String t = sc.hasNextLine() ? sc.nextLine() : "";
+        System.out.println(new Solution().findTheDifference(s, t));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').split('\\n');
+const s = lines[0] || '', t = lines[1] || '';
+
+__USER_CODE__
+
+console.log(findTheDifference(s, t));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char s[1001], t[1002];
+    fgets(s, sizeof(s), stdin); fgets(t, sizeof(t), stdin);
+    int ns = strlen(s), nt = strlen(t);
+    if (s[ns-1] == '\\n') s[--ns] = '\\0';
+    if (t[nt-1] == '\\n') t[--nt] = '\\0';
+    printf("%c\\n", findTheDifference(s, t));
+    return 0;
+}`,
+    },
+    aiContext: 'Find the Difference — XOR trick O(n)',
+  },
+
+  // ── 117. Assign Cookies ───────────────────────────────────────────────────────
+  {
+    number: 117, title: 'Assign Cookies', slug: 'assign-cookies', difficulty: 'Easy',
+    tags: ['Array', 'Two Pointers', 'Greedy', 'Sorting'], companies: ['Amazon', 'Google'],
+    acceptance: 53.4, premium: false,
+    description: `Assign cookies to children to maximize the number of content children. Each child <code>i</code> has greed factor <code>g[i]</code>; each cookie <code>j</code> has size <code>s[j]</code>. Child <code>i</code> is content if <code>s[j] >= g[i]</code>.<br><br>First line: g values. Second line: s values.`,
+    examples: [
+      { input: '1 2 3\n1 1', output: '1', explanation: 'Only one child can be satisfied' },
+      { input: '1 2\n1 2 3', output: '2' },
+    ],
+    constraints: ['1 ≤ g.length ≤ 3×10⁴', '0 ≤ s.length ≤ 3×10⁴', '1 ≤ g[i], s[j] ≤ 2³¹-1'],
+    testCases: [
+      { input: '1 2 3\n1 1', expected: '1', hidden: false },
+      { input: '1 2\n1 2 3', expected: '2', hidden: false },
+      { input: '10 9 8 7\n5 6 7 8', expected: '2', hidden: true },
+      { input: '1\n1',       expected: '1', hidden: true  },
+    ],
+    hints: [
+      'Sort both arrays.',
+      'Use two pointers: greedily assign smallest sufficient cookie.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+
+    }
+};`,
+      python: `class Solution:
+    def findContentChildren(self, g: List[int], s: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int findContentChildren(int[] g, int[] s) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} g
+ * @param {number[]} s
+ * @return {number}
+ */
+var findContentChildren = function(g, s) {
+
+};`,
+      c: `int findContentChildren(int* g, int gSize, int* s, int sSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string l1, l2; getline(cin, l1); getline(cin, l2);
+    istringstream s1(l1), s2(l2);
+    vector<int> g, s; int x;
+    while (s1 >> x) g.push_back(x);
+    while (s2 >> x) s.push_back(x);
+    Solution sol;
+    cout << sol.findContentChildren(g, s) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+g = list(map(int, lines[0].split()))
+s = list(map(int, lines[1].split())) if len(lines) > 1 else []
+print(Solution().findContentChildren(g, s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] g = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        String line2 = sc.hasNextLine() ? sc.nextLine().trim() : "";
+        int[] s = line2.isEmpty() ? new int[0] : Arrays.stream(line2.split(" ")).mapToInt(Integer::parseInt).toArray();
+        System.out.println(new Solution().findContentChildren(g, s));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');
+const g = lines[0].split(' ').map(Number);
+const s = lines[1] ? lines[1].split(' ').map(Number) : [];
+
+__USER_CODE__
+
+console.log(findContentChildren(g, s));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int g[30001], s[30001], ng = 0, ns = 0;
+    char buf[500000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while (*p && *p != '\\n') { if (*p == ' ') { p++; continue; } g[ng++] = strtol(p, &p, 10); }
+    fgets(buf, sizeof(buf), stdin); p = buf;
+    while (*p && *p != '\\n') { if (*p == ' ') { p++; continue; } s[ns++] = strtol(p, &p, 10); }
+    printf("%d\\n", findContentChildren(g, ng, s, ns));
+    return 0;
+}`,
+    },
+    aiContext: 'Assign Cookies — sort + two pointers greedy O(n log n)',
+  },
+
+  // ── 118. Lemonade Change ──────────────────────────────────────────────────────
+  {
+    number: 118, title: 'Lemonade Change', slug: 'lemonade-change', difficulty: 'Easy',
+    tags: ['Array', 'Greedy'], companies: ['Amazon', 'Google'],
+    acceptance: 52.8, premium: false,
+    description: `Each customer pays $5, $10, or $20. Lemonade costs $5. Return <code>true</code> if you can give correct change to every customer, <code>false</code> otherwise.`,
+    examples: [
+      { input: '5 5 5 10 20',    output: 'true'  },
+      { input: '5 5 10 10 20',   output: 'false' },
+    ],
+    constraints: ['1 ≤ bills.length ≤ 10⁵', 'bills[i] is 5, 10, or 20'],
+    testCases: [
+      { input: '5 5 5 10 20',  expected: 'true',  hidden: false },
+      { input: '5 5 10 10 20', expected: 'false', hidden: false },
+      { input: '5 5 5 20',     expected: 'true',  hidden: true  },
+      { input: '10 10',        expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Track count of $5 and $10 bills.',
+      'For $10: use one $5 as change.',
+      'For $20: prefer one $10 + one $5; fallback three $5s.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool lemonadeChange(vector<int>& bills) {
+
+    }
+};`,
+      python: `class Solution:
+    def lemonadeChange(self, bills: List[int]) -> bool:
+        `,
+      java: `class Solution {
+    public boolean lemonadeChange(int[] bills) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} bills
+ * @return {boolean}
+ */
+var lemonadeChange = function(bills) {
+
+};`,
+      c: `bool lemonadeChange(int* bills, int billsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> bills; int x;
+    while (cin >> x) bills.push_back(x);
+    Solution sol;
+    cout << (sol.lemonadeChange(bills) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+bills = list(map(int, sys.stdin.read().split()))
+print(str(Solution().lemonadeChange(bills)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] bills = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().lemonadeChange(bills));
+    }
+}`,
+      javascript: `const bills = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(String(lemonadeChange(bills)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int bills[100001], n = 0;
+    while (scanf("%d", &bills[n]) == 1) n++;
+    printf("%s\\n", lemonadeChange(bills, n) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Lemonade Change — greedy bill tracking O(n)',
+  },
+
+  // ── 119. Score of Parentheses ─────────────────────────────────────────────────
+  {
+    number: 119, title: 'Score of Parentheses', slug: 'score-of-parentheses', difficulty: 'Medium',
+    tags: ['String', 'Stack'], companies: ['Google', 'Amazon', 'Facebook'],
+    acceptance: 65.8, premium: false,
+    description: `Given a balanced parentheses string <code>s</code>, return the score.<br><br>Rules: "()" = 1, "AB" = A + B, "(A)" = 2*A.`,
+    examples: [
+      { input: '()',     output: '1' },
+      { input: '(())',   output: '2' },
+      { input: '()()',   output: '2' },
+      { input: '(()(()))', output: '6' },
+    ],
+    constraints: ['2 ≤ s.length ≤ 50', 's consists of ( and )', 's is balanced'],
+    testCases: [
+      { input: '()',       expected: '1', hidden: false },
+      { input: '(())',     expected: '2', hidden: false },
+      { input: '()()',     expected: '2', hidden: false },
+      { input: '(()(()))', expected: '6', hidden: true  },
+    ],
+    hints: [
+      'Use a stack to track depth.',
+      '() at depth d contributes 2^d to the score.',
+      'Or: push 0 for (, pop and merge on ).',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int scoreOfParentheses(string s) {
+
+    }
+};`,
+      python: `class Solution:
+    def scoreOfParentheses(self, s: str) -> int:
+        `,
+      java: `class Solution {
+    public int scoreOfParentheses(String s) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @return {number}
+ */
+var scoreOfParentheses = function(s) {
+
+};`,
+      c: `int scoreOfParentheses(char* s) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s; cin >> s;
+    Solution sol;
+    cout << sol.scoreOfParentheses(s) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+s = sys.stdin.read().strip()
+print(Solution().scoreOfParentheses(s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        String s = new Scanner(System.in).next().trim();
+        System.out.println(new Solution().scoreOfParentheses(s));
+    }
+}`,
+      javascript: `const s = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+
+__USER_CODE__
+
+console.log(scoreOfParentheses(s));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    char s[51]; scanf("%s", s);
+    printf("%d\\n", scoreOfParentheses(s));
+    return 0;
+}`,
+    },
+    aiContext: 'Score of Parentheses — stack or depth approach O(n)',
+  },
+
+  // ── 120. Check if Array Is Sorted and Rotated ─────────────────────────────────
+  {
+    number: 120, title: 'Check if Array Is Sorted and Rotated', slug: 'check-if-array-is-sorted-and-rotated', difficulty: 'Easy',
+    tags: ['Array'], companies: ['Amazon', 'Google'],
+    acceptance: 49.8, premium: false,
+    description: `Given an array <code>nums</code>, return <code>true</code> if it was originally sorted in non-decreasing order, then rotated some number of positions (including zero). Return <code>false</code> otherwise.`,
+    examples: [
+      { input: '3 4 5 1 2', output: 'true',  explanation: '[1,2,3,4,5] rotated 3 times' },
+      { input: '2 1 3 4',   output: 'false', explanation: 'Not a rotation of sorted array' },
+      { input: '1 2 3',     output: 'true',  explanation: 'Already sorted' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 100', '1 ≤ nums[i] ≤ 100'],
+    testCases: [
+      { input: '3 4 5 1 2', expected: 'true',  hidden: false },
+      { input: '2 1 3 4',   expected: 'false', hidden: false },
+      { input: '1 2 3',     expected: 'true',  hidden: false },
+      { input: '1',         expected: 'true',  hidden: true  },
+      { input: '2 1',       expected: 'true',  hidden: true  },
+    ],
+    hints: [
+      'Count "drops" where nums[i] > nums[i+1] (wrapping around).',
+      'At most 1 drop means sorted and rotated.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool check(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def check(self, nums: List[int]) -> bool:
+        `,
+      java: `class Solution {
+    public boolean check(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var check = function(nums) {
+
+};`,
+      c: `bool check(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    cout << (sol.check(nums) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(str(Solution().check(nums)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().check(nums));
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(String(check(nums)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[101], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    printf("%s\\n", check(nums, n) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Check Sorted and Rotated — count drops O(n)',
+  },
+
+
+  // ── PROBLEMS 121–130 ──────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 121. Number of Segments in a String ──────────────────────────────────────
+  {
+    number: 121, title: 'Number of Segments in a String', slug: 'number-of-segments-in-a-string', difficulty: 'Easy',
+    tags: ['String'], companies: ['Google', 'Amazon'],
+    acceptance: 38.1, premium: false,
+    description: `Given a string <code>s</code>, return the number of segments (contiguous sequences of non-space characters).`,
+    examples: [
+      { input: 'Hello, my name is John', output: '5' },
+      { input: 'Hello',                  output: '1' },
+    ],
+    constraints: ['0 ≤ s.length ≤ 300', 's consists of lowercase/uppercase letters, digits, or spaces'],
+    testCases: [
+      { input: 'Hello, my name is John', expected: '5', hidden: false },
+      { input: 'Hello',                  expected: '1', hidden: false },
+      { input: '',                       expected: '0', hidden: true  },
+      { input: '   ',                    expected: '0', hidden: true  },
+      { input: 'love live! mu\'sic forever', expected: '4', hidden: true },
+    ],
+    hints: [
+      'Count transitions from space to non-space.',
+      'Or split on whitespace and count non-empty tokens.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int countSegments(string s) {
+
+    }
+};`,
+      python: `class Solution:
+    def countSegments(self, s: str) -> int:
+        `,
+      java: `class Solution {
+    public int countSegments(String s) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @return {number}
+ */
+var countSegments = function(s) {
+
+};`,
+      c: `int countSegments(char* s) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s;
+    getline(cin, s);
+    Solution sol;
+    cout << sol.countSegments(s) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+s = sys.stdin.readline().rstrip('\\n')
+print(Solution().countSegments(s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.hasNextLine() ? sc.nextLine() : "";
+        System.out.println(new Solution().countSegments(s));
+    }
+}`,
+      javascript: `const s = require('fs').readFileSync('/dev/stdin', 'utf8').replace(/\\n$/, '');
+
+__USER_CODE__
+
+console.log(countSegments(s));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char s[301] = "";
+    fgets(s, sizeof(s), stdin);
+    int n = strlen(s);
+    if (n > 0 && s[n-1] == '\\n') s[--n] = '\\0';
+    printf("%d\\n", countSegments(s));
+    return 0;
+}`,
+    },
+    aiContext: 'Number of Segments in a String — count non-space runs O(n)',
+  },
+
+  // ── 122. Detect Capital ───────────────────────────────────────────────────────
+  {
+    number: 122, title: 'Detect Capital', slug: 'detect-capital', difficulty: 'Easy',
+    tags: ['String'], companies: ['Amazon', 'Apple'],
+    acceptance: 55.8, premium: false,
+    description: `Given a string <code>word</code>, return <code>true</code> if the usage of capitals is correct.<br><br>Valid: all capitals, all lowercase, or only first letter capitalized.`,
+    examples: [
+      { input: 'USA',   output: 'true'  },
+      { input: 'FlaG',  output: 'false' },
+      { input: 'leetcode', output: 'true' },
+    ],
+    constraints: ['1 ≤ word.length ≤ 100', 'word consists of uppercase and lowercase English letters'],
+    testCases: [
+      { input: 'USA',      expected: 'true',  hidden: false },
+      { input: 'FlaG',     expected: 'false', hidden: false },
+      { input: 'leetcode', expected: 'true',  hidden: false },
+      { input: 'Google',   expected: 'true',  hidden: true  },
+      { input: 'G',        expected: 'true',  hidden: true  },
+    ],
+    hints: [
+      'Check all uppercase, all lowercase, or first uppercase rest lowercase.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool detectCapitalUse(string word) {
+
+    }
+};`,
+      python: `class Solution:
+    def detectCapitalUse(self, word: str) -> bool:
+        `,
+      java: `class Solution {
+    public boolean detectCapitalUse(String word) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} word
+ * @return {boolean}
+ */
+var detectCapitalUse = function(word) {
+
+};`,
+      c: `bool detectCapitalUse(char* word) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string word; cin >> word;
+    Solution sol;
+    cout << (sol.detectCapitalUse(word) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+word = sys.stdin.read().strip()
+print(str(Solution().detectCapitalUse(word)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        String word = new Scanner(System.in).next().trim();
+        System.out.println(new Solution().detectCapitalUse(word));
+    }
+}`,
+      javascript: `const word = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+
+__USER_CODE__
+
+console.log(String(detectCapitalUse(word)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    char word[101]; scanf("%s", word);
+    printf("%s\\n", detectCapitalUse(word) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Detect Capital — string case check O(n)',
+  },
+
+  // ── 123. Longest Common Prefix ────────────────────────────────────────────────
+  {
+    number: 123, title: 'Longest Common Prefix', slug: 'longest-common-prefix', difficulty: 'Easy',
+    tags: ['String', 'Trie'], companies: ['Google', 'Amazon', 'Microsoft'],
+    acceptance: 42.3, premium: false,
+    description: `Write a function to find the longest common prefix string among an array of strings. Return an empty string if there is no common prefix.<br><br>Input: space-separated strings on one line.`,
+    examples: [
+      { input: 'flower flow flight', output: 'fl'  },
+      { input: 'dog racecar car',   output: ''    },
+    ],
+    constraints: ['1 ≤ strs.length ≤ 200', '0 ≤ strs[i].length ≤ 200', 'strs[i] consists of lowercase English letters'],
+    testCases: [
+      { input: 'flower flow flight', expected: 'fl', hidden: false },
+      { input: 'dog racecar car',    expected: '',   hidden: false },
+      { input: 'a',                  expected: 'a',  hidden: true  },
+      { input: 'ab a',               expected: 'a',  hidden: true  },
+    ],
+    hints: [
+      'Sort and compare first and last strings.',
+      'Or iteratively reduce prefix.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+
+    }
+};`,
+      python: `class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        `,
+      java: `class Solution {
+    public String longestCommonPrefix(String[] strs) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string[]} strs
+ * @return {string}
+ */
+var longestCommonPrefix = function(strs) {
+
+};`,
+      c: `char* longestCommonPrefix(char** strs, int strsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line);
+    vector<string> strs; string w;
+    while (ss >> w) strs.push_back(w);
+    Solution sol;
+    cout << sol.longestCommonPrefix(strs) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+strs = sys.stdin.read().strip().split()
+print(Solution().longestCommonPrefix(strs))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        String line = new Scanner(System.in).nextLine().trim();
+        String[] strs = line.split(" ");
+        System.out.println(new Solution().longestCommonPrefix(strs));
+    }
+}`,
+      javascript: `const strs = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/);
+
+__USER_CODE__
+
+console.log(longestCommonPrefix(strs));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char words[200][201]; int n = 0;
+    char line[40001]; fgets(line, sizeof(line), stdin);
+    char *p = strtok(line, " \\n");
+    while (p && n < 200) { strcpy(words[n++], p); p = strtok(NULL, " \\n"); }
+    char *ptrs[200]; for (int i = 0; i < n; i++) ptrs[i] = words[i];
+    printf("%s\\n", longestCommonPrefix(ptrs, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Longest Common Prefix — vertical scan or sort O(n*m)',
+  },
+
+  // ── 124. Reverse Words in a String ───────────────────────────────────────────
+  {
+    number: 124, title: 'Reverse Words in a String', slug: 'reverse-words-in-a-string', difficulty: 'Medium',
+    tags: ['Two Pointers', 'String'], companies: ['Microsoft', 'Facebook', 'Apple'],
+    acceptance: 33.6, premium: false,
+    description: `Given an input string <code>s</code>, reverse the order of the words. A word is a sequence of non-space characters. Leading/trailing spaces and multiple spaces between words should be removed.`,
+    examples: [
+      { input: 'the sky is blue',  output: 'blue is sky the' },
+      { input: '  hello world  ',  output: 'world hello'     },
+      { input: 'a good   example', output: 'example good a'  },
+    ],
+    constraints: ['1 ≤ s.length ≤ 10⁴', 's contains letters, digits, and spaces'],
+    testCases: [
+      { input: 'the sky is blue',   expected: 'blue is sky the', hidden: false },
+      { input: '  hello world  ',   expected: 'world hello',     hidden: false },
+      { input: 'a good   example',  expected: 'example good a',  hidden: false },
+      { input: '1',                 expected: '1',               hidden: true  },
+    ],
+    hints: [
+      'Split on whitespace, filter empty strings.',
+      'Reverse the list and join with a single space.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string reverseWords(string s) {
+
+    }
+};`,
+      python: `class Solution:
+    def reverseWords(self, s: str) -> str:
+        `,
+      java: `class Solution {
+    public String reverseWords(String s) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @return {string}
+ */
+var reverseWords = function(s) {
+
+};`,
+      c: `char* reverseWords(char* s) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s; getline(cin, s);
+    Solution sol;
+    cout << sol.reverseWords(s) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+s = sys.stdin.readline().rstrip('\\n')
+print(Solution().reverseWords(s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        String s = new Scanner(System.in).nextLine();
+        System.out.println(new Solution().reverseWords(s));
+    }
+}`,
+      javascript: `const s = require('fs').readFileSync('/dev/stdin', 'utf8').replace(/\\n$/, '');
+
+__USER_CODE__
+
+console.log(reverseWords(s));`,
+      c: `#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    char s[10001];
+    fgets(s, sizeof(s), stdin);
+    int n = strlen(s);
+    if (n > 0 && s[n-1] == '\\n') s[--n] = '\\0';
+    char *res = reverseWords(s);
+    printf("%s\\n", res);
+    return 0;
+}`,
+    },
+    aiContext: 'Reverse Words in a String — split and reverse O(n)',
+  },
+
+  // ── 125. Power of Three ──────────────────────────────────────────────────────
+  {
+    number: 125, title: 'Power of Three', slug: 'power-of-three', difficulty: 'Easy',
+    tags: ['Math', 'Recursion'], companies: ['Google', 'Amazon'],
+    acceptance: 43.1, premium: false,
+    description: `Given an integer <code>n</code>, return <code>true</code> if it is a power of three, <code>false</code> otherwise. An integer is a power of three if there exists an integer <code>x</code> such that <code>n == 3^x</code>.`,
+    examples: [
+      { input: '27',  output: 'true'  },
+      { input: '0',   output: 'false' },
+      { input: '-1',  output: 'false' },
+    ],
+    constraints: ['-2³¹ ≤ n ≤ 2³¹-1'],
+    testCases: [
+      { input: '27',   expected: 'true',  hidden: false },
+      { input: '0',    expected: 'false', hidden: false },
+      { input: '-1',   expected: 'false', hidden: false },
+      { input: '9',    expected: 'true',  hidden: true  },
+      { input: '45',   expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Keep dividing by 3 while divisible.',
+      'At the end, check if n == 1.',
+      'Or: 3^19 = 1162261467 is the max power of 3 in int range; check if it is divisible by n.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool isPowerOfThree(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def isPowerOfThree(self, n: int) -> bool:
+        `,
+      java: `class Solution {
+    public boolean isPowerOfThree(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n
+ * @return {boolean}
+ */
+var isPowerOfThree = function(n) {
+
+};`,
+      c: `bool isPowerOfThree(int n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int n; cin >> n;
+    Solution sol;
+    cout << (sol.isPowerOfThree(n) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+print(str(Solution().isPowerOfThree(n)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int n = new Scanner(System.in).nextInt();
+        System.out.println(new Solution().isPowerOfThree(n));
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin', 'utf8').trim());
+
+__USER_CODE__
+
+console.log(String(isPowerOfThree(n)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int n; scanf("%d", &n);
+    printf("%s\\n", isPowerOfThree(n) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Power of Three — divide or max-power check O(log n)',
+  },
+
+  // ── 126. Ugly Number ─────────────────────────────────────────────────────────
+  {
+    number: 126, title: 'Ugly Number', slug: 'ugly-number', difficulty: 'Easy',
+    tags: ['Math'], companies: ['Amazon', 'Microsoft', 'Bloomberg'],
+    acceptance: 41.8, premium: false,
+    description: `An ugly number is a positive integer whose prime factors are limited to 2, 3, and 5. Given an integer <code>n</code>, return <code>true</code> if <code>n</code> is an ugly number.`,
+    examples: [
+      { input: '6',   output: 'true',  explanation: '6 = 2 × 3' },
+      { input: '1',   output: 'true',  explanation: '1 has no prime factors' },
+      { input: '14',  output: 'false', explanation: '14 = 2 × 7' },
+    ],
+    constraints: ['-2³¹ ≤ n ≤ 2³¹-1'],
+    testCases: [
+      { input: '6',   expected: 'true',  hidden: false },
+      { input: '1',   expected: 'true',  hidden: false },
+      { input: '14',  expected: 'false', hidden: false },
+      { input: '0',   expected: 'false', hidden: true  },
+      { input: '30',  expected: 'true',  hidden: true  },
+    ],
+    hints: [
+      'Divide by 2, 3, 5 while divisible.',
+      'If n becomes 1, it is ugly.',
+      'Negative numbers and 0 are not ugly.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool isUgly(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def isUgly(self, n: int) -> bool:
+        `,
+      java: `class Solution {
+    public boolean isUgly(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n
+ * @return {boolean}
+ */
+var isUgly = function(n) {
+
+};`,
+      c: `bool isUgly(int n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int n; cin >> n;
+    Solution sol;
+    cout << (sol.isUgly(n) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+print(str(Solution().isUgly(n)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int n = new Scanner(System.in).nextInt();
+        System.out.println(new Solution().isUgly(n));
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin', 'utf8').trim());
+
+__USER_CODE__
+
+console.log(String(isUgly(n)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int n; scanf("%d", &n);
+    printf("%s\\n", isUgly(n) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Ugly Number — divide by 2,3,5 O(log n)',
+  },
+
+  // ── 127. Minimum Absolute Difference ─────────────────────────────────────────
+  {
+    number: 127, title: 'Minimum Absolute Difference', slug: 'minimum-absolute-difference', difficulty: 'Easy',
+    tags: ['Array', 'Sorting'], companies: ['Amazon', 'Google'],
+    acceptance: 69.7, premium: false,
+    description: `Given an array of distinct integers <code>arr</code>, find all pairs with the minimum absolute difference. Return a list of pairs in ascending order, each pair printed as <code>a b</code> on a separate line.`,
+    examples: [
+      { input: '4 2 1 3',         output: '1 2\n2 3\n3 4' },
+      { input: '1 3 6 10 15',     output: '1 3'           },
+      { input: '3 8 -10 23 19 -4 -14 27', output: '-14 -10\n19 23\n23 27' },
+    ],
+    constraints: ['2 ≤ arr.length ≤ 10⁵', '-10⁶ ≤ arr[i] ≤ 10⁶', 'All integers are distinct'],
+    testCases: [
+      { input: '4 2 1 3',     expected: '1 2\n2 3\n3 4',   hidden: false },
+      { input: '1 3 6 10 15', expected: '1 3',              hidden: false },
+      { input: '3 8 -10 23 19 -4 -14 27', expected: '-14 -10\n19 23\n23 27', hidden: false },
+      { input: '40 100 3',    expected: '3 40',             hidden: true  },
+    ],
+    hints: [
+      'Sort the array.',
+      'Find the minimum difference between consecutive elements.',
+      'Collect all pairs achieving that minimum.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<vector<int>> minimumAbsDifference(vector<int>& arr) {
+
+    }
+};`,
+      python: `class Solution:
+    def minimumAbsDifference(self, arr: List[int]) -> List[List[int]]:
+        `,
+      java: `class Solution {
+    public List<List<Integer>> minimumAbsDifference(int[] arr) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} arr
+ * @return {number[][]}
+ */
+var minimumAbsDifference = function(arr) {
+
+};`,
+      c: `int** minimumAbsDifference(int* arr, int arrSize, int* returnSize, int** returnColumnSizes) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> arr; int x;
+    while (cin >> x) arr.push_back(x);
+    Solution sol;
+    auto res = sol.minimumAbsDifference(arr);
+    for (auto& p : res) cout << p[0] << " " << p[1] << "\\n";
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+arr = list(map(int, sys.stdin.read().split()))
+for p in Solution().minimumAbsDifference(arr):
+    print(*p)`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] arr = list.stream().mapToInt(i -> i).toArray();
+        for (List<Integer> p : new Solution().minimumAbsDifference(arr))
+            System.out.println(p.get(0) + " " + p.get(1));
+    }
+}`,
+      javascript: `const arr = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+for (const p of minimumAbsDifference(arr)) console.log(p[0] + ' ' + p[1]);`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int arr[100001], n = 0;
+    while (scanf("%d", &arr[n]) == 1) n++;
+    int retSize; int *retColSizes;
+    int **res = minimumAbsDifference(arr, n, &retSize, &retColSizes);
+    for (int i = 0; i < retSize; i++) printf("%d %d\\n", res[i][0], res[i][1]);
+    return 0;
+}`,
+    },
+    aiContext: 'Minimum Absolute Difference — sort + scan O(n log n)',
+  },
+
+  // ── 128. Sort Array by Parity ─────────────────────────────────────────────────
+  {
+    number: 128, title: 'Sort Array by Parity', slug: 'sort-array-by-parity', difficulty: 'Easy',
+    tags: ['Array', 'Two Pointers', 'Sorting'], companies: ['Amazon', 'Google'],
+    acceptance: 75.9, premium: false,
+    description: `Given an integer array <code>nums</code>, move all even integers to the beginning followed by all odd integers. Return any valid answer. Print space-separated.`,
+    examples: [
+      { input: '3 1 2 4', output: '4 2 1 3', explanation: 'Evens first, then odds (any order within each group)' },
+      { input: '0',       output: '0' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 5000', '0 ≤ nums[i] ≤ 5000'],
+    testCases: [
+      { input: '3 1 2 4', expected: '2 4 3 1', hidden: false },
+      { input: '0',       expected: '0',        hidden: false },
+      { input: '1 3 2',   expected: '2 1 3',    hidden: true  },
+      { input: '2 4 6',   expected: '2 4 6',    hidden: true  },
+    ],
+    hints: [
+      'Use two pointers: left starts at 0, right at end.',
+      'Swap when left is odd and right is even.',
+      'Or use stable partition.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> sortArrayByParity(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def sortArrayByParity(self, nums: List[int]) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] sortArrayByParity(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var sortArrayByParity = function(nums) {
+
+};`,
+      c: `int* sortArrayByParity(int* nums, int numsSize, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    auto res = sol.sortArrayByParity(nums);
+    for (int i = 0; i < (int)res.size(); i++) cout << (i ? " " : "") << res[i];
+    cout << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(*Solution().sortArrayByParity(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        int[] res = new Solution().sortArrayByParity(nums);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) sb.append(i > 0 ? " " : "").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(sortArrayByParity(nums).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[5001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    int retSize;
+    int *res = sortArrayByParity(nums, n, &retSize);
+    for (int i = 0; i < retSize; i++) printf("%s%d", i ? " " : "", res[i]);
+    printf("\\n");
+    return 0;
+}`,
+    },
+    aiContext: 'Sort Array by Parity — two pointers O(n)',
+  },
+
+  // ── 129. Height Checker ───────────────────────────────────────────────────────
+  {
+    number: 129, title: 'Height Checker', slug: 'height-checker', difficulty: 'Easy',
+    tags: ['Array', 'Sorting', 'Counting Sort'], companies: ['Amazon', 'Google'],
+    acceptance: 75.4, premium: false,
+    description: `Students are asked to stand in non-decreasing order by height. Return the number of students not standing in the correct position.`,
+    examples: [
+      { input: '1 1 4 2 1 3', output: '3' },
+      { input: '5 1 2 3 4',   output: '5' },
+      { input: '1 2 3 4 5',   output: '0' },
+    ],
+    constraints: ['1 ≤ heights.length ≤ 100', '1 ≤ heights[i] ≤ 100'],
+    testCases: [
+      { input: '1 1 4 2 1 3', expected: '3', hidden: false },
+      { input: '5 1 2 3 4',   expected: '5', hidden: false },
+      { input: '1 2 3 4 5',   expected: '0', hidden: false },
+      { input: '2 1',         expected: '2', hidden: true  },
+    ],
+    hints: [
+      'Sort a copy of the array.',
+      'Count positions where original != sorted.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int heightChecker(vector<int>& heights) {
+
+    }
+};`,
+      python: `class Solution:
+    def heightChecker(self, heights: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int heightChecker(int[] heights) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} heights
+ * @return {number}
+ */
+var heightChecker = function(heights) {
+
+};`,
+      c: `int heightChecker(int* heights, int heightsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> h; int x;
+    while (cin >> x) h.push_back(x);
+    Solution sol;
+    cout << sol.heightChecker(h) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+h = list(map(int, sys.stdin.read().split()))
+print(Solution().heightChecker(h))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] h = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().heightChecker(h));
+    }
+}`,
+      javascript: `const h = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(heightChecker(h));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int h[101], n = 0;
+    while (scanf("%d", &h[n]) == 1) n++;
+    printf("%d\\n", heightChecker(h, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Height Checker — sort and compare O(n log n)',
+  },
+
+  // ── 130. Third Maximum Number ─────────────────────────────────────────────────
+  {
+    number: 130, title: 'Third Maximum Number', slug: 'third-maximum-number', difficulty: 'Easy',
+    tags: ['Array', 'Sorting'], companies: ['Amazon', 'Google', 'Apple'],
+    acceptance: 33.9, premium: false,
+    description: `Given an integer array <code>nums</code>, return the <strong>third distinct maximum</strong> number. If it does not exist, return the maximum.`,
+    examples: [
+      { input: '3 2 1',   output: '1', explanation: 'Third max is 1' },
+      { input: '1 2',     output: '2', explanation: 'No third max, return max' },
+      { input: '2 2 3 1', output: '1', explanation: 'Third distinct max is 1' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁴', '-2³¹ ≤ nums[i] ≤ 2³¹-1'],
+    testCases: [
+      { input: '3 2 1',   expected: '1', hidden: false },
+      { input: '1 2',     expected: '2', hidden: false },
+      { input: '2 2 3 1', expected: '1', hidden: false },
+      { input: '1 1 1',   expected: '1', hidden: true  },
+      { input: '1 2 3 4', expected: '2', hidden: true  },
+    ],
+    hints: [
+      'Use a sorted set of size at most 3.',
+      'Track top-3 distinct maximums.',
+      'If fewer than 3 distinct values exist, return the maximum.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int thirdMax(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def thirdMax(self, nums: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int thirdMax(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var thirdMax = function(nums) {
+
+};`,
+      c: `int thirdMax(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    cout << sol.thirdMax(nums) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(Solution().thirdMax(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().thirdMax(nums));
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(thirdMax(nums));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[10001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    printf("%d\\n", thirdMax(nums, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Third Maximum Number — top-3 set O(n)',
+  },
+
+
+  // ── PROBLEMS 131–140 ──────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 131. Add Digits ───────────────────────────────────────────────────────────
+  {
+    number: 131, title: 'Add Digits', slug: 'add-digits', difficulty: 'Easy',
+    tags: ['Math', 'Simulation', 'Number Theory'], companies: ['Amazon', 'Google'],
+    acceptance: 63.4, premium: false,
+    description: `Given an integer <code>num</code>, repeatedly add all its digits until the result has only one digit, and return it.`,
+    examples: [
+      { input: '38', output: '2', explanation: '3+8=11, 1+1=2' },
+      { input: '0',  output: '0' },
+    ],
+    constraints: ['0 ≤ num ≤ 2³¹-1'],
+    testCases: [
+      { input: '38',  expected: '2', hidden: false },
+      { input: '0',   expected: '0', hidden: false },
+      { input: '9',   expected: '9', hidden: true  },
+      { input: '100', expected: '1', hidden: true  },
+      { input: '199', expected: '1', hidden: true  },
+    ],
+    hints: [
+      'Digital root formula: if num == 0 return 0, else return 1 + (num-1) % 9.',
+      'Or just simulate repeatedly summing digits.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int addDigits(int num) {
+
+    }
+};`,
+      python: `class Solution:
+    def addDigits(self, num: int) -> int:
+        `,
+      java: `class Solution {
+    public int addDigits(int num) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} num
+ * @return {number}
+ */
+var addDigits = function(num) {
+
+};`,
+      c: `int addDigits(int num) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int num; cin >> num;
+    Solution sol;
+    cout << sol.addDigits(num) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+num = int(sys.stdin.read().strip())
+print(Solution().addDigits(num))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int num = new Scanner(System.in).nextInt();
+        System.out.println(new Solution().addDigits(num));
+    }
+}`,
+      javascript: `const num = parseInt(require('fs').readFileSync('/dev/stdin', 'utf8').trim());
+
+__USER_CODE__
+
+console.log(addDigits(num));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int num; scanf("%d", &num);
+    printf("%d\\n", addDigits(num));
+    return 0;
+}`,
+    },
+    aiContext: 'Add Digits — digital root formula O(1)',
+  },
+
+  // ── 132. Happy Number ─────────────────────────────────────────────────────────
+  {
+    number: 132, title: 'Happy Number', slug: 'happy-number', difficulty: 'Easy',
+    tags: ['Hash Table', 'Math', 'Two Pointers'], companies: ['Amazon', 'Apple', 'Uber'],
+    acceptance: 54.2, premium: false,
+    description: `A happy number is defined by the process: starting with any positive integer, replace it with the sum of squares of its digits, and repeat until it equals 1 (happy) or loops forever (not happy). Return <code>true</code> if happy.`,
+    examples: [
+      { input: '19', output: 'true',  explanation: '1²+9²=82 → 8²+2²=68 → 6²+8²=100 → 1' },
+      { input: '2',  output: 'false' },
+    ],
+    constraints: ['1 ≤ n ≤ 2³¹-1'],
+    testCases: [
+      { input: '19', expected: 'true',  hidden: false },
+      { input: '2',  expected: 'false', hidden: false },
+      { input: '1',  expected: 'true',  hidden: true  },
+      { input: '7',  expected: 'true',  hidden: true  },
+      { input: '4',  expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Use a set to detect cycles.',
+      'Or use Floyd\'s cycle detection (slow/fast pointers).',
+      'Numbers not happy will cycle through a known set.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool isHappy(int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def isHappy(self, n: int) -> bool:
+        `,
+      java: `class Solution {
+    public boolean isHappy(int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} n
+ * @return {boolean}
+ */
+var isHappy = function(n) {
+
+};`,
+      c: `bool isHappy(int n) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int n; cin >> n;
+    Solution sol;
+    cout << (sol.isHappy(n) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+print(str(Solution().isHappy(n)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int n = new Scanner(System.in).nextInt();
+        System.out.println(new Solution().isHappy(n));
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin', 'utf8').trim());
+
+__USER_CODE__
+
+console.log(String(isHappy(n)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int n; scanf("%d", &n);
+    printf("%s\\n", isHappy(n) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Happy Number — hash set cycle detection O(log n)',
+  },
+
+  // ── 133. Excel Sheet Column Number ───────────────────────────────────────────
+  {
+    number: 133, title: 'Excel Sheet Column Number', slug: 'excel-sheet-column-number', difficulty: 'Easy',
+    tags: ['Math', 'String'], companies: ['Microsoft', 'Google', 'Amazon'],
+    acceptance: 62.3, premium: false,
+    description: `Given a string <code>columnTitle</code> representing an Excel column title, return its corresponding column number.<br><br>A → 1, B → 2, ..., Z → 26, AA → 27, AB → 28, ...`,
+    examples: [
+      { input: 'A',   output: '1'   },
+      { input: 'AB',  output: '28'  },
+      { input: 'ZY',  output: '701' },
+    ],
+    constraints: ['1 ≤ columnTitle.length ≤ 7', 'columnTitle consists of uppercase English letters'],
+    testCases: [
+      { input: 'A',    expected: '1',    hidden: false },
+      { input: 'AB',   expected: '28',   hidden: false },
+      { input: 'ZY',   expected: '701',  hidden: false },
+      { input: 'Z',    expected: '26',   hidden: true  },
+      { input: 'AAA',  expected: '703',  hidden: true  },
+    ],
+    hints: [
+      'Treat it as base-26 number system.',
+      'result = result * 26 + (char - \'A\' + 1).',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int titleToNumber(string columnTitle) {
+
+    }
+};`,
+      python: `class Solution:
+    def titleToNumber(self, columnTitle: str) -> int:
+        `,
+      java: `class Solution {
+    public int titleToNumber(String columnTitle) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} columnTitle
+ * @return {number}
+ */
+var titleToNumber = function(columnTitle) {
+
+};`,
+      c: `int titleToNumber(char* columnTitle) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s; cin >> s;
+    Solution sol;
+    cout << sol.titleToNumber(s) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+s = sys.stdin.read().strip()
+print(Solution().titleToNumber(s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        String s = new Scanner(System.in).next().trim();
+        System.out.println(new Solution().titleToNumber(s));
+    }
+}`,
+      javascript: `const s = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+
+__USER_CODE__
+
+console.log(titleToNumber(s));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    char s[8]; scanf("%s", s);
+    printf("%d\\n", titleToNumber(s));
+    return 0;
+}`,
+    },
+    aiContext: 'Excel Sheet Column Number — base-26 conversion O(n)',
+  },
+
+  // ── 134. Excel Sheet Column Title ─────────────────────────────────────────────
+  {
+    number: 134, title: 'Excel Sheet Column Title', slug: 'excel-sheet-column-title', difficulty: 'Easy',
+    tags: ['Math', 'String'], companies: ['Microsoft', 'Amazon', 'Google'],
+    acceptance: 36.7, premium: false,
+    description: `Given an integer <code>columnNumber</code>, return its corresponding Excel column title.<br><br>1 → A, 2 → B, ..., 26 → Z, 27 → AA, 28 → AB, ...`,
+    examples: [
+      { input: '1',   output: 'A'   },
+      { input: '28',  output: 'AB'  },
+      { input: '701', output: 'ZY'  },
+    ],
+    constraints: ['1 ≤ columnNumber ≤ 2³¹-1'],
+    testCases: [
+      { input: '1',   expected: 'A',   hidden: false },
+      { input: '28',  expected: 'AB',  hidden: false },
+      { input: '701', expected: 'ZY',  hidden: false },
+      { input: '26',  expected: 'Z',   hidden: true  },
+      { input: '703', expected: 'AAA', hidden: true  },
+    ],
+    hints: [
+      'Subtract 1 before taking mod 26 to handle the Z case.',
+      'Prepend the character to the result string.',
+      'Repeat until columnNumber is 0.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string convertToTitle(int columnNumber) {
+
+    }
+};`,
+      python: `class Solution:
+    def convertToTitle(self, columnNumber: int) -> str:
+        `,
+      java: `class Solution {
+    public String convertToTitle(int columnNumber) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} columnNumber
+ * @return {string}
+ */
+var convertToTitle = function(columnNumber) {
+
+};`,
+      c: `char* convertToTitle(int columnNumber) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int n; cin >> n;
+    Solution sol;
+    cout << sol.convertToTitle(n) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+n = int(sys.stdin.read().strip())
+print(Solution().convertToTitle(n))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int n = new Scanner(System.in).nextInt();
+        System.out.println(new Solution().convertToTitle(n));
+    }
+}`,
+      javascript: `const n = parseInt(require('fs').readFileSync('/dev/stdin', 'utf8').trim());
+
+__USER_CODE__
+
+console.log(convertToTitle(n));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int n; scanf("%d", &n);
+    printf("%s\\n", convertToTitle(n));
+    return 0;
+}`,
+    },
+    aiContext: 'Excel Sheet Column Title — base-26 reverse O(log n)',
+  },
+
+  // ── 135. Contains Nearby Duplicate ───────────────────────────────────────────
+  {
+    number: 135, title: 'Contains Duplicate II', slug: 'contains-duplicate-ii', difficulty: 'Easy',
+    tags: ['Array', 'Hash Table', 'Sliding Window'], companies: ['Palantir', 'Airbnb', 'Amazon'],
+    acceptance: 43.5, premium: false,
+    description: `Given an integer array <code>nums</code> and an integer <code>k</code>, return <code>true</code> if there are two distinct indices <code>i</code> and <code>j</code> such that <code>nums[i] == nums[j]</code> and <code>|i - j| <= k</code>.<br><br>First line: space-separated nums. Second line: k.`,
+    examples: [
+      { input: '1 2 3 1\n3',       output: 'true'  },
+      { input: '1 0 1 1\n1',       output: 'true'  },
+      { input: '1 2 3 1 2 3\n2',   output: 'false' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁵', '-10⁹ ≤ nums[i] ≤ 10⁹', '0 ≤ k ≤ 10⁵'],
+    testCases: [
+      { input: '1 2 3 1\n3',     expected: 'true',  hidden: false },
+      { input: '1 0 1 1\n1',     expected: 'true',  hidden: false },
+      { input: '1 2 3 1 2 3\n2', expected: 'false', hidden: false },
+      { input: '1 2 1\n0',       expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Use a hash map storing the most recent index of each value.',
+      'If nums[i] was seen at index j and i - j <= k, return true.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool containsNearbyDuplicate(vector<int>& nums, int k) {
+
+    }
+};`,
+      python: `class Solution:
+    def containsNearbyDuplicate(self, nums: List[int], k: int) -> bool:
+        `,
+      java: `class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {boolean}
+ */
+var containsNearbyDuplicate = function(nums, k) {
+
+};`,
+      c: `bool containsNearbyDuplicate(int* nums, int numsSize, int k) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line);
+    vector<int> nums; int x;
+    while (ss >> x) nums.push_back(x);
+    int k; cin >> k;
+    Solution sol;
+    cout << (sol.containsNearbyDuplicate(nums, k) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+nums = list(map(int, lines[0].split()))
+k = int(lines[1].strip())
+print(str(Solution().containsNearbyDuplicate(nums, k)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] nums = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int k = sc.nextInt();
+        System.out.println(new Solution().containsNearbyDuplicate(nums, k));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');
+const nums = lines[0].split(' ').map(Number), k = parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(String(containsNearbyDuplicate(nums, k)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[100001], n = 0, k;
+    char buf[2000000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while (*p && *p != '\\n') { if (*p == ' ') { p++; continue; } nums[n++] = strtol(p, &p, 10); }
+    scanf("%d", &k);
+    printf("%s\\n", containsNearbyDuplicate(nums, n, k) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Contains Duplicate II — hash map index tracking O(n)',
+  },
+
+  // ── 136. Implement Stack using Queues ─────────────────────────────────────────
+  {
+    number: 136, title: 'Implement Stack using Queues', slug: 'implement-stack-using-queues', difficulty: 'Easy',
+    tags: ['Stack', 'Design', 'Queue'], companies: ['Bloomberg', 'Microsoft', 'Amazon'],
+    acceptance: 56.2, premium: false,
+    description: `Implement a last-in-first-out (LIFO) stack using only two queues.<br><br>Input: operations one per line (<code>push v</code>, <code>pop</code>, <code>top</code>, <code>empty</code>). Print result of <code>pop</code>, <code>top</code>, <code>empty</code>.`,
+    examples: [
+      { input: 'push 1\npush 2\ntop\npop\nempty', output: '2\n2\nfalse' },
+    ],
+    constraints: ['1 ≤ x ≤ 9', 'At most 100 calls', 'pop/top called on non-empty stack'],
+    testCases: [
+      { input: 'push 1\npush 2\ntop\npop\nempty', expected: '2\n2\nfalse', hidden: false },
+      { input: 'push 1\ntop\npop\nempty',          expected: '1\n1\ntrue', hidden: true  },
+      { input: 'push 3\npush 5\ntop\npop\ntop',    expected: '5\n5\n3',   hidden: true  },
+    ],
+    hints: [
+      'On push, enqueue to main queue then rotate all existing elements to the back.',
+      'This keeps newest element at front for O(n) push, O(1) top/pop.',
+    ],
+    starter: {
+      cpp: `class MyStack {
+public:
+    MyStack() {
+
+    }
+
+    void push(int x) {
+
+    }
+
+    int pop() {
+
+    }
+
+    int top() {
+
+    }
+
+    bool empty() {
+
+    }
+};`,
+      python: `class MyStack:
+
+    def __init__(self):
+
+
+    def push(self, x: int) -> None:
+
+
+    def pop(self) -> int:
+
+
+    def top(self) -> int:
+
+
+    def empty(self) -> bool:
+        `,
+      java: `class MyStack {
+
+    public MyStack() {
+
+    }
+
+    public void push(int x) {
+
+    }
+
+    public int pop() {
+
+    }
+
+    public int top() {
+
+    }
+
+    public boolean empty() {
+
+    }
+}`,
+      javascript: `var MyStack = function() {
+
+};
+
+MyStack.prototype.push = function(x) {
+
+};
+
+MyStack.prototype.pop = function() {
+
+};
+
+MyStack.prototype.top = function() {
+
+};
+
+MyStack.prototype.empty = function() {
+
+};`,
+      c: `typedef struct MyStack MyStack;
+
+MyStack* myStackCreate() {
+
+}
+
+void myStackPush(MyStack* obj, int x) {
+
+}
+
+int myStackPop(MyStack* obj) {
+
+}
+
+int myStackTop(MyStack* obj) {
+
+}
+
+bool myStackEmpty(MyStack* obj) {
+
+}
+
+void myStackFree(MyStack* obj) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    MyStack st;
+    string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        if (line.substr(0, 4) == "push") { int v = stoi(line.substr(5)); st.push(v); }
+        else if (line == "pop")   cout << st.pop()   << "\\n";
+        else if (line == "top")   cout << st.top()   << "\\n";
+        else if (line == "empty") cout << (st.empty() ? "true" : "false") << "\\n";
+    }
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+st = MyStack()
+for line in lines:
+    parts = line.split()
+    if parts[0] == 'push': st.push(int(parts[1]))
+    elif parts[0] == 'pop':   print(st.pop())
+    elif parts[0] == 'top':   print(st.top())
+    elif parts[0] == 'empty': print(str(st.empty()).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        MyStack st = new MyStack();
+        while (sc.hasNextLine()) {
+            String line = sc.nextLine().trim(); if (line.isEmpty()) continue;
+            String[] parts = line.split(" ");
+            if (parts[0].equals("push")) st.push(Integer.parseInt(parts[1]));
+            else if (parts[0].equals("pop"))   System.out.println(st.pop());
+            else if (parts[0].equals("top"))   System.out.println(st.top());
+            else if (parts[0].equals("empty")) System.out.println(st.empty());
+        }
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');
+
+__USER_CODE__
+
+const st = new MyStack();
+for (const line of lines) {
+    const parts = line.trim().split(' ');
+    if (parts[0] === 'push') st.push(parseInt(parts[1]));
+    else if (parts[0] === 'pop')   console.log(st.pop());
+    else if (parts[0] === 'top')   console.log(st.top());
+    else if (parts[0] === 'empty') console.log(String(st.empty()));
+}`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    MyStack *st = myStackCreate();
+    char line[50];
+    while (fgets(line, sizeof(line), stdin)) {
+        if (line[0] == '\\n') continue;
+        if (strncmp(line, "push", 4) == 0) { int v = atoi(line + 5); myStackPush(st, v); }
+        else if (strncmp(line, "pop", 3) == 0)   printf("%d\\n", myStackPop(st));
+        else if (strncmp(line, "top", 3) == 0)   printf("%d\\n", myStackTop(st));
+        else if (strncmp(line, "empty", 5) == 0) printf("%s\\n", myStackEmpty(st) ? "true" : "false");
+    }
+    myStackFree(st); return 0;
+}`,
+    },
+    aiContext: 'Implement Stack using Queues — one queue trick O(n) push',
+  },
+
+  // ── 137. Reverse Vowels of a String ──────────────────────────────────────────
+  {
+    number: 137, title: 'Reverse Vowels of a String', slug: 'reverse-vowels-of-a-string', difficulty: 'Easy',
+    tags: ['Two Pointers', 'String'], companies: ['Google', 'Amazon'],
+    acceptance: 49.2, premium: false,
+    description: `Given a string <code>s</code>, reverse only all the vowels in the string and return it.`,
+    examples: [
+      { input: 'IceCreAm', output: 'AceCreIm', explanation: 'Vowels: I, e, e, A → reversed: A, e, e, I' },
+      { input: 'leetcode', output: 'leetcode' },
+    ],
+    constraints: ['1 ≤ s.length ≤ 3×10⁵', 's consists of printable ASCII characters'],
+    testCases: [
+      { input: 'IceCreAm', expected: 'AceCreIm', hidden: false },
+      { input: 'leetcode', expected: 'leetcode', hidden: false },
+      { input: 'hello',    expected: 'holle',    hidden: true  },
+      { input: 'aeiou',    expected: 'uoiea',    hidden: true  },
+    ],
+    hints: [
+      'Use two pointers: left at start, right at end.',
+      'Move each toward center until both are on vowels.',
+      'Swap and continue.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string reverseVowels(string s) {
+
+    }
+};`,
+      python: `class Solution:
+    def reverseVowels(self, s: str) -> str:
+        `,
+      java: `class Solution {
+    public String reverseVowels(String s) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @return {string}
+ */
+var reverseVowels = function(s) {
+
+};`,
+      c: `char* reverseVowels(char* s) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s; getline(cin, s);
+    Solution sol;
+    cout << sol.reverseVowels(s) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+s = sys.stdin.read().strip()
+print(Solution().reverseVowels(s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        String s = new Scanner(System.in).nextLine().trim();
+        System.out.println(new Solution().reverseVowels(s));
+    }
+}`,
+      javascript: `const s = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+
+__USER_CODE__
+
+console.log(reverseVowels(s));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char s[300001];
+    fgets(s, sizeof(s), stdin);
+    int n = strlen(s); if (s[n-1] == '\\n') s[--n] = '\\0';
+    printf("%s\\n", reverseVowels(s));
+    return 0;
+}`,
+    },
+    aiContext: 'Reverse Vowels of a String — two pointers O(n)',
+  },
+
+  // ── 138. Intersection of Two Arrays ──────────────────────────────────────────
+  {
+    number: 138, title: 'Intersection of Two Arrays', slug: 'intersection-of-two-arrays', difficulty: 'Easy',
+    tags: ['Array', 'Hash Table', 'Two Pointers', 'Binary Search', 'Sorting'], companies: ['LinkedIn', 'Google', 'Amazon'],
+    acceptance: 71.4, premium: false,
+    description: `Given two integer arrays <code>nums1</code> and <code>nums2</code>, return an array of their intersection (each element appears once). Print space-separated (sorted).<br><br>First line: nums1. Second line: nums2.`,
+    examples: [
+      { input: '1 2 2 1\n2 2', output: '2'   },
+      { input: '4 9 5\n9 4 9 8 4', output: '4 9' },
+    ],
+    constraints: ['1 ≤ nums1.length, nums2.length ≤ 1000', '0 ≤ nums1[i], nums2[i] ≤ 1000'],
+    testCases: [
+      { input: '1 2 2 1\n2 2',      expected: '2',   hidden: false },
+      { input: '4 9 5\n9 4 9 8 4',  expected: '4 9', hidden: false },
+      { input: '1\n2',              expected: '',     hidden: true  },
+      { input: '1 2 3\n3 2 1',      expected: '1 2 3', hidden: true },
+    ],
+    hints: [
+      'Put nums1 elements in a set.',
+      'Check which elements of nums2 are in that set.',
+      'Return unique results.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+
+    }
+};`,
+      python: `class Solution:
+    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums1
+ * @param {number[]} nums2
+ * @return {number[]}
+ */
+var intersection = function(nums1, nums2) {
+
+};`,
+      c: `int* intersection(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string l1, l2; getline(cin, l1); getline(cin, l2);
+    istringstream s1(l1), s2(l2);
+    vector<int> n1, n2; int x;
+    while (s1 >> x) n1.push_back(x);
+    while (s2 >> x) n2.push_back(x);
+    Solution sol;
+    auto res = sol.intersection(n1, n2);
+    sort(res.begin(), res.end());
+    for (int i = 0; i < (int)res.size(); i++) cout << (i ? " " : "") << res[i];
+    cout << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+n1 = list(map(int, lines[0].split()))
+n2 = list(map(int, lines[1].split()))
+print(*sorted(Solution().intersection(n1, n2)))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] n1 = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int[] n2 = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int[] res = new Solution().intersection(n1, n2);
+        Arrays.sort(res);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) sb.append(i > 0 ? " " : "").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');
+const n1 = lines[0].split(' ').map(Number);
+const n2 = lines[1].split(' ').map(Number);
+
+__USER_CODE__
+
+console.log(intersection(n1, n2).sort((a,b)=>a-b).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int cmp(const void *a, const void *b) { return *(int*)a - *(int*)b; }
+int main() {
+    int n1[1001], n2[1001], sz1 = 0, sz2 = 0;
+    char buf[10000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while (*p && *p != '\\n') { if (*p == ' ') { p++; continue; } n1[sz1++] = strtol(p, &p, 10); }
+    fgets(buf, sizeof(buf), stdin); p = buf;
+    while (*p && *p != '\\n') { if (*p == ' ') { p++; continue; } n2[sz2++] = strtol(p, &p, 10); }
+    int retSize;
+    int *res = intersection(n1, sz1, n2, sz2, &retSize);
+    qsort(res, retSize, sizeof(int), cmp);
+    for (int i = 0; i < retSize; i++) printf("%s%d", i ? " " : "", res[i]);
+    printf("\\n"); return 0;
+}`,
+    },
+    aiContext: 'Intersection of Two Arrays — hash set O(n+m)',
+  },
+
+  // ── 139. Word Pattern ─────────────────────────────────────────────────────────
+  {
+    number: 139, title: 'Word Pattern', slug: 'word-pattern', difficulty: 'Easy',
+    tags: ['Hash Table', 'String'], companies: ['Dropbox', 'Uber', 'Amazon'],
+    acceptance: 42.3, premium: false,
+    description: `Given a <code>pattern</code> and a string <code>s</code>, find if <code>s</code> follows the same pattern. Each letter in pattern maps to exactly one word and vice versa.<br><br>First line: pattern. Second line: s (space-separated words).`,
+    examples: [
+      { input: 'abba\ndog cat cat dog',  output: 'true'  },
+      { input: 'abba\ndog cat cat fish', output: 'false' },
+      { input: 'aaaa\ndog cat cat dog',  output: 'false' },
+    ],
+    constraints: ['1 ≤ pattern.length ≤ 300', '1 ≤ s.length ≤ 3000', 'pattern consists of lowercase English letters', 's consists of lowercase English letters and spaces'],
+    testCases: [
+      { input: 'abba\ndog cat cat dog',  expected: 'true',  hidden: false },
+      { input: 'abba\ndog cat cat fish', expected: 'false', hidden: false },
+      { input: 'aaaa\ndog cat cat dog',  expected: 'false', hidden: false },
+      { input: 'aaa\naa aa aa aa',       expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Map each pattern character to a word and each word to a pattern character.',
+      'Both mappings must be consistent (bijection).',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool wordPattern(string pattern, string s) {
+
+    }
+};`,
+      python: `class Solution:
+    def wordPattern(self, pattern: str, s: str) -> bool:
+        `,
+      java: `class Solution {
+    public boolean wordPattern(String pattern, String s) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} pattern
+ * @param {string} s
+ * @return {boolean}
+ */
+var wordPattern = function(pattern, s) {
+
+};`,
+      c: `bool wordPattern(char* pattern, char* s) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string pattern, s;
+    getline(cin, pattern); getline(cin, s);
+    Solution sol;
+    cout << (sol.wordPattern(pattern, s) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\\n')
+pattern = lines[0].strip()
+s = lines[1].strip() if len(lines) > 1 else ''
+print(str(Solution().wordPattern(pattern, s)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String pattern = sc.nextLine().trim();
+        String s = sc.nextLine().trim();
+        System.out.println(new Solution().wordPattern(pattern, s));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').split('\\n');
+const pattern = lines[0].trim(), s = (lines[1] || '').trim();
+
+__USER_CODE__
+
+console.log(String(wordPattern(pattern, s)));`,
+      c: `#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char pattern[301], s[3001];
+    fgets(pattern, sizeof(pattern), stdin);
+    fgets(s, sizeof(s), stdin);
+    int np = strlen(pattern), ns = strlen(s);
+    if (pattern[np-1] == '\\n') pattern[--np] = '\\0';
+    if (s[ns-1] == '\\n') s[--ns] = '\\0';
+    printf("%s\\n", wordPattern(pattern, s) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Word Pattern — bijection hash map O(n)',
+  },
+
+  // ── 140. Is Subsequence (Follow-Up) ──────────────────────────────────────────
+  {
+    number: 140, title: 'Number of Matching Subsequences', slug: 'number-of-matching-subsequences', difficulty: 'Medium',
+    tags: ['Hash Table', 'String', 'Trie', 'Sorting'], companies: ['Google', 'Amazon', 'Facebook'],
+    acceptance: 52.1, premium: false,
+    description: `Given a string <code>s</code> and an array of strings <code>words</code>, return the number of <code>words[i]</code> that is a subsequence of <code>s</code>.<br><br>First line: s. Second line: space-separated words.`,
+    examples: [
+      { input: 'abcde\na bb acd ace',   output: '3', explanation: 'a, acd, ace are subsequences' },
+      { input: 'dsahjpjauf\nahjpjau jd ua anbr aje', output: '2' },
+    ],
+    constraints: ['1 ≤ s.length ≤ 5×10⁴', '1 ≤ words.length ≤ 5000', '1 ≤ words[i].length ≤ 50'],
+    testCases: [
+      { input: 'abcde\na bb acd ace',             expected: '3', hidden: false },
+      { input: 'dsahjpjauf\nahjpjau jd ua anbr aje', expected: '2', hidden: false },
+      { input: 'abc\nabc bc c',                   expected: '3', hidden: true  },
+      { input: 'ahbgdc\ngreat fantastic good',    expected: '0', hidden: true  },
+    ],
+    hints: [
+      'For each word, check if it is a subsequence of s using two pointers.',
+      'Batch by first character for efficiency.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int numMatchingSubseq(string s, vector<string>& words) {
+
+    }
+};`,
+      python: `class Solution:
+    def numMatchingSubseq(self, s: str, words: List[str]) -> int:
+        `,
+      java: `class Solution {
+    public int numMatchingSubseq(String s, String[] words) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} s
+ * @param {string[]} words
+ * @return {number}
+ */
+var numMatchingSubseq = function(s, words) {
+
+};`,
+      c: `int numMatchingSubseq(char* s, char** words, int wordsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s; getline(cin, s);
+    string line; getline(cin, line);
+    istringstream ss(line);
+    vector<string> words; string w;
+    while (ss >> w) words.push_back(w);
+    Solution sol;
+    cout << sol.numMatchingSubseq(s, words) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\\n')
+s = lines[0]
+words = lines[1].split() if len(lines) > 1 else []
+print(Solution().numMatchingSubseq(s, words))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine().trim();
+        String[] words = sc.hasNextLine() ? sc.nextLine().trim().split(" ") : new String[]{};
+        System.out.println(new Solution().numMatchingSubseq(s, words));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');
+const s = lines[0];
+const words = lines[1] ? lines[1].split(' ') : [];
+
+__USER_CODE__
+
+console.log(numMatchingSubseq(s, words));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char s[50001]; fgets(s, sizeof(s), stdin);
+    int ns = strlen(s); if (s[ns-1] == '\\n') s[--ns] = '\\0';
+    char words[5001][51]; int nw = 0;
+    char line[255001]; fgets(line, sizeof(line), stdin);
+    char *p = strtok(line, " \\n");
+    while (p && nw < 5000) { strncpy(words[nw++], p, 50); words[nw-1][50] = '\\0'; p = strtok(NULL, " \\n"); }
+    char *ptrs[5001]; for (int i = 0; i < nw; i++) ptrs[i] = words[i];
+    printf("%d\\n", numMatchingSubseq(s, ptrs, nw));
+    return 0;
+}`,
+    },
+    aiContext: 'Number of Matching Subsequences — bucket by first char O(n + sum of word lengths)',
+  },
+
+
+  // ── PROBLEMS 141–150 ──────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 141. Count Odd Numbers in an Interval Range ───────────────────────────────
+  {
+    number: 141, title: 'Count Odd Numbers in an Interval Range', slug: 'count-odd-numbers-in-an-interval-range', difficulty: 'Easy',
+    tags: ['Math'], companies: ['Amazon', 'Google'],
+    acceptance: 56.1, premium: false,
+    description: `Given two non-negative integers <code>low</code> and <code>high</code>, return the count of odd numbers between <code>low</code> and <code>high</code> (inclusive).<br><br>Input: two integers on one line.`,
+    examples: [
+      { input: '3 7',  output: '3', explanation: 'Odd numbers: 3, 5, 7' },
+      { input: '8 10', output: '1', explanation: 'Odd number: 9' },
+    ],
+    constraints: ['0 ≤ low ≤ high ≤ 10⁹'],
+    testCases: [
+      { input: '3 7',   expected: '3', hidden: false },
+      { input: '8 10',  expected: '1', hidden: false },
+      { input: '0 0',   expected: '0', hidden: true  },
+      { input: '1 1',   expected: '1', hidden: true  },
+      { input: '0 100', expected: '50', hidden: true },
+    ],
+    hints: [
+      'Count odds from 0 to n = (n + 1) / 2.',
+      'Answer = countOdds(high) - countOdds(low - 1).',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int countOdds(int low, int high) {
+
+    }
+};`,
+      python: `class Solution:
+    def countOdds(self, low: int, high: int) -> int:
+        `,
+      java: `class Solution {
+    public int countOdds(int low, int high) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} low
+ * @param {number} high
+ * @return {number}
+ */
+var countOdds = function(low, high) {
+
+};`,
+      c: `int countOdds(int low, int high) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int low, high; cin >> low >> high;
+    Solution sol;
+    cout << sol.countOdds(low, high) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+low, high = map(int, sys.stdin.read().split())
+print(Solution().countOdds(low, high))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int low = sc.nextInt(), high = sc.nextInt();
+        System.out.println(new Solution().countOdds(low, high));
+    }
+}`,
+      javascript: `const [low, high] = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(countOdds(low, high));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int low, high; scanf("%d %d", &low, &high);
+    printf("%d\n", countOdds(low, high));
+    return 0;
+}`,
+    },
+    aiContext: 'Count Odd Numbers in Interval — math formula O(1)',
+  },
+
+  // ── 142. Minimum Operations to Reduce X to Zero ───────────────────────────────
+  {
+    number: 142, title: 'Minimum Operations to Reduce X to Zero', slug: 'minimum-operations-to-reduce-x-to-zero', difficulty: 'Medium',
+    tags: ['Array', 'Hash Table', 'Binary Search', 'Sliding Window', 'Prefix Sum'], companies: ['Amazon', 'Google', 'Facebook'],
+    acceptance: 33.7, premium: false,
+    description: `Given an integer array <code>nums</code> and an integer <code>x</code>, return the minimum number of operations to reduce <code>x</code> to exactly 0 by removing elements from either end. Return -1 if impossible.<br><br>First line: space-separated nums. Second line: x.`,
+    examples: [
+      { input: '1 1 4 2 3\n5',       output: '2', explanation: 'Remove 3 and 2 from right' },
+      { input: '5 6 7 8 9\n4',       output: '-1' },
+      { input: '3 2 20 1 1 3\n10',   output: '5' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁵', '1 ≤ nums[i] ≤ 10⁴', '1 ≤ x ≤ 10⁹'],
+    testCases: [
+      { input: '1 1 4 2 3\n5',     expected: '2',  hidden: false },
+      { input: '5 6 7 8 9\n4',     expected: '-1', hidden: false },
+      { input: '3 2 20 1 1 3\n10', expected: '5',  hidden: false },
+      { input: '1 1\n3',           expected: '-1', hidden: true  },
+    ],
+    hints: [
+      'Equivalent to finding the longest subarray with sum = total - x.',
+      'Use a sliding window or prefix sum hash map.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int minOperations(vector<int>& nums, int x) {
+
+    }
+};`,
+      python: `class Solution:
+    def minOperations(self, nums: List[int], x: int) -> int:
+        `,
+      java: `class Solution {
+    public int minOperations(int[] nums, int x) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @param {number} x
+ * @return {number}
+ */
+var minOperations = function(nums, x) {
+
+};`,
+      c: `int minOperations(int* nums, int numsSize, int x) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line); vector<int> nums; int n;
+    while (ss >> n) nums.push_back(n);
+    int x; cin >> x;
+    Solution sol;
+    cout << sol.minOperations(nums, x) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\n')
+nums = list(map(int, lines[0].split()))
+x = int(lines[1].strip())
+print(Solution().minOperations(nums, x))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] nums = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int x = sc.nextInt();
+        System.out.println(new Solution().minOperations(nums, x));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
+const nums = lines[0].split(' ').map(Number), x = parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(minOperations(nums, x));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[100001], n = 0, x;
+    char buf[2000000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while (*p && *p != '\n') { if (*p == ' ') { p++; continue; } nums[n++] = strtol(p, &p, 10); }
+    scanf("%d", &x);
+    printf("%d\n", minOperations(nums, n, x));
+    return 0;
+}`,
+    },
+    aiContext: 'Minimum Operations to Reduce X to Zero — sliding window on complement O(n)',
+  },
+
+  // ── 143. K Radius Subarray Averages ──────────────────────────────────────────
+  {
+    number: 143, title: 'K Radius Subarray Averages', slug: 'k-radius-subarray-averages', difficulty: 'Medium',
+    tags: ['Array', 'Sliding Window', 'Prefix Sum'], companies: ['Google', 'Amazon'],
+    acceptance: 47.9, premium: false,
+    description: `Given a 0-indexed array <code>nums</code> and integer <code>k</code>, return an array <code>avgs</code> of length <code>n</code> where <code>avgs[i]</code> is the average (floor) of the subarray <code>nums[i-k..i+k]</code>, or -1 if the window doesn't fully exist.<br><br>First line: space-separated nums. Second line: k.`,
+    examples: [
+      { input: '7 4 3 9 1 8 5 2 6\n3', output: '-1 -1 -1 5 4 4 -1 -1 -1' },
+      { input: '100000\n0',             output: '100000' },
+      { input: '8\n100000',             output: '-1' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 10⁵', '0 ≤ nums[i], k ≤ 10⁵'],
+    testCases: [
+      { input: '7 4 3 9 1 8 5 2 6\n3', expected: '-1 -1 -1 5 4 4 -1 -1 -1', hidden: false },
+      { input: '100000\n0',             expected: '100000',                   hidden: false },
+      { input: '8\n100000',             expected: '-1',                       hidden: true  },
+    ],
+    hints: [
+      'Use prefix sums for O(1) range queries.',
+      'Window size = 2*k+1; check bounds before computing average.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> getAverages(vector<int>& nums, int k) {
+
+    }
+};`,
+      python: `class Solution:
+    def getAverages(self, nums: List[int], k: int) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] getAverages(int[] nums, int k) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var getAverages = function(nums, k) {
+
+};`,
+      c: `int* getAverages(int* nums, int numsSize, int k, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line); vector<int> nums; int n;
+    while (ss >> n) nums.push_back(n);
+    int k; cin >> k;
+    Solution sol;
+    auto res = sol.getAverages(nums, k);
+    for (int i = 0; i < (int)res.size(); i++) cout << (i ? " " : "") << res[i];
+    cout << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\n')
+nums = list(map(int, lines[0].split()))
+k = int(lines[1].strip())
+print(*Solution().getAverages(nums, k))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] nums = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int k = sc.nextInt();
+        int[] res = new Solution().getAverages(nums, k);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) sb.append(i > 0 ? " " : "").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
+const nums = lines[0].split(' ').map(Number), k = parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(getAverages(nums, k).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[100001], n = 0, k;
+    char buf[2000000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while (*p && *p != '\n') { if (*p == ' ') { p++; continue; } nums[n++] = strtol(p, &p, 10); }
+    scanf("%d", &k);
+    int retSize; int *res = getAverages(nums, n, k, &retSize);
+    for (int i = 0; i < retSize; i++) printf("%s%d", i ? " " : "", res[i]);
+    printf("\n"); free(res); return 0;
+}`,
+    },
+    aiContext: 'K Radius Subarray Averages — prefix sum O(n)',
+  },
+
+  // ── 144. Maximum Difference Between Increasing Elements ───────────────────────
+  {
+    number: 144, title: 'Maximum Difference Between Increasing Elements', slug: 'maximum-difference-between-increasing-elements', difficulty: 'Easy',
+    tags: ['Array'], companies: ['Amazon', 'Google'],
+    acceptance: 52.1, premium: false,
+    description: `Given a 0-indexed integer array <code>nums</code>, find the maximum difference between <code>nums[j] - nums[i]</code> such that <code>0 ≤ i < j < n</code> and <code>nums[i] < nums[j]</code>. Return -1 if no such pair exists.`,
+    examples: [
+      { input: '7 1 5 4',   output: '4',  explanation: 'i=1,j=2: 5-1=4' },
+      { input: '9 4 3 2',   output: '-1', explanation: 'All decreasing' },
+      { input: '1 5 2 10',  output: '9',  explanation: 'i=0,j=3: 10-1=9' },
+    ],
+    constraints: ['n == nums.length', '2 ≤ n ≤ 1000', '1 ≤ nums[i] ≤ 10⁹'],
+    testCases: [
+      { input: '7 1 5 4',  expected: '4',  hidden: false },
+      { input: '9 4 3 2',  expected: '-1', hidden: false },
+      { input: '1 5 2 10', expected: '9',  hidden: false },
+      { input: '1 2',      expected: '1',  hidden: true  },
+    ],
+    hints: [
+      'Track the minimum value seen so far.',
+      'For each element, compute current - min so far.',
+      'Update the answer and min accordingly.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int maximumDifference(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def maximumDifference(self, nums: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int maximumDifference(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maximumDifference = function(nums) {
+
+};`,
+      c: `int maximumDifference(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    cout << sol.maximumDifference(nums) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(Solution().maximumDifference(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().maximumDifference(nums));
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(maximumDifference(nums));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[1001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    printf("%d\n", maximumDifference(nums, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Maximum Difference Between Increasing Elements — track min O(n)',
+  },
+
+  // ── 145. Greatest Common Divisor of Strings ───────────────────────────────────
+  {
+    number: 145, title: 'Greatest Common Divisor of Strings', slug: 'greatest-common-divisor-of-strings', difficulty: 'Easy',
+    tags: ['Math', 'String'], companies: ['Google', 'Amazon', 'Facebook'],
+    acceptance: 52.7, premium: false,
+    description: `For two strings <code>s</code> and <code>t</code>, we say "t divides s" if <code>s = t + t + ... + t</code>. Given two strings <code>str1</code> and <code>str2</code>, return the largest string <code>x</code> such that <code>x</code> divides both.<br><br>First line: str1. Second line: str2.`,
+    examples: [
+      { input: 'ABCABC\nABC', output: 'ABC' },
+      { input: 'ABABAB\nABAB', output: 'AB' },
+      { input: 'LEET\nCODE',   output: ''   },
+    ],
+    constraints: ['1 ≤ str1.length, str2.length ≤ 1000', 'str1 and str2 consist of uppercase English letters'],
+    testCases: [
+      { input: 'ABCABC\nABC', expected: 'ABC', hidden: false },
+      { input: 'ABABAB\nABAB', expected: 'AB', hidden: false },
+      { input: 'LEET\nCODE',  expected: '',    hidden: false },
+      { input: 'AA\nA',       expected: 'A',   hidden: true  },
+    ],
+    hints: [
+      'If str1 + str2 != str2 + str1, return empty.',
+      'Otherwise return str1[:gcd(len(str1), len(str2))].',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string gcdOfStrings(string str1, string str2) {
+
+    }
+};`,
+      python: `class Solution:
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        `,
+      java: `class Solution {
+    public String gcdOfStrings(String str1, String str2) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} str1
+ * @param {string} str2
+ * @return {string}
+ */
+var gcdOfStrings = function(str1, str2) {
+
+};`,
+      c: `char* gcdOfStrings(char* str1, char* str2) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s1, s2;
+    getline(cin, s1); getline(cin, s2);
+    Solution sol;
+    cout << sol.gcdOfStrings(s1, s2) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\n')
+s1 = lines[0]; s2 = lines[1] if len(lines) > 1 else ''
+print(Solution().gcdOfStrings(s1, s2))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s1 = sc.nextLine(), s2 = sc.nextLine();
+        System.out.println(new Solution().gcdOfStrings(s1, s2));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').split('\n');
+const s1 = lines[0], s2 = lines[1] || '';
+
+__USER_CODE__
+
+console.log(gcdOfStrings(s1, s2));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char s1[1001], s2[1001];
+    fgets(s1, sizeof(s1), stdin); fgets(s2, sizeof(s2), stdin);
+    int n1 = strlen(s1), n2 = strlen(s2);
+    if (s1[n1-1] == '\n') s1[--n1] = '\0';
+    if (s2[n2-1] == '\n') s2[--n2] = '\0';
+    printf("%s\n", gcdOfStrings(s1, s2));
+    return 0;
+}`,
+    },
+    aiContext: 'GCD of Strings — string GCD using length GCD O(n)',
+  },
+
+  // ── 146. Kids With the Greatest Number of Candies ─────────────────────────────
+  {
+    number: 146, title: 'Kids With the Greatest Number of Candies', slug: 'kids-with-the-greatest-number-of-candies', difficulty: 'Easy',
+    tags: ['Array'], companies: ['Amazon', 'Google'],
+    acceptance: 87.5, premium: false,
+    description: `Given an integer array <code>candies</code> (candies[i] = number of candies kid i has) and <code>extraCandies</code>, return a boolean array where result[i] is true if kid i can have the greatest number of candies after receiving all extraCandies.<br><br>First line: candies. Second line: extraCandies.`,
+    examples: [
+      { input: '2 3 5 1 3\n3', output: 'true true true false true' },
+      { input: '4 2 1 1 2\n1', output: 'true false false false false' },
+    ],
+    constraints: ['2 ≤ candies.length ≤ 100', '1 ≤ candies[i] ≤ 100', '1 ≤ extraCandies ≤ 50'],
+    testCases: [
+      { input: '2 3 5 1 3\n3', expected: 'true true true false true',       hidden: false },
+      { input: '4 2 1 1 2\n1', expected: 'true false false false false',     hidden: false },
+      { input: '12 1 12\n10',  expected: 'true false true',                  hidden: true  },
+    ],
+    hints: [
+      'Find the maximum in candies.',
+      'For each kid, check if candies[i] + extraCandies >= max.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<bool> kidsWithCandies(vector<int>& candies, int extraCandies) {
+
+    }
+};`,
+      python: `class Solution:
+    def kidsWithCandies(self, candies: List[int], extraCandies: int) -> List[bool]:
+        `,
+      java: `class Solution {
+    public List<Boolean> kidsWithCandies(int[] candies, int extraCandies) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} candies
+ * @param {number} extraCandies
+ * @return {boolean[]}
+ */
+var kidsWithCandies = function(candies, extraCandies) {
+
+};`,
+      c: `bool* kidsWithCandies(int* candies, int candiesSize, int extraCandies, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line); vector<int> c; int x;
+    while (ss >> x) c.push_back(x);
+    int extra; cin >> extra;
+    Solution sol;
+    auto res = sol.kidsWithCandies(c, extra);
+    for (int i = 0; i < (int)res.size(); i++) cout << (i ? " " : "") << (res[i] ? "true" : "false");
+    cout << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\n')
+c = list(map(int, lines[0].split()))
+extra = int(lines[1].strip())
+print(*[str(v).lower() for v in Solution().kidsWithCandies(c, extra)])`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] c = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int extra = sc.nextInt();
+        List<Boolean> res = new Solution().kidsWithCandies(c, extra);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.size(); i++) sb.append(i > 0 ? " " : "").append(res.get(i));
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
+const c = lines[0].split(' ').map(Number), extra = parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(kidsWithCandies(c, extra).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    int c[101], n = 0, extra;
+    char buf[500]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while (*p && *p != '\n') { if (*p == ' ') { p++; continue; } c[n++] = strtol(p, &p, 10); }
+    scanf("%d", &extra);
+    int retSize; bool *res = kidsWithCandies(c, n, extra, &retSize);
+    for (int i = 0; i < retSize; i++) printf("%s%s", i ? " " : "", res[i] ? "true" : "false");
+    printf("\n"); free(res); return 0;
+}`,
+    },
+    aiContext: 'Kids With Greatest Candies — find max then compare O(n)',
+  },
+
+  // ── 147. Richest Customer Wealth ──────────────────────────────────────────────
+  {
+    number: 147, title: 'Richest Customer Wealth', slug: 'richest-customer-wealth', difficulty: 'Easy',
+    tags: ['Array', 'Matrix'], companies: ['Amazon', 'Google'],
+    acceptance: 88.4, premium: false,
+    description: `You are given an <code>m x n</code> integer grid <code>accounts</code> where <code>accounts[i][j]</code> is the amount of money the <code>i</code>th customer has in the <code>j</code>th bank. Return the wealth of the richest customer (sum of their row).<br><br>Input: m rows of n space-separated integers.`,
+    examples: [
+      { input: '1 2 3\n3 2 1',     output: '6', explanation: 'Both have wealth 6, return 6' },
+      { input: '1 5\n7 3\n3 5',    output: '10' },
+      { input: '2 8 7\n7 1 3\n1 9 5', output: '17' },
+    ],
+    constraints: ['1 ≤ m, n ≤ 50', '1 ≤ accounts[i][j] ≤ 100'],
+    testCases: [
+      { input: '1 2 3\n3 2 1',     expected: '6',  hidden: false },
+      { input: '1 5\n7 3\n3 5',    expected: '10', hidden: false },
+      { input: '2 8 7\n7 1 3\n1 9 5', expected: '17', hidden: false },
+      { input: '1',                expected: '1',  hidden: true  },
+    ],
+    hints: [
+      'Sum each row and return the maximum.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int maximumWealth(vector<vector<int>>& accounts) {
+
+    }
+};`,
+      python: `class Solution:
+    def maximumWealth(self, accounts: List[List[int]]) -> int:
+        `,
+      java: `class Solution {
+    public int maximumWealth(int[][] accounts) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} accounts
+ * @return {number}
+ */
+var maximumWealth = function(accounts) {
+
+};`,
+      c: `int maximumWealth(int** accounts, int accountsSize, int* accountsColSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<vector<int>> acc; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        istringstream ss(line); vector<int> row; int x;
+        while (ss >> x) row.push_back(x);
+        acc.push_back(row);
+    }
+    Solution sol; cout << sol.maximumWealth(acc) << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\n')
+acc = [list(map(int, l.split())) for l in lines]
+print(Solution().maximumWealth(acc))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<int[]> rows = new ArrayList<>();
+        while (sc.hasNextLine()) { String l = sc.nextLine().trim(); if (l.isEmpty()) continue; rows.add(Arrays.stream(l.split(" ")).mapToInt(Integer::parseInt).toArray()); }
+        System.out.println(new Solution().maximumWealth(rows.toArray(new int[0][])));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
+const acc = lines.map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+console.log(maximumWealth(acc));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int m[51][51], rows = 0, cols = 0; char buf[500];
+    while (fgets(buf, sizeof(buf), stdin)) {
+        if (buf[0] == '\n') continue; char *p = buf; int j = 0;
+        while (*p && *p != '\n') { if (*p == ' ') { p++; continue; } m[rows][j++] = strtol(p, &p, 10); }
+        cols = j; rows++;
+    }
+    int *ptrs[51]; int colSizes[51];
+    for (int i = 0; i < rows; i++) { ptrs[i] = m[i]; colSizes[i] = cols; }
+    printf("%d\n", maximumWealth((int**)ptrs, rows, colSizes)); return 0;
+}`,
+    },
+    aiContext: 'Richest Customer Wealth — row sum max O(m*n)',
+  },
+
+  // ── 148. Number of Steps to Reduce a Number to Zero ──────────────────────────
+  {
+    number: 148, title: 'Number of Steps to Reduce a Number to Zero', slug: 'number-of-steps-to-reduce-a-number-to-zero', difficulty: 'Easy',
+    tags: ['Math', 'Bit Manipulation'], companies: ['Amazon', 'Google'],
+    acceptance: 85.7, premium: false,
+    description: `Given an integer <code>num</code>, return the number of steps to reduce it to zero. In one step: if even, divide by 2; if odd, subtract 1.`,
+    examples: [
+      { input: '14', output: '6', explanation: '14→7→6→3→2→1→0' },
+      { input: '8',  output: '4', explanation: '8→4→2→1→0' },
+      { input: '123', output: '12' },
+    ],
+    constraints: ['0 ≤ num ≤ 10⁶'],
+    testCases: [
+      { input: '14',  expected: '6',  hidden: false },
+      { input: '8',   expected: '4',  hidden: false },
+      { input: '123', expected: '12', hidden: false },
+      { input: '0',   expected: '0',  hidden: true  },
+      { input: '1',   expected: '1',  hidden: true  },
+    ],
+    hints: [
+      'Simulate the process step by step.',
+      'Or count bits: number of 1-bits + number of bit positions - 1.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int numberOfSteps(int num) {
+
+    }
+};`,
+      python: `class Solution:
+    def numberOfSteps(self, num: int) -> int:
+        `,
+      java: `class Solution {
+    public int numberOfSteps(int num) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number} num
+ * @return {number}
+ */
+var numberOfSteps = function(num) {
+
+};`,
+      c: `int numberOfSteps(int num) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    int num; cin >> num;
+    Solution sol; cout << sol.numberOfSteps(num) << endl; return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+num = int(sys.stdin.read().strip())
+print(Solution().numberOfSteps(num))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        int num = new Scanner(System.in).nextInt();
+        System.out.println(new Solution().numberOfSteps(num));
+    }
+}`,
+      javascript: `const num = parseInt(require('fs').readFileSync('/dev/stdin', 'utf8').trim());
+
+__USER_CODE__
+
+console.log(numberOfSteps(num));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int num; scanf("%d", &num);
+    printf("%d\n", numberOfSteps(num)); return 0;
+}`,
+    },
+    aiContext: 'Number of Steps to Reduce to Zero — simulate O(log n)',
+  },
+
+  // ── 149. Shuffle the Array ────────────────────────────────────────────────────
+  {
+    number: 149, title: 'Shuffle the Array', slug: 'shuffle-the-array', difficulty: 'Easy',
+    tags: ['Array'], companies: ['Amazon', 'Google'],
+    acceptance: 88.1, premium: false,
+    description: `Given an array <code>nums</code> consisting of <code>2n</code> elements in the form <code>[x1,x2,...,xn,y1,y2,...,yn]</code>, return <code>[x1,y1,x2,y2,...,xn,yn]</code>.<br><br>First line: space-separated nums (length 2n). Second line: n.`,
+    examples: [
+      { input: '2 5 1 3 4 7\n3', output: '2 3 5 4 1 7' },
+      { input: '1 2 3 4 4 3 2 1\n4', output: '1 4 2 3 3 2 4 1' },
+      { input: '1 1 2 2\n2', output: '1 2 1 2' },
+    ],
+    constraints: ['1 ≤ n ≤ 500', 'nums.length == 2n', '1 ≤ nums[i] ≤ 10³'],
+    testCases: [
+      { input: '2 5 1 3 4 7\n3',       expected: '2 3 5 4 1 7',     hidden: false },
+      { input: '1 2 3 4 4 3 2 1\n4',   expected: '1 4 2 3 3 2 4 1', hidden: false },
+      { input: '1 1 2 2\n2',           expected: '1 2 1 2',          hidden: false },
+      { input: '1 2\n1',               expected: '1 2',              hidden: true  },
+    ],
+    hints: [
+      'Interleave elements at index i and i+n.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> shuffle(vector<int>& nums, int n) {
+
+    }
+};`,
+      python: `class Solution:
+    def shuffle(self, nums: List[int], n: int) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] shuffle(int[] nums, int n) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @param {number} n
+ * @return {number[]}
+ */
+var shuffle = function(nums, n) {
+
+};`,
+      c: `int* shuffle(int* nums, int numsSize, int n, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string line; getline(cin, line);
+    istringstream ss(line); vector<int> nums; int x;
+    while (ss >> x) nums.push_back(x);
+    int n; cin >> n;
+    Solution sol;
+    auto res = sol.shuffle(nums, n);
+    for (int i = 0; i < (int)res.size(); i++) cout << (i ? " " : "") << res[i];
+    cout << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\n')
+nums = list(map(int, lines[0].split()))
+n = int(lines[1].strip())
+print(*Solution().shuffle(nums, n))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] nums = Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int n = sc.nextInt();
+        int[] res = new Solution().shuffle(nums, n);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) sb.append(i > 0 ? " " : "").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
+const nums = lines[0].split(' ').map(Number), n = parseInt(lines[1]);
+
+__USER_CODE__
+
+console.log(shuffle(nums, n).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[1001], sz = 0, n;
+    char buf[10000]; fgets(buf, sizeof(buf), stdin);
+    char *p = buf; while (*p && *p != '\n') { if (*p == ' ') { p++; continue; } nums[sz++] = strtol(p, &p, 10); }
+    scanf("%d", &n);
+    int retSize; int *res = shuffle(nums, sz, n, &retSize);
+    for (int i = 0; i < retSize; i++) printf("%s%d", i ? " " : "", res[i]);
+    printf("\n"); free(res); return 0;
+}`,
+    },
+    aiContext: 'Shuffle the Array — interleave O(n)',
+  },
+
+  // ── 150. Concatenation of Array ───────────────────────────────────────────────
+  {
+    number: 150, title: 'Concatenation of Array', slug: 'concatenation-of-array', difficulty: 'Easy',
+    tags: ['Array', 'Simulation'], companies: ['Amazon', 'Google'],
+    acceptance: 90.3, premium: false,
+    description: `Given an integer array <code>nums</code> of length <code>n</code>, return the array <code>ans</code> of length <code>2n</code> where <code>ans[i] == nums[i]</code> and <code>ans[i + n] == nums[i]</code>.`,
+    examples: [
+      { input: '1 2 1', output: '1 2 1 1 2 1' },
+      { input: '1 3 2 1', output: '1 3 2 1 1 3 2 1' },
+    ],
+    constraints: ['1 ≤ n ≤ 1000', '1 ≤ nums[i] ≤ 1000'],
+    testCases: [
+      { input: '1 2 1',    expected: '1 2 1 1 2 1',       hidden: false },
+      { input: '1 3 2 1',  expected: '1 3 2 1 1 3 2 1',   hidden: false },
+      { input: '1',        expected: '1 1',                hidden: true  },
+      { input: '5 10 15',  expected: '5 10 15 5 10 15',   hidden: true  },
+    ],
+    hints: [
+      'Simply append nums to itself.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    vector<int> getConcatenation(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def getConcatenation(self, nums: List[int]) -> List[int]:
+        `,
+      java: `class Solution {
+    public int[] getConcatenation(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var getConcatenation = function(nums) {
+
+};`,
+      c: `int* getConcatenation(int* nums, int numsSize, int* returnSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    auto res = sol.getConcatenation(nums);
+    for (int i = 0; i < (int)res.size(); i++) cout << (i ? " " : "") << res[i];
+    cout << endl; return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(*Solution().getConcatenation(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        int[] res = new Solution().getConcatenation(nums);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < res.length; i++) sb.append(i > 0 ? " " : "").append(res[i]);
+        System.out.println(sb);
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(getConcatenation(nums).join(' '));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[1001], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    int retSize; int *res = getConcatenation(nums, n, &retSize);
+    for (int i = 0; i < retSize; i++) printf("%s%d", i ? " " : "", res[i]);
+    printf("\n"); free(res); return 0;
+}`,
+    },
+    aiContext: 'Concatenation of Array — append to itself O(n)',
+  },
+
+
+
+  // ── PROBLEMS 151–160 ──────────────────────────────────────────────────────────
+// Each problem has:
+//   starter     → what the user sees in the editor (function signature only)
+//   codeWrapper → full runnable code sent to Judge0 (__USER_CODE__ = user's class)
+
+  // ── 151. Defanging an IP Address ─────────────────────────────────────────────
+  {
+    number: 151, title: 'Defanging an IP Address', slug: 'defanging-an-ip-address', difficulty: 'Easy',
+    tags: ['String'], companies: ['Amazon', 'Google'],
+    acceptance: 90.5, premium: false,
+    description: `Given a valid IPv4 address, return a defanged version where every <code>.</code> is replaced with <code>[.]</code>.`,
+    examples: [
+      { input: '1.1.1.1',     output: '1[.]1[.]1[.]1' },
+      { input: '255.100.50.0', output: '255[.]100[.]50[.]0' },
+    ],
+    constraints: ['address is a valid IPv4 address'],
+    testCases: [
+      { input: '1.1.1.1',      expected: '1[.]1[.]1[.]1',       hidden: false },
+      { input: '255.100.50.0', expected: '255[.]100[.]50[.]0',   hidden: false },
+      { input: '0.0.0.0',      expected: '0[.]0[.]0[.]0',        hidden: true  },
+      { input: '192.168.1.1',  expected: '192[.]168[.]1[.]1',    hidden: true  },
+    ],
+    hints: [
+      'Replace every "." with "[.]".',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string defangIPaddr(string address) {
+
+    }
+};`,
+      python: `class Solution:
+    def defangIPaddr(self, address: str) -> str:
+        `,
+      java: `class Solution {
+    public String defangIPaddr(String address) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} address
+ * @return {string}
+ */
+var defangIPaddr = function(address) {
+
+};`,
+      c: `char* defangIPaddr(char* address) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s; cin >> s;
+    Solution sol;
+    cout << sol.defangIPaddr(s) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+s = sys.stdin.read().strip()
+print(Solution().defangIPaddr(s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        String s = new Scanner(System.in).next().trim();
+        System.out.println(new Solution().defangIPaddr(s));
+    }
+}`,
+      javascript: `const s = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+
+__USER_CODE__
+
+console.log(defangIPaddr(s));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    char s[20]; scanf("%s", s);
+    printf("%s\n", defangIPaddr(s));
+    return 0;
+}`,
+    },
+    aiContext: 'Defanging an IP Address — string replace O(n)',
+  },
+
+  // ── 152. Jewels and Stones ────────────────────────────────────────────────────
+  {
+    number: 152, title: 'Jewels and Stones', slug: 'jewels-and-stones', difficulty: 'Easy',
+    tags: ['Hash Table', 'String'], companies: ['Amazon', 'Google'],
+    acceptance: 88.2, premium: false,
+    description: `You're given strings <code>jewels</code> representing types of jewels and <code>stones</code> representing the stones you have. Return how many stones are also jewels.<br><br>First line: jewels. Second line: stones.`,
+    examples: [
+      { input: 'aA\naAAbbbb', output: '3' },
+      { input: 'z\nZZ',       output: '0' },
+    ],
+    constraints: ['1 ≤ jewels.length, stones.length ≤ 50', 'jewels and stones consist of English letters', 'All jewel characters are unique'],
+    testCases: [
+      { input: 'aA\naAAbbbb', expected: '3', hidden: false },
+      { input: 'z\nZZ',       expected: '0', hidden: false },
+      { input: 'abc\naaabbbccc', expected: '9', hidden: true },
+      { input: 'a\nb',        expected: '0', hidden: true  },
+    ],
+    hints: [
+      'Put jewels in a set.',
+      'Count stones that are in the set.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int numJewelsInStones(string jewels, string stones) {
+
+    }
+};`,
+      python: `class Solution:
+    def numJewelsInStones(self, jewels: str, stones: str) -> int:
+        `,
+      java: `class Solution {
+    public int numJewelsInStones(String jewels, String stones) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} jewels
+ * @param {string} stones
+ * @return {number}
+ */
+var numJewelsInStones = function(jewels, stones) {
+
+};`,
+      c: `int numJewelsInStones(char* jewels, char* stones) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string j, s;
+    getline(cin, j); getline(cin, s);
+    Solution sol;
+    cout << sol.numJewelsInStones(j, s) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\n')
+j = lines[0]; s = lines[1] if len(lines) > 1 else ''
+print(Solution().numJewelsInStones(j, s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String j = sc.nextLine(), s = sc.nextLine();
+        System.out.println(new Solution().numJewelsInStones(j, s));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').split('\n');
+const j = lines[0], s = lines[1] || '';
+
+__USER_CODE__
+
+console.log(numJewelsInStones(j, s));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char j[51], s[51];
+    fgets(j, sizeof(j), stdin); fgets(s, sizeof(s), stdin);
+    int nj = strlen(j), ns = strlen(s);
+    if (j[nj-1] == '\n') j[--nj] = '\0';
+    if (s[ns-1] == '\n') s[--ns] = '\0';
+    printf("%d\n", numJewelsInStones(j, s));
+    return 0;
+}`,
+    },
+    aiContext: 'Jewels and Stones — hash set O(n)',
+  },
+
+  // ── 153. Sum of Unique Elements ───────────────────────────────────────────────
+  {
+    number: 153, title: 'Sum of Unique Elements', slug: 'sum-of-unique-elements', difficulty: 'Easy',
+    tags: ['Array', 'Hash Table', 'Counting'], companies: ['Amazon', 'Google'],
+    acceptance: 80.1, premium: false,
+    description: `Given an integer array <code>nums</code>, return the sum of all the unique elements (elements that appear exactly once).`,
+    examples: [
+      { input: '1 2 3 2', output: '4', explanation: '1 + 3 = 4 (2 appears twice)' },
+      { input: '1 1 1 1 1', output: '0' },
+      { input: '1 2 3 4 5', output: '15' },
+    ],
+    constraints: ['1 ≤ nums.length ≤ 100', '1 ≤ nums[i] ≤ 100'],
+    testCases: [
+      { input: '1 2 3 2',   expected: '4',  hidden: false },
+      { input: '1 1 1 1 1', expected: '0',  hidden: false },
+      { input: '1 2 3 4 5', expected: '15', hidden: false },
+      { input: '5',         expected: '5',  hidden: true  },
+    ],
+    hints: [
+      'Count frequency of each element.',
+      'Sum elements with frequency exactly 1.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int sumOfUnique(vector<int>& nums) {
+
+    }
+};`,
+      python: `class Solution:
+    def sumOfUnique(self, nums: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int sumOfUnique(int[] nums) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var sumOfUnique = function(nums) {
+
+};`,
+      c: `int sumOfUnique(int* nums, int numsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> nums; int x;
+    while (cin >> x) nums.push_back(x);
+    Solution sol;
+    cout << sol.sumOfUnique(nums) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+nums = list(map(int, sys.stdin.read().split()))
+print(Solution().sumOfUnique(nums))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] nums = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().sumOfUnique(nums));
+    }
+}`,
+      javascript: `const nums = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(sumOfUnique(nums));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int nums[101], n = 0;
+    while (scanf("%d", &nums[n]) == 1) n++;
+    printf("%d\n", sumOfUnique(nums, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Sum of Unique Elements — frequency count O(n)',
+  },
+
+  // ── 154. Maximum Units on a Truck ─────────────────────────────────────────────
+  {
+    number: 154, title: 'Maximum Units on a Truck', slug: 'maximum-units-on-a-truck', difficulty: 'Easy',
+    tags: ['Array', 'Greedy', 'Sorting'], companies: ['Amazon', 'Google', 'Facebook'],
+    acceptance: 72.9, premium: false,
+    description: `You are given a 2D array <code>boxTypes</code> where <code>boxTypes[i] = [numberOfBoxes, numberOfUnitsPerBox]</code> and a <code>truckSize</code>. Return the maximum total number of units you can put on the truck.<br><br>Input: pairs (one per line). Last line: truckSize.`,
+    examples: [
+      { input: '1 3\n2 2\n3 1\n4', output: '8', explanation: 'Take box type 0 (3 units), 2 of type 1 (4 units), 1 of type 2 (1 unit) = 8' },
+      { input: '5 10\n2 5\n4 7\n3 9\n10', output: '91' },
+    ],
+    constraints: ['1 ≤ boxTypes.length ≤ 1000', '1 ≤ numberOfBoxes, numberOfUnitsPerBox ≤ 1000', '1 ≤ truckSize ≤ 10⁶'],
+    testCases: [
+      { input: '1 3\n2 2\n3 1\n4',          expected: '8',  hidden: false },
+      { input: '5 10\n2 5\n4 7\n3 9\n10',   expected: '91', hidden: false },
+      { input: '1 1\n1',                    expected: '1',  hidden: true  },
+      { input: '3 5\n2 3\n2',               expected: '13', hidden: true  },
+    ],
+    hints: [
+      'Sort by units per box descending.',
+      'Greedily fill the truck with the highest-unit boxes first.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int maximumUnits(vector<vector<int>>& boxTypes, int truckSize) {
+
+    }
+};`,
+      python: `class Solution:
+    def maximumUnits(self, boxTypes: List[List[int]], truckSize: int) -> int:
+        `,
+      java: `class Solution {
+    public int maximumUnits(int[][] boxTypes, int truckSize) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[][]} boxTypes
+ * @param {number} truckSize
+ * @return {number}
+ */
+var maximumUnits = function(boxTypes, truckSize) {
+
+};`,
+      c: `int maximumUnits(int** boxTypes, int boxTypesSize, int* boxTypesColSize, int truckSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<vector<int>> boxes; string line;
+    vector<string> lines;
+    while (getline(cin, line)) if (!line.empty()) lines.push_back(line);
+    int truckSize = stoi(lines.back()); lines.pop_back();
+    for (auto& l : lines) {
+        istringstream ss(l); vector<int> r; int x;
+        while (ss >> x) r.push_back(x);
+        boxes.push_back(r);
+    }
+    Solution sol;
+    cout << sol.maximumUnits(boxes, truckSize) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\n')
+truckSize = int(lines[-1])
+boxTypes = [list(map(int, l.split())) for l in lines[:-1]]
+print(Solution().maximumUnits(boxTypes, truckSize))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<String> lines = new ArrayList<>();
+        while (sc.hasNextLine()) { String l = sc.nextLine().trim(); if (!l.isEmpty()) lines.add(l); }
+        int truckSize = Integer.parseInt(lines.remove(lines.size() - 1));
+        int[][] boxes = new int[lines.size()][2];
+        for (int i = 0; i < lines.size(); i++) {
+            String[] p = lines.get(i).split(" ");
+            boxes[i][0] = Integer.parseInt(p[0]); boxes[i][1] = Integer.parseInt(p[1]);
+        }
+        System.out.println(new Solution().maximumUnits(boxes, truckSize));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n').filter(l => l);
+const truckSize = parseInt(lines.pop());
+const boxTypes = lines.map(l => l.split(' ').map(Number));
+
+__USER_CODE__
+
+console.log(maximumUnits(boxTypes, truckSize));`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    int arr[1001][2], n = 0; char buf[100];
+    char allLines[100][100]; int nl = 0;
+    while (fgets(allLines[nl], sizeof(allLines[nl]), stdin)) { if (allLines[nl][0] != '\n') nl++; }
+    int truckSize = atoi(allLines[nl-1]);
+    for (int i = 0; i < nl-1; i++) {
+        sscanf(allLines[i], "%d %d", &arr[n][0], &arr[n][1]); n++;
+    }
+    int *ptrs[1001]; int colSizes[1001];
+    for (int i = 0; i < n; i++) { ptrs[i] = arr[i]; colSizes[i] = 2; }
+    printf("%d\n", maximumUnits((int**)ptrs, n, colSizes, truckSize));
+    return 0;
+}`,
+    },
+    aiContext: 'Maximum Units on a Truck — greedy sort by units desc O(n log n)',
+  },
+
+  // ── 155. Destination City ─────────────────────────────────────────────────────
+  {
+    number: 155, title: 'Destination City', slug: 'destination-city', difficulty: 'Easy',
+    tags: ['Hash Table', 'String'], companies: ['Amazon', 'Google'],
+    acceptance: 78.5, premium: false,
+    description: `Given a list of paths where <code>paths[i] = [cityA, cityB]</code>, return the destination city — the city with no outgoing path.<br><br>Input: each path as two space-separated city names on a line.`,
+    examples: [
+      { input: 'London NewYork\nNewYork Lima\nLima Sao Paulo', output: 'Sao Paulo' },
+      { input: 'B A\nC B\nA C',                               output: 'A'         },
+    ],
+    constraints: ['1 ≤ paths.length ≤ 100', 'cityA != cityB', 'All strings consist of English letters and spaces'],
+    testCases: [
+      { input: 'London NewYork\nNewYork Lima\nLima Sao Paulo', expected: 'Sao Paulo', hidden: false },
+      { input: 'B A\nC B\nA C',                               expected: 'A',          hidden: false },
+      { input: 'A Z',                                          expected: 'Z',          hidden: true  },
+    ],
+    hints: [
+      'Collect all source cities in a set.',
+      'Return the destination city not in the source set.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string destCity(vector<vector<string>>& paths) {
+
+    }
+};`,
+      python: `class Solution:
+    def destCity(self, paths: List[List[str]]) -> str:
+        `,
+      java: `class Solution {
+    public String destCity(List<List<String>> paths) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string[][]} paths
+ * @return {string}
+ */
+var destCity = function(paths) {
+
+};`,
+      c: `char* destCity(char*** paths, int pathsSize, int* pathsColSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<vector<string>> paths; string line;
+    while (getline(cin, line)) {
+        if (line.empty()) continue;
+        // Split at first space for two-word cities: find the pattern "word[s] word[s]"
+        // Actually split on tab or specific delimiter — use first space-delimited token as cityA, rest as cityB
+        // Better: find position after first word group ending before last word group
+        // Simple approach: find the ' ' that separates A and B by scanning
+        // We'll read cityA as everything up to finding a second city name
+        // Since cities can have spaces, use the paths format: "CityA CityB" split at last odd boundary
+        // We'll mark separator: look for \t or use fixed split
+        // For this problem, split at the FIRST occurrence of two consecutive spaces or just at pos of second capital
+        // Simplest: read whole line, split at first occurrence where we can identify both cities
+        // Actually for test cases above: "London NewYork", "NewYork Lima", "Sao Paulo" etc.
+        // Let's split at the LAST space to get cityB as the last word, rest is cityA
+        // This works when cities are single words. For "Sao Paulo" style, the path would be
+        // "Lima Sao Paulo" -> cityA="Lima", cityB="Sao Paulo"
+        // So split at FIRST space for cityA, rest for cityB:
+        size_t pos = line.find(' ');
+        if (pos != string::npos) {
+            string a = line.substr(0, pos);
+            string b = line.substr(pos + 1);
+            paths.push_back({a, b});
+        }
+    }
+    Solution sol;
+    cout << sol.destCity(paths) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = [l for l in sys.stdin.read().split('\n') if l]
+paths = []
+for l in lines:
+    idx = l.index(' ')
+    paths.append([l[:idx], l[idx+1:]])
+print(Solution().destCity(paths))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<List<String>> paths = new ArrayList<>();
+        while (sc.hasNextLine()) {
+            String l = sc.nextLine(); if (l.isEmpty()) continue;
+            int idx = l.indexOf(' ');
+            paths.add(Arrays.asList(l.substring(0, idx), l.substring(idx + 1)));
+        }
+        System.out.println(new Solution().destCity(paths));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n').filter(l => l);
+const paths = lines.map(l => { const idx = l.indexOf(' '); return [l.slice(0, idx), l.slice(idx+1)]; });
+
+__USER_CODE__
+
+console.log(destCity(paths));`,
+      c: `#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+__USER_CODE__
+
+int main() {
+    char lines[101][201]; int n = 0;
+    while (fgets(lines[n], sizeof(lines[n]), stdin)) { if (lines[n][0] != '\n') n++; }
+    char cityAs[101][101], cityBs[101][101];
+    for (int i = 0; i < n; i++) {
+        char *sp = strchr(lines[i], ' ');
+        int la = sp - lines[i];
+        strncpy(cityAs[i], lines[i], la); cityAs[i][la] = '\0';
+        int lb = strlen(sp+1); if (sp[1+lb-1] == '\n') lb--;
+        strncpy(cityBs[i], sp+1, lb); cityBs[i][lb] = '\0';
+    }
+    char *ptrs[101][2];
+    for (int i = 0; i < n; i++) { ptrs[i][0] = cityAs[i]; ptrs[i][1] = cityBs[i]; }
+    int colSizes[101]; for (int i = 0; i < n; i++) colSizes[i] = 2;
+    printf("%s\n", destCity((char***)ptrs, n, colSizes));
+    return 0;
+}`,
+    },
+    aiContext: 'Destination City — source set lookup O(n)',
+  },
+
+  // ── 156. Check if Two String Arrays are Equivalent ────────────────────────────
+  {
+    number: 156, title: 'Check if Two String Arrays are Equivalent', slug: 'check-if-two-string-arrays-are-equivalent', difficulty: 'Easy',
+    tags: ['Array', 'String'], companies: ['Amazon', 'Google'],
+    acceptance: 84.5, premium: false,
+    description: `Given two string arrays <code>word1</code> and <code>word2</code>, return <code>true</code> if the two arrays represent the same string (concatenation of all strings equals).<br><br>First line: space-separated words of word1. Second line: space-separated words of word2.`,
+    examples: [
+      { input: 'ab c\nabc', output: 'true' },
+      { input: 'a cb\nab c', output: 'false' },
+    ],
+    constraints: ['1 ≤ word1.length, word2.length ≤ 10³', '1 ≤ word1[i].length, word2[i].length ≤ 10³'],
+    testCases: [
+      { input: 'ab c\nabc',    expected: 'true',  hidden: false },
+      { input: 'a cb\nab c',   expected: 'false', hidden: false },
+      { input: 'abc d e f\nabcdef', expected: 'true', hidden: true },
+      { input: 'a\nb',         expected: 'false', hidden: true  },
+    ],
+    hints: [
+      'Concatenate all strings in each array.',
+      'Compare the two resulting strings.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    bool arrayStringsAreEqual(vector<string>& word1, vector<string>& word2) {
+
+    }
+};`,
+      python: `class Solution:
+    def arrayStringsAreEqual(self, word1: List[str], word2: List[str]) -> bool:
+        `,
+      java: `class Solution {
+    public boolean arrayStringsAreEqual(String[] word1, String[] word2) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string[]} word1
+ * @param {string[]} word2
+ * @return {boolean}
+ */
+var arrayStringsAreEqual = function(word1, word2) {
+
+};`,
+      c: `bool arrayStringsAreEqual(char** word1, int word1Size, char** word2, int word2Size) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string l1, l2; getline(cin, l1); getline(cin, l2);
+    istringstream s1(l1), s2(l2);
+    vector<string> w1, w2; string w;
+    while (s1 >> w) w1.push_back(w);
+    while (s2 >> w) w2.push_back(w);
+    Solution sol;
+    cout << (sol.arrayStringsAreEqual(w1, w2) ? "true" : "false") << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().strip().split('\n')
+w1 = lines[0].split(); w2 = lines[1].split() if len(lines) > 1 else []
+print(str(Solution().arrayStringsAreEqual(w1, w2)).lower())`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String[] w1 = sc.nextLine().trim().split(" ");
+        String[] w2 = sc.nextLine().trim().split(" ");
+        System.out.println(new Solution().arrayStringsAreEqual(w1, w2));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n');
+const w1 = lines[0].split(' '), w2 = (lines[1] || '').split(' ');
+
+__USER_CODE__
+
+console.log(String(arrayStringsAreEqual(w1, w2)));`,
+      c: `#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+__USER_CODE__
+
+int main() {
+    char words1[1001][1001], words2[1001][1001]; int n1 = 0, n2 = 0;
+    char l1[100001], l2[100001];
+    fgets(l1, sizeof(l1), stdin); fgets(l2, sizeof(l2), stdin);
+    char *p = strtok(l1, " \n"); while (p) { strcpy(words1[n1++], p); p = strtok(NULL, " \n"); }
+    p = strtok(l2, " \n"); while (p) { strcpy(words2[n2++], p); p = strtok(NULL, " \n"); }
+    char *ptrs1[1001], *ptrs2[1001];
+    for (int i = 0; i < n1; i++) ptrs1[i] = words1[i];
+    for (int i = 0; i < n2; i++) ptrs2[i] = words2[i];
+    printf("%s\n", arrayStringsAreEqual(ptrs1, n1, ptrs2, n2) ? "true" : "false");
+    return 0;
+}`,
+    },
+    aiContext: 'Check if Two String Arrays are Equivalent — concatenate and compare O(n)',
+  },
+
+  // ── 157. Merge Strings Alternately ────────────────────────────────────────────
+  {
+    number: 157, title: 'Merge Strings Alternately', slug: 'merge-strings-alternately', difficulty: 'Easy',
+    tags: ['Two Pointers', 'String'], companies: ['Amazon', 'Google', 'Facebook'],
+    acceptance: 80.3, premium: false,
+    description: `Merge two strings by alternating their characters. If one string is longer than the other, append the remaining characters at the end.<br><br>First line: word1. Second line: word2.`,
+    examples: [
+      { input: 'abc\npqr', output: 'apbqcr'  },
+      { input: 'ab\npqrs', output: 'apbqrs'  },
+      { input: 'abcd\npq', output: 'apbqcd'  },
+    ],
+    constraints: ['1 ≤ word1.length, word2.length ≤ 100', 'word1 and word2 consist of lowercase English letters'],
+    testCases: [
+      { input: 'abc\npqr',  expected: 'apbqcr', hidden: false },
+      { input: 'ab\npqrs',  expected: 'apbqrs', hidden: false },
+      { input: 'abcd\npq',  expected: 'apbqcd', hidden: false },
+      { input: 'a\nb',      expected: 'ab',      hidden: true  },
+    ],
+    hints: [
+      'Use two pointers, one for each string.',
+      'Alternate appending characters from each string.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string mergeAlternately(string word1, string word2) {
+
+    }
+};`,
+      python: `class Solution:
+    def mergeAlternately(self, word1: str, word2: str) -> str:
+        `,
+      java: `class Solution {
+    public String mergeAlternately(String word1, String word2) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} word1
+ * @param {string} word2
+ * @return {string}
+ */
+var mergeAlternately = function(word1, word2) {
+
+};`,
+      c: `char* mergeAlternately(char* word1, char* word2) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string w1, w2;
+    getline(cin, w1); getline(cin, w2);
+    Solution sol;
+    cout << sol.mergeAlternately(w1, w2) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+lines = sys.stdin.read().split('\n')
+w1 = lines[0]; w2 = lines[1] if len(lines) > 1 else ''
+print(Solution().mergeAlternately(w1, w2))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String w1 = sc.nextLine(), w2 = sc.nextLine();
+        System.out.println(new Solution().mergeAlternately(w1, w2));
+    }
+}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').split('\n');
+const w1 = lines[0], w2 = lines[1] || '';
+
+__USER_CODE__
+
+console.log(mergeAlternately(w1, w2));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char w1[101], w2[101];
+    fgets(w1, sizeof(w1), stdin); fgets(w2, sizeof(w2), stdin);
+    int n1 = strlen(w1), n2 = strlen(w2);
+    if (w1[n1-1] == '\n') w1[--n1] = '\0';
+    if (w2[n2-1] == '\n') w2[--n2] = '\0';
+    printf("%s\n", mergeAlternately(w1, w2));
+    return 0;
+}`,
+    },
+    aiContext: 'Merge Strings Alternately — two pointers O(n+m)',
+  },
+
+  // ── 158. Find the Highest Altitude ────────────────────────────────────────────
+  {
+    number: 158, title: 'Find the Highest Altitude', slug: 'find-the-highest-altitude', difficulty: 'Easy',
+    tags: ['Array', 'Prefix Sum'], companies: ['Amazon', 'Google'],
+    acceptance: 75.5, premium: false,
+    description: `A biker starts at altitude 0 and goes on a road trip where <code>gain[i]</code> is the net gain in altitude between points <code>i</code> and <code>i+1</code>. Return the highest altitude reached.`,
+    examples: [
+      { input: '-5 1 5 0 -7', output: '1', explanation: 'Altitudes: 0,-5,-4,1,1,-6. Highest: 1' },
+      { input: '-4 -3 -2 -1 4 3 2', output: '0' },
+    ],
+    constraints: ['n == gain.length', '1 ≤ n ≤ 100', '-100 ≤ gain[i] ≤ 100'],
+    testCases: [
+      { input: '-5 1 5 0 -7',     expected: '1', hidden: false },
+      { input: '-4 -3 -2 -1 4 3 2', expected: '0', hidden: false },
+      { input: '1 2 3',           expected: '6', hidden: true  },
+      { input: '-1',              expected: '0', hidden: true  },
+    ],
+    hints: [
+      'Track running prefix sum starting at 0.',
+      'Return the maximum value seen.',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int largestAltitude(vector<int>& gain) {
+
+    }
+};`,
+      python: `class Solution:
+    def largestAltitude(self, gain: List[int]) -> int:
+        `,
+      java: `class Solution {
+    public int largestAltitude(int[] gain) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {number[]} gain
+ * @return {number}
+ */
+var largestAltitude = function(gain) {
+
+};`,
+      c: `int largestAltitude(int* gain, int gainSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<int> gain; int x;
+    while (cin >> x) gain.push_back(x);
+    Solution sol;
+    cout << sol.largestAltitude(gain) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+gain = list(map(int, sys.stdin.read().split()))
+print(Solution().largestAltitude(gain))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Integer> list = new ArrayList<>();
+        while (sc.hasNextInt()) list.add(sc.nextInt());
+        int[] gain = list.stream().mapToInt(i -> i).toArray();
+        System.out.println(new Solution().largestAltitude(gain));
+    }
+}`,
+      javascript: `const gain = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\s+/).map(Number);
+
+__USER_CODE__
+
+console.log(largestAltitude(gain));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    int gain[101], n = 0;
+    while (scanf("%d", &gain[n]) == 1) n++;
+    printf("%d\n", largestAltitude(gain, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Find the Highest Altitude — prefix sum max O(n)',
+  },
+
+  // ── 159. Goal Parser Interpretation ──────────────────────────────────────────
+  {
+    number: 159, title: 'Goal Parser Interpretation', slug: 'goal-parser-interpretation', difficulty: 'Easy',
+    tags: ['String'], companies: ['Amazon', 'Google'],
+    acceptance: 85.5, premium: false,
+    description: `You own a Goal Parser that can interpret a string <code>command</code>. The parser interprets: <code>G</code> → "G", <code>()</code> → "o", <code>(al)</code> → "al". Return the Goal Parser's interpretation.`,
+    examples: [
+      { input: 'G()(al)',    output: 'Goal'    },
+      { input: 'G()()()()(al)', output: 'Gooooal' },
+      { input: '(al)G(al)()()G', output: 'alGalooG' },
+    ],
+    constraints: ['1 ≤ command.length ≤ 100', 'command consists of G, (, ), a, l only', 'command is valid'],
+    testCases: [
+      { input: 'G()(al)',        expected: 'Goal',    hidden: false },
+      { input: 'G()()()()(al)',  expected: 'Gooooal', hidden: false },
+      { input: '(al)G(al)()()G', expected: 'alGalooG', hidden: false },
+      { input: 'G',              expected: 'G',       hidden: true  },
+    ],
+    hints: [
+      'Replace "()" with "o" and "(al)" with "al".',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    string interpret(string command) {
+
+    }
+};`,
+      python: `class Solution:
+    def interpret(self, command: str) -> str:
+        `,
+      java: `class Solution {
+    public String interpret(String command) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string} command
+ * @return {string}
+ */
+var interpret = function(command) {
+
+};`,
+      c: `char* interpret(char* command) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    string s; cin >> s;
+    Solution sol;
+    cout << sol.interpret(s) << endl;
+    return 0;
+}`,
+      python: `import sys
+
+__USER_CODE__
+
+s = sys.stdin.read().strip()
+print(Solution().interpret(s))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        String s = new Scanner(System.in).next().trim();
+        System.out.println(new Solution().interpret(s));
+    }
+}`,
+      javascript: `const s = require('fs').readFileSync('/dev/stdin', 'utf8').trim();
+
+__USER_CODE__
+
+console.log(interpret(s));`,
+      c: `#include <stdio.h>
+
+__USER_CODE__
+
+int main() {
+    char s[101]; scanf("%s", s);
+    printf("%s\n", interpret(s));
+    return 0;
+}`,
+    },
+    aiContext: 'Goal Parser Interpretation — string replace O(n)',
+  },
+
+  // ── 160. Final Value of Variable After Performing Operations ──────────────────
+  {
+    number: 160, title: 'Final Value of Variable After Performing Operations', slug: 'final-value-of-variable-after-performing-operations', difficulty: 'Easy',
+    tags: ['Array', 'String', 'Simulation'], companies: ['Amazon', 'Google'],
+    acceptance: 88.6, premium: false,
+    description: `Initially, X = 0. Given a list of operations (one per line), return the final value of X.<br><br>Operations: <code>++X</code> or <code>X++</code> increments X by 1; <code>--X</code> or <code>X--</code> decrements X by 1.`,
+    examples: [
+      { input: '--X\nX++\nX++', output: '1', explanation: '-1+1+1=1' },
+      { input: '++X\n++X\nX++', output: '3' },
+      { input: 'X++\n++X\n--X\nX--', output: '0' },
+    ],
+    constraints: ['1 ≤ operations.length ≤ 100', 'operations[i] is one of ++X, X++, --X, X--'],
+    testCases: [
+      { input: '--X\nX++\nX++',      expected: '1', hidden: false },
+      { input: '++X\n++X\nX++',      expected: '3', hidden: false },
+      { input: 'X++\n++X\n--X\nX--', expected: '0', hidden: false },
+      { input: '++X',                expected: '1', hidden: true  },
+    ],
+    hints: [
+      'For each operation, check if it contains "++" or "--".',
+      'Increment for "++", decrement for "--".',
+    ],
+    starter: {
+      cpp: `class Solution {
+public:
+    int finalValueAfterOperations(vector<string>& operations) {
+
+    }
+};`,
+      python: `class Solution:
+    def finalValueAfterOperations(self, operations: List[str]) -> int:
+        `,
+      java: `class Solution {
+    public int finalValueAfterOperations(String[] operations) {
+
+    }
+}`,
+      javascript: `/**
+ * @param {string[]} operations
+ * @return {number}
+ */
+var finalValueAfterOperations = function(operations) {
+
+};`,
+      c: `int finalValueAfterOperations(char** operations, int operationsSize) {
+
+}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+__USER_CODE__
+
+int main() {
+    vector<string> ops; string line;
+    while (getline(cin, line)) if (!line.empty()) ops.push_back(line);
+    Solution sol;
+    cout << sol.finalValueAfterOperations(ops) << endl;
+    return 0;
+}`,
+      python: `from typing import List
+import sys
+
+__USER_CODE__
+
+ops = [l for l in sys.stdin.read().strip().split('\n') if l]
+print(Solution().finalValueAfterOperations(ops))`,
+      java: `import java.util.*;
+
+__USER_CODE__
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<String> ops = new ArrayList<>();
+        while (sc.hasNextLine()) { String l = sc.nextLine(); if (!l.isEmpty()) ops.add(l); }
+        System.out.println(new Solution().finalValueAfterOperations(ops.toArray(new String[0])));
+    }
+}`,
+      javascript: `const ops = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\n').filter(l => l);
+
+__USER_CODE__
+
+console.log(finalValueAfterOperations(ops));`,
+      c: `#include <stdio.h>
+#include <string.h>
+
+__USER_CODE__
+
+int main() {
+    char ops[101][5]; int n = 0;
+    while (scanf("%s", ops[n]) == 1) n++;
+    char *ptrs[101]; for (int i = 0; i < n; i++) ptrs[i] = ops[i];
+    printf("%d\n", finalValueAfterOperations(ptrs, n));
+    return 0;
+}`,
+    },
+    aiContext: 'Final Value After Operations — simulate O(n)',
+  },
+
 ];
 
 // ── Seed ─────────────────────────────────────────────────────────────────────
