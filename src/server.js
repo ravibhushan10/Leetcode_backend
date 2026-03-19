@@ -16,14 +16,22 @@ const app  = express();
 const PORT = process.env.PORT || 5000;
 
 // ── CORS ──────────────────────────────────────
+// FRONTEND_URL can be a comma-separated list of allowed origins, e.g.:
+//   FRONTEND_URL=https://codeforge.vercel.app,https://www.codeforge.dev
+const allowedOrigins = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+
 const corsOptions = {
   origin: (origin, cb) => {
+    // Allow requests with no origin (mobile apps, Postman, server-to-server)
     if (!origin) return cb(null, true);
     if (
       origin.startsWith('http://localhost') ||
       origin.startsWith('http://127.0.0.1') ||
       origin.startsWith('file://') ||
-      origin === process.env.FRONTEND_URL ||
+      allowedOrigins.includes(origin) ||
       origin === process.env.ADMIN_URL
     ) return cb(null, true);
     cb(new Error('Not allowed by CORS'));
@@ -70,10 +78,17 @@ mongoose.connect(process.env.MONGODB_URI)
     await cleanupUnverifiedAccounts();
     setInterval(cleanupUnverifiedAccounts, 6 * 60 * 60 * 1000);
 
-    app.listen(PORT, () => console.log(`🚀 CodeForge API → http://localhost:${PORT}`));
+   // After mongoose.connect(...).then(...)
+app.listen(PORT, () => console.log(`🚀 CodeForge API → http://localhost:${PORT}`))
+  .on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} is already in use. Kill the existing process and try again.`);
+      process.exit(1);
+    }
+  });
   })
   .catch(err => {
-    console.error('❌ MongoDB connection failed:', err.message);
+    console.error('MongoDB connection failed:', err.message);
     process.exit(1);
   });
 

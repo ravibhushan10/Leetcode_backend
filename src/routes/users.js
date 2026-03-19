@@ -38,10 +38,15 @@ async function issueTokens(user, res) {
   const hash = await bcrypt.hash(refreshToken, 10);
   await User.findByIdAndUpdate(user._id, { refreshTokenHash: hash });
 
+  // In production the frontend and backend are on different origins (e.g. Vercel + Render).
+  // Cross-origin cookies require sameSite:'none' + secure:true.
+  // In development (same origin via Vite proxy) 'lax' works fine, but 'none' also works
+  // as long as you're on localhost with a browser that allows it.
+  const isProd = process.env.NODE_ENV === 'production';
   res.cookie('cf_refresh', refreshToken, {
     httpOnly: true,
-    secure:   process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure:   isProd,          // must be true when sameSite:'none'
+    sameSite: isProd ? 'none' : 'lax',
     maxAge:   365 * 24 * 60 * 60 * 1000, // 1 year
   });
 
