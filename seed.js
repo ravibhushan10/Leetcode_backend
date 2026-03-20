@@ -36,12 +36,12 @@ console.log('✅ Indexes synced');
 
 // ── Admin user ────────────────────────────────────────────────────────────────
 try {
-  await mongoose.connection.db.collection('users').deleteMany({ email: 'admin@codeforge.com' });
+  await mongoose.connection.db.collection('users').deleteMany({ email: 'ravi12maurya@gmail.com' });
 } catch (e) {}
 
-const hash = await bcrypt.hash('admin123', 12);
+const hash = await bcrypt.hash('Keyboss', 12);
 await new User({
-  name: 'Admin', email: 'admin@codeforge.com',
+  name: 'Admin', email: 'ravi12maurya@gmail.com',
   passwordHash: hash, isAdmin: true, plan: 'pro',
   ratingTitle: 'Admin', oauthProvider: 'admin',
 }).save();
@@ -12023,116 +12023,7 @@ int main(){
     aiContext: 'Add Two Numbers — linked list carry simulation O(max(m,n))',
   },
 
-  // ── 94. Next Permutation ─────────────────────────────────────────────────────
-  {
-    number: 94, title: 'Next Permutation', slug: 'next-permutation', difficulty: 'Medium',
-    tags: ['Array', 'Two Pointers'], companies: ['Google', 'Amazon', 'Microsoft'],
-    acceptance: 38.5, premium: false,
-    description: `Given an array of integers <code>nums</code>, find the next permutation in lexicographic order. If no next permutation exists (last permutation), rearrange as the lowest possible order (sorted ascending). Do it in-place.`,
-    examples: [
-      { input: '1 2 3', output: '1 3 2' },
-      { input: '3 2 1', output: '1 2 3' },
-      { input: '1 1 5', output: '1 5 1' },
-    ],
-    constraints: ['1 ≤ nums.length ≤ 100', '0 ≤ nums[i] ≤ 100'],
-    testCases: [
-      { input: '1 2 3', expected: '1 3 2', hidden: false },
-      { input: '3 2 1', expected: '1 2 3', hidden: false },
-      { input: '1 1 5', expected: '1 5 1', hidden: false },
-      { input: '1',     expected: '1',     hidden: true  },
-      { input: '2 3 1', expected: '3 1 2', hidden: true  },
-    ],
-    hints: [
-      'Find the largest index i such that nums[i] < nums[i+1].',
-      'Find the largest index j > i such that nums[j] > nums[i].',
-      'Swap nums[i] and nums[j], then reverse suffix after i.',
-    ],
-    starter: {
-      cpp: `class Solution {
-public:
-    void nextPermutation(vector<int>& nums) {
 
-    }
-};`,
-      python: `class Solution:
-    def nextPermutation(self, nums: List[int]) -> None:
-        """
-        Do not return anything, modify nums in-place instead.
-        """
-        `,
-      java: `class Solution {
-    public void nextPermutation(int[] nums) {
-
-    }
-}`,
-      javascript: `/**
- * @param {number[]} nums
- * @return {void} Do not return anything, modify nums in-place instead.
- */
-var nextPermutation = function(nums) {
-
-};`,
-      c: `void nextPermutation(int* nums, int numsSize) {
-
-}`,
-    },
-    codeWrapper: {
-      cpp: `#include <bits/stdc++.h>
-using namespace std;
-
-__USER_CODE__
-
-int main() {
-    vector<int> nums; int x;
-    while(cin>>x) nums.push_back(x);
-    Solution sol; sol.nextPermutation(nums);
-    for(int i=0;i<(int)nums.size();i++) cout<<(i?" ":"")<<nums[i];
-    cout<<endl; return 0;
-}`,
-      python: `from typing import List
-import sys
-
-__USER_CODE__
-
-nums=list(map(int,sys.stdin.read().split()))
-Solution().nextPermutation(nums)
-print(*nums)`,
-      java: `import java.util.*;
-
-__USER_CODE__
-
-public class Main {
-    public static void main(String[]args){
-        Scanner sc=new Scanner(System.in);
-        List<Integer>list=new ArrayList<>();
-        while(sc.hasNextInt()) list.add(sc.nextInt());
-        int[]nums=list.stream().mapToInt(i->i).toArray();
-        new Solution().nextPermutation(nums);
-        StringBuilder sb=new StringBuilder();
-        for(int i=0;i<nums.length;i++) sb.append(i>0?" ":"").append(nums[i]);
-        System.out.println(sb);
-    }
-}`,
-      javascript: `const nums=require('fs').readFileSync('/dev/stdin','utf8').trim().split(/\\s+/).map(Number);
-
-__USER_CODE__
-
-nextPermutation(nums);
-console.log(nums.join(' '));`,
-      c: `#include <stdio.h>
-
-__USER_CODE__
-
-int main(){
-    int nums[101],n=0;
-    while(scanf("%d",&nums[n])==1) n++;
-    nextPermutation(nums,n);
-    for(int i=0;i<n;i++) printf("%s%d",i?" ":"",nums[i]);
-    printf("\\n"); return 0;
-}`,
-    },
-    aiContext: 'Next Permutation — find pivot, swap, reverse O(n)',
-  },
 
   // ── 95. Minimum Window Substring ─────────────────────────────────────────────
   {
@@ -12945,107 +12836,7 @@ int main(){
     aiContext: 'Remove Nth Node From End — two pointers O(n)',
   },
 
-  // ── 100. Counting Bits ───────────────────────────────────────────────────────
-  {
-    number: 100, title: 'Counting Bits', slug: 'counting-bits', difficulty: 'Easy',
-    tags: ['Dynamic Programming', 'Bit Manipulation'], companies: ['Google', 'Facebook', 'Apple'],
-    acceptance: 74.8, premium: false,
-    description: `Given an integer <code>n</code>, return an array of length <code>n+1</code> where <code>ans[i]</code> is the number of 1s in the binary representation of <code>i</code>. Print space-separated.`,
-    examples: [
-      { input: 'n = 2', output: '0 1 1',   explanation: '0→0, 1→1, 2→10' },
-      { input: 'n = 5', output: '0 1 1 2 1 2' },
-    ],
-    constraints: ['0 ≤ n ≤ 10⁵'],
-    testCases: [
-      { input: '2', expected: '0 1 1',       hidden: false },
-      { input: '5', expected: '0 1 1 2 1 2', hidden: false },
-      { input: '0', expected: '0',            hidden: true  },
-      { input: '1', expected: '0 1',          hidden: true  },
-    ],
-    hints: [
-      'dp[i] = dp[i >> 1] + (i & 1).',
-      'Shifting right removes the last bit; add 1 if last bit was set.',
-      'Build dp array from 0 to n.',
-    ],
-    starter: {
-      cpp: `class Solution {
-public:
-    vector<int> countBits(int n) {
 
-    }
-};`,
-      python: `class Solution:
-    def countBits(self, n: int) -> List[int]:
-        `,
-      java: `class Solution {
-    public int[] countBits(int n) {
-
-    }
-}`,
-      javascript: `/**
- * @param {number} n
- * @return {number[]}
- */
-var countBits = function(n) {
-
-};`,
-      c: `int* countBits(int n, int* returnSize) {
-
-}`,
-    },
-    codeWrapper: {
-      cpp: `#include <bits/stdc++.h>
-using namespace std;
-
-__USER_CODE__
-
-int main(){
-    int n;cin>>n;
-    Solution sol;
-    vector<int>res=sol.countBits(n);
-    for(int i=0;i<(int)res.size();i++) cout<<(i?" ":"")<<res[i];
-    cout<<endl;return 0;
-}`,
-      python: `from typing import List
-import sys
-
-__USER_CODE__
-
-n=int(sys.stdin.read().strip())
-print(*Solution().countBits(n))`,
-      java: `import java.util.*;
-
-__USER_CODE__
-
-public class Main{
-    public static void main(String[]args){
-        int n=new Scanner(System.in).nextInt();
-        int[]res=new Solution().countBits(n);
-        StringBuilder sb=new StringBuilder();
-        for(int i=0;i<res.length;i++) sb.append(i>0?" ":"").append(res[i]);
-        System.out.println(sb);
-    }
-}`,
-      javascript: `const n=parseInt(require('fs').readFileSync('/dev/stdin','utf8').trim());
-
-__USER_CODE__
-
-console.log(countBits(n).join(' '));`,
-      c: `#include <stdio.h>
-#include <stdlib.h>
-
-__USER_CODE__
-
-int main(){
-    int n;scanf("%d",&n);
-    int retSize;
-    int*res=countBits(n,&retSize);
-    for(int i=0;i<retSize;i++) printf("%s%d",i?" ":"",res[i]);
-    printf("\\n");free(res);return 0;
-}`,
-    },
-    aiContext: 'Counting Bits — DP with bit shift O(n)',
-  },
 
   // ── PROBLEMS 101–110 ──────────────────────────────────────────────────────────
 // Each problem has starter (function signature) + codeWrapper (__USER_CODE__)
@@ -13701,9 +13492,9 @@ int main(){
     aiContext: 'Reverse Linked List II — one pass with dummy head O(n)',
   },
 
-  // ── 107. Next Permutation ─────────────────────────────────────────────────────
+  // ── 94. Next Permutation ──────────────────────────────────────────────────────
   {
-    number: 107, title: 'Next Permutation', slug: 'next-permutation', difficulty: 'Medium',
+    number: 94, title: 'Next Permutation', slug: 'next-permutation', difficulty: 'Medium',
     tags: ['Array', 'Two Pointers'], companies: ['Google', 'Amazon', 'Microsoft'],
     acceptance: 38.5, premium: false,
     description: `Given an array, find the next permutation in lexicographic order. If it is the last permutation, rearrange to the smallest. Do it in-place.`,
@@ -13801,105 +13592,10 @@ int main(){
     aiContext: 'Next Permutation — find pivot, swap, reverse O(n)',
   },
 
-  // ── 108. Subarray Sum Equals K ────────────────────────────────────────────────
+
+  // ── 108. Task Scheduler ─────────────────────────────────────────────────────
   {
-    number: 108, title: 'Subarray Sum Equals K', slug: 'subarray-sum-equals-k', difficulty: 'Medium',
-    tags: ['Array', 'Hash Table', 'Prefix Sum'], companies: ['Facebook', 'Google', 'Amazon'],
-    acceptance: 43.7, premium: false,
-    description: `Return the total number of subarrays whose sum equals <code>k</code>.<br><br>First line: space-separated nums. Second line: k.`,
-    examples: [
-      { input: '1 1 1\n2', output: '2' },
-      { input: '1 2 3\n3', output: '2' },
-    ],
-    constraints: ['1 ≤ nums.length ≤ 2×10⁴', '-1000 ≤ nums[i] ≤ 1000'],
-    testCases: [
-      { input: '1 1 1\n2',   expected: '2', hidden: false },
-      { input: '1 2 3\n3',   expected: '2', hidden: false },
-      { input: '1\n1',       expected: '1', hidden: true  },
-      { input: '-1 -1 1\n0', expected: '1', hidden: true  },
-    ],
-    hints: [
-      'Use prefix sums and a hash map.',
-      'For each prefix sum s, add count of (s - k) from map.',
-    ],
-    starter: {
-      cpp: `class Solution {
-public:
-    int subarraySum(vector<int>& nums, int k) {
-
-    }
-};`,
-      python: `class Solution:
-    def subarraySum(self, nums: List[int], k: int) -> int:
-        `,
-      java: `class Solution {
-    public int subarraySum(int[] nums, int k) {
-
-    }
-}`,
-      javascript: `var subarraySum = function(nums, k) {
-
-};`,
-      c: `int subarraySum(int* nums, int numsSize, int k) {
-
-}`,
-    },
-    codeWrapper: {
-      cpp: `#include <bits/stdc++.h>
-using namespace std;
-
-__USER_CODE__
-
-int main(){
-    string line;getline(cin,line);
-    istringstream ss(line);vector<int>nums;int x;while(ss>>x)nums.push_back(x);
-    int k;cin>>k;
-    cout<<Solution().subarraySum(nums,k)<<endl;return 0;
-}`,
-      python: `from typing import List
-import sys
-
-__USER_CODE__
-
-lines=sys.stdin.read().split('\\n')
-nums=list(map(int,lines[0].split()));k=int(lines[1].strip())
-print(Solution().subarraySum(nums,k))`,
-      java: `import java.util.*;
-
-__USER_CODE__
-
-public class Main{
-    public static void main(String[]args){
-        Scanner sc=new Scanner(System.in);
-        int[]nums=Arrays.stream(sc.nextLine().trim().split(" ")).mapToInt(Integer::parseInt).toArray();
-        int k=sc.nextInt();
-        System.out.println(new Solution().subarraySum(nums,k));
-    }
-}`,
-      javascript: `const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n');
-const nums=lines[0].split(' ').map(Number),k=parseInt(lines[1]);
-
-__USER_CODE__
-
-console.log(subarraySum(nums,k));`,
-      c: `#include <stdio.h>
-
-__USER_CODE__
-
-int main(){
-    int nums[20001],n=0,k;
-    char buf[500000];fgets(buf,sizeof(buf),stdin);
-    char*p=buf;while(*p&&*p!='\\n'){if(*p==' '){p++;continue;}nums[n++]=strtol(p,&p,10);}
-    scanf("%d",&k);
-    printf("%d\\n",subarraySum(nums,n,k));return 0;
-}`,
-    },
-    aiContext: 'Subarray Sum Equals K — prefix sum hash map O(n)',
-  },
-
-  // ── 109. Task Scheduler ──────────────────────────────────────────────────────
-  {
-    number: 109, title: 'Task Scheduler', slug: 'task-scheduler', difficulty: 'Medium',
+    number: 108, title: 'Task Scheduler', slug: 'task-scheduler', difficulty: 'Medium',
     tags: ['Array', 'Hash Table', 'Greedy', 'Counting'], companies: ['Facebook', 'Amazon', 'Google'],
     acceptance: 57.6, premium: false,
     description: `Given tasks and cooldown <code>n</code>, return the least number of time units needed (same task must be at least <code>n</code> apart).<br><br>First line: space-separated tasks. Second line: n.`,
@@ -13996,9 +13692,9 @@ int main(){
     aiContext: 'Task Scheduler — greedy formula O(n)',
   },
 
-  // ── 110. Counting Bits ────────────────────────────────────────────────────────
+  // ── 100. Counting Bits ────────────────────────────────────────────────────────
   {
-    number: 110, title: 'Counting Bits', slug: 'counting-bits', difficulty: 'Easy',
+    number: 100, title: 'Counting Bits', slug: 'counting-bits', difficulty: 'Easy',
     tags: ['Dynamic Programming', 'Bit Manipulation'], companies: ['Google', 'Facebook', 'Apple'],
     acceptance: 74.8, premium: false,
     description: `Given <code>n</code>, return an array of length <code>n+1</code> where <code>ans[i]</code> is the number of 1s in the binary representation of <code>i</code>. Print space-separated.`,
@@ -19137,7 +18833,7 @@ int main() {
 
   // ── 158. Find the Highest Altitude ────────────────────────────────────────────
   {
-    number: 158, title: 'Find the Highest Altitude', slug: 'find-the-highest-altitude', difficulty: 'Easy',
+    number: 107, title: 'Find the Highest Altitude', slug: 'find-the-highest-altitude', difficulty: 'Easy',
     tags: ['Array', 'Prefix Sum'], companies: ['Amazon', 'Google'],
     acceptance: 75.5, premium: false,
     description: `A biker starts at altitude 0 and goes on a road trip where <code>gain[i]</code> is the net gain in altitude between points <code>i</code> and <code>i+1</code>. Return the highest altitude reached.`,
@@ -19236,7 +18932,7 @@ int main() {
 
   // ── 159. Goal Parser Interpretation ──────────────────────────────────────────
   {
-    number: 159, title: 'Goal Parser Interpretation', slug: 'goal-parser-interpretation', difficulty: 'Easy',
+    number: 109, title: 'Goal Parser Interpretation', slug: 'goal-parser-interpretation', difficulty: 'Easy',
     tags: ['String'], companies: ['Amazon', 'Google'],
     acceptance: 85.5, premium: false,
     description: `You own a Goal Parser that can interpret a string <code>command</code>. The parser interprets: <code>G</code> → "G", <code>()</code> → "o", <code>(al)</code> → "al". Return the Goal Parser's interpretation.`,
@@ -19329,7 +19025,7 @@ int main() {
 
   // ── 160. Final Value of Variable After Performing Operations ──────────────────
   {
-    number: 160, title: 'Final Value of Variable After Performing Operations', slug: 'final-value-of-variable-after-performing-operations', difficulty: 'Easy',
+    number: 110, title: 'Final Value of Variable After Performing Operations', slug: 'final-value-of-variable-after-performing-operations', difficulty: 'Easy',
     tags: ['Array', 'String', 'Simulation'], companies: ['Amazon', 'Google'],
     acceptance: 88.6, premium: false,
     description: `Initially, X = 0. Given a list of operations (one per line), return the final value of X.<br><br>Operations: <code>++X</code> or <code>X++</code> increments X by 1; <code>--X</code> or <code>X--</code> decrements X by 1.`,
@@ -19428,17 +19124,331 @@ int main() {
     aiContext: 'Final Value After Operations — simulate O(n)',
   },
 
+   // ── 158. Clone Graph ─────────────────────────────────────────────────────────
+  {
+    number: 158, title: 'Clone Graph', slug: 'clone-graph', difficulty: 'Medium',
+    tags: ['Hash Table', 'Depth-First Search', 'Breadth-First Search', 'Graph'],
+    companies: ['Facebook', 'Amazon', 'Google', 'Microsoft'], acceptance: 53.2, premium: false,
+    description: `Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph. Each node contains a value and a list of neighbors.<br><br>Input: first line is number of nodes <code>n</code>, then <code>n</code> lines each with space-separated neighbor indices (1-based). Output: adjacency list of cloned graph in same format.`,
+    examples: [
+      { input: 'n=4, edges=[[2,4],[1,3],[2,4],[1,3]]', output: '[[2,4],[1,3],[2,4],[1,3]]', explanation: 'Deep copy of the 4-node graph' },
+      { input: 'n=1, edges=[[]]', output: '[[]]' },
+    ],
+    constraints: ['0 ≤ n ≤ 100', '1 ≤ node.val ≤ 100', 'No repeated edges, no self-loops'],
+    testCases: [
+      { input: '4\n2 4\n1 3\n2 4\n1 3', expected: '[[2,4],[1,3],[2,4],[1,3]]', hidden: false },
+      { input: '1\n',                   expected: '[[]]',                      hidden: false },
+      { input: '2\n2\n1',               expected: '[[2],[1]]',                 hidden: true  },
+    ],
+    hints: [
+      'Use a hash map from original node to its clone to avoid infinite loops.',
+      'DFS: for each neighbor, if not cloned yet recurse; otherwise use the existing clone.',
+      'BFS works too — process level by level using a queue.',
+    ],
+    starter: {
+      cpp: `class Solution {\npublic:\n    Node* cloneGraph(Node* node) {\n\n    }\n};`,
+      python: `class Solution:\n    def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:\n        `,
+      java: `class Solution {\n    public Node cloneGraph(Node node) {\n\n    }\n}`,
+      javascript: `/**\n * @param {Node} node\n * @return {Node}\n */\nvar cloneGraph = function(node) {\n\n};`,
+      c: `struct Node* cloneGraph(struct Node* node) {\n\n}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\nclass Node {\npublic:\n    int val;\n    vector<Node*> neighbors;\n    Node(int v) : val(v) {}\n};\n\n__USER_CODE__\n\nint main() {\n    int n; cin >> n;\n    if (n == 0) { cout << "[]" << endl; return 0; }\n    vector<Node*> nodes(n + 1);\n    for (int i = 1; i <= n; i++) nodes[i] = new Node(i);\n    cin.ignore();\n    for (int i = 1; i <= n; i++) {\n        string line; getline(cin, line);\n        istringstream ss(line); int nb;\n        while (ss >> nb) nodes[i]->neighbors.push_back(nodes[nb]);\n    }\n    Solution sol;\n    Node* cloned = sol.cloneGraph(nodes[1]);\n    map<Node*, int> idx; queue<Node*> q; vector<Node*> order;\n    q.push(cloned); idx[cloned] = 1;\n    while (!q.empty()) {\n        Node* cur = q.front(); q.pop(); order.push_back(cur);\n        for (auto nb : cur->neighbors) if (!idx.count(nb)) { idx[nb] = idx.size() + 1; q.push(nb); }\n    }\n    cout << "[";\n    for (int i = 0; i < (int)order.size(); i++) {\n        cout << "[";\n        for (int j = 0; j < (int)order[i]->neighbors.size(); j++) {\n            if (j) cout << ",";\n            cout << idx[order[i]->neighbors[j]];\n        }\n        cout << "]";\n        if (i + 1 < (int)order.size()) cout << ",";\n    }\n    cout << "]" << endl;\n    return 0;\n}`,
+      python: `import sys\nfrom collections import deque\nfrom typing import Optional\n\nclass Node:\n    def __init__(self, val=0, neighbors=None):\n        self.val = val\n        self.neighbors = neighbors or []\n\n__USER_CODE__\n\nlines = sys.stdin.read().splitlines()\nn = int(lines[0])\nif n == 0:\n    print("[]")\nelse:\n    nodes = {i: Node(i) for i in range(1, n + 1)}\n    for i in range(1, n + 1):\n        line = lines[i].strip() if i < len(lines) else ""\n        if line:\n            for nb in map(int, line.split()):\n                nodes[i].neighbors.append(nodes[nb])\n    cloned = Solution().cloneGraph(nodes[1])\n    order, idx, q = [], {}, deque([cloned])\n    idx[cloned] = 1\n    while q:\n        cur = q.popleft()\n        order.append(cur)\n        for nb in cur.neighbors:\n            if nb not in idx:\n                idx[nb] = len(idx) + 1\n                q.append(nb)\n    print("[" + ",".join("[" + ",".join(str(idx[nb]) for nb in node.neighbors) + "]" for node in order) + "]")`,
+      java: `import java.util.*;\n\nclass Node {\n    int val;\n    List<Node> neighbors;\n    Node(int v) { val = v; neighbors = new ArrayList<>(); }\n}\n\n__USER_CODE__\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = Integer.parseInt(sc.nextLine().trim());\n        if (n == 0) { System.out.println("[]"); return; }\n        Node[] nodes = new Node[n + 1];\n        for (int i = 1; i <= n; i++) nodes[i] = new Node(i);\n        for (int i = 1; i <= n; i++) {\n            String line = sc.hasNextLine() ? sc.nextLine().trim() : "";\n            if (!line.isEmpty())\n                for (String t : line.split(" "))\n                    nodes[i].neighbors.add(nodes[Integer.parseInt(t)]);\n        }\n        Node cloned = new Solution().cloneGraph(nodes[1]);\n        List<Node> order = new ArrayList<>();\n        Map<Node, Integer> idx = new HashMap<>();\n        Queue<Node> q = new LinkedList<>();\n        q.add(cloned); idx.put(cloned, 1);\n        while (!q.isEmpty()) {\n            Node cur = q.poll(); order.add(cur);\n            for (Node nb : cur.neighbors)\n                if (!idx.containsKey(nb)) { idx.put(nb, idx.size() + 1); q.add(nb); }\n        }\n        StringBuilder sb = new StringBuilder("[");\n        for (int i = 0; i < order.size(); i++) {\n            sb.append("[");\n            List<Node> nbs = order.get(i).neighbors;\n            for (int j = 0; j < nbs.size(); j++) {\n                if (j > 0) sb.append(",");\n                sb.append(idx.get(nbs.get(j)));\n            }\n            sb.append("]");\n            if (i + 1 < order.size()) sb.append(",");\n        }\n        System.out.println(sb.append("]"));\n    }\n}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');\nconst n = parseInt(lines[0]);\n\nfunction Node(val) { this.val = val; this.neighbors = []; }\n\n__USER_CODE__\n\nif (n === 0) { console.log('[]'); process.exit(); }\nconst nodes = {};\nfor (let i = 1; i <= n; i++) nodes[i] = new Node(i);\nfor (let i = 1; i <= n; i++) {\n    const line = (lines[i] || '').trim();\n    if (line) line.split(' ').forEach(nb => nodes[i].neighbors.push(nodes[+nb]));\n}\nconst cloned = cloneGraph(nodes[1]);\nconst order = [], idx = new Map(), q = [cloned];\nidx.set(cloned, 1);\nwhile (q.length) {\n    const cur = q.shift(); order.push(cur);\n    for (const nb of cur.neighbors)\n        if (!idx.has(nb)) { idx.set(nb, idx.size + 1); q.push(nb); }\n}\nconsole.log('[' + order.map(node => '[' + node.neighbors.map(nb => idx.get(nb)).join(',') + ']').join(',') + ']');`,
+      c: `#include <stdio.h>\n\nint main() { printf("[[]]\\n"); return 0; }`,
+    },
+    aiContext: 'Clone Graph — DFS/BFS with visited hash map O(V+E)',
+  },
+
+  // ── 159. Pacific Atlantic Water Flow ─────────────────────────────────────────
+  {
+    number: 159, title: 'Pacific Atlantic Water Flow', slug: 'pacific-atlantic-water-flow', difficulty: 'Medium',
+    tags: ['Array', 'Depth-First Search', 'Breadth-First Search', 'Matrix'],
+    companies: ['Google', 'Facebook', 'Amazon', 'Uber'], acceptance: 52.8, premium: false,
+    description: `There is an <code>m x n</code> island bordered by the Pacific Ocean (top and left edges) and Atlantic Ocean (bottom and right edges). Water can flow to a neighbor only if the neighbor height is less than or equal to the current cell.<br><br>Return all cells from which water can flow to both oceans.<br><br>Input: first line is <code>m</code> and <code>n</code>, then <code>m</code> lines of <code>n</code> space-separated heights. Output: space-separated <code>row,col</code> pairs sorted by row then col.`,
+    examples: [
+      { input: 'm=5,n=5 heights=[[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]', output: '0,4 1,3 1,4 2,2 3,0 3,1 4,0' },
+      { input: 'm=1,n=1 heights=[[1]]', output: '0,0' },
+    ],
+    constraints: ['1 ≤ m, n ≤ 200', '0 ≤ heights[i][j] ≤ 10⁵'],
+    testCases: [
+      { input: '5 5\n1 2 2 3 5\n3 2 3 4 4\n2 4 5 3 1\n6 7 1 4 5\n5 1 1 2 4', expected: '0,4 1,3 1,4 2,2 3,0 3,1 4,0', hidden: false },
+      { input: '1 1\n1',                                                         expected: '0,0',                          hidden: false },
+      { input: '2 2\n1 2\n4 3',                                                   expected: '0,1 1,0 1,1',                  hidden: true  },
+    ],
+    hints: [
+      'Reverse the problem: BFS/DFS from ocean borders inward instead of from each cell outward.',
+      'Run BFS from all Pacific border cells (top row + left col) to find Pacific-reachable set.',
+      'Run BFS from all Atlantic border cells (bottom row + right col), then intersect both sets.',
+    ],
+    starter: {
+      cpp: `class Solution {\npublic:\n    vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {\n\n    }\n};`,
+      python: `class Solution:\n    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:\n        `,
+      java: `class Solution {\n    public List<List<Integer>> pacificAtlantic(int[][] heights) {\n\n    }\n}`,
+      javascript: `/**\n * @param {number[][]} heights\n * @return {number[][]}\n */\nvar pacificAtlantic = function(heights) {\n\n};`,
+      c: `int** pacificAtlantic(int** heights, int heightsSize, int* heightsColSize, int* returnSize, int** returnColumnSizes) {\n\n}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\n__USER_CODE__\n\nint main() {\n    int m, n; cin >> m >> n;\n    vector<vector<int>> h(m, vector<int>(n));\n    for (int i = 0; i < m; i++)\n        for (int j = 0; j < n; j++)\n            cin >> h[i][j];\n    Solution sol;\n    auto res = sol.pacificAtlantic(h);\n    for (int i = 0; i < (int)res.size(); i++) {\n        if (i) cout << " ";\n        cout << res[i][0] << "," << res[i][1];\n    }\n    cout << endl;\n    return 0;\n}`,
+      python: `import sys\nfrom typing import List\n\n__USER_CODE__\n\ndata = sys.stdin.read().split()\nidx = 0\nm, n = int(data[idx]), int(data[idx+1]); idx += 2\nheights = []\nfor i in range(m):\n    heights.append([int(data[idx+j]) for j in range(n)])\n    idx += n\nres = Solution().pacificAtlantic(heights)\nprint(' '.join(f'{r},{c}' for r, c in res))`,
+      java: `import java.util.*;\n\n__USER_CODE__\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int m = sc.nextInt(), n = sc.nextInt();\n        int[][] h = new int[m][n];\n        for (int i = 0; i < m; i++)\n            for (int j = 0; j < n; j++)\n                h[i][j] = sc.nextInt();\n        List<List<Integer>> res = new Solution().pacificAtlantic(h);\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < res.size(); i++) {\n            if (i > 0) sb.append(" ");\n            sb.append(res.get(i).get(0)).append(",").append(res.get(i).get(1));\n        }\n        System.out.println(sb);\n    }\n}`,
+      javascript: `const data = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);\nlet idx = 0;\nconst m = data[idx++], n = data[idx++];\nconst heights = [];\nfor (let i = 0; i < m; i++) { heights.push(data.slice(idx, idx + n)); idx += n; }\n\n__USER_CODE__\n\nconst res = pacificAtlantic(heights);\nconsole.log(res.map(([r, c]) => r + ',' + c).join(' '));`,
+      c: `#include <stdio.h>\n#include <stdlib.h>\n\n__USER_CODE__\n\nint main() {\n    int m, n; scanf("%d %d", &m, &n);\n    int** h = malloc(m * sizeof(int*));\n    int* cols = malloc(m * sizeof(int));\n    for (int i = 0; i < m; i++) {\n        h[i] = malloc(n * sizeof(int)); cols[i] = n;\n        for (int j = 0; j < n; j++) scanf("%d", &h[i][j]);\n    }\n    int ret = 0;\n    int** retCols = malloc(m * n * sizeof(int*));\n    int** res = pacificAtlantic(h, m, cols, &ret, retCols);\n    for (int i = 0; i < ret; i++) {\n        if (i) printf(" ");\n        printf("%d,%d", res[i][0], res[i][1]);\n    }\n    printf("\\n"); return 0;\n}`,
+    },
+    aiContext: 'Pacific Atlantic Water Flow — reverse BFS from ocean borders O(m*n)',
+  },
+
+  // ── 160. Serialize and Deserialize Binary Tree ────────────────────────────────
+  {
+    number: 160, title: 'Serialize and Deserialize Binary Tree', slug: 'serialize-and-deserialize-binary-tree', difficulty: 'Hard',
+    tags: ['String', 'Tree', 'Depth-First Search', 'Breadth-First Search', 'Design', 'Binary Tree'],
+    companies: ['Facebook', 'Amazon', 'Google', 'Microsoft', 'Uber'], acceptance: 56.3, premium: false,
+    description: `Design an algorithm to serialize and deserialize a binary tree. Serialization converts a tree to a string; deserialization converts it back. Your algorithm just needs to produce the same tree after a round-trip.<br><br>Input: space-separated level-order values where <code>null</code> means no node. Output: level-order serialization of the reconstructed tree (trailing nulls omitted).`,
+    examples: [
+      { input: 'root = [1,2,3,null,null,4,5]', output: '1 2 3 null null 4 5' },
+      { input: 'root = []',                     output: 'null'                },
+    ],
+    constraints: ['0 ≤ nodes ≤ 10⁴', '-1000 ≤ Node.val ≤ 1000'],
+    testCases: [
+      { input: '1 2 3 null null 4 5', expected: '1 2 3 null null 4 5', hidden: false },
+      { input: 'null',                expected: 'null',                 hidden: false },
+      { input: '1 2',                 expected: '1 2',                  hidden: true  },
+      { input: '1 null 2 null 3',     expected: '1 null 2 null 3',      hidden: true  },
+    ],
+    hints: [
+      'BFS (level-order) serialization: enqueue nodes, write val or "null" for each.',
+      'Deserialization: use a queue of parent nodes; next two tokens are left and right child.',
+      'DFS preorder with null markers also works cleanly.',
+    ],
+    starter: {
+      cpp: `class Codec {\npublic:\n    string serialize(TreeNode* root) {\n\n    }\n    TreeNode* deserialize(string data) {\n\n    }\n};`,
+      python: `class Codec:\n    def serialize(self, root):\n        \n    def deserialize(self, data):\n        `,
+      java: `public class Codec {\n    public String serialize(TreeNode root) {\n\n    }\n    public TreeNode deserialize(String data) {\n\n    }\n}`,
+      javascript: `var serialize = function(root) {\n\n};\nvar deserialize = function(data) {\n\n};`,
+      c: `char* serialize(struct TreeNode* root) {\n\n}\nstruct TreeNode* deserialize(char* data) {\n\n}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\nstruct TreeNode { int val; TreeNode *left, *right; TreeNode(int v):val(v),left(nullptr),right(nullptr){} };\n\n__USER_CODE__\n\nint main() {\n    vector<string> tokens; string t;\n    while (cin >> t) tokens.push_back(t);\n    if (tokens.empty() || tokens[0] == "null") { cout << "null" << endl; return 0; }\n    TreeNode* root = new TreeNode(stoi(tokens[0]));\n    queue<TreeNode*> q; q.push(root); int i = 1;\n    while (!q.empty() && i < (int)tokens.size()) {\n        TreeNode* cur = q.front(); q.pop();\n        if (i < (int)tokens.size() && tokens[i] != "null") { cur->left = new TreeNode(stoi(tokens[i])); q.push(cur->left); } i++;\n        if (i < (int)tokens.size() && tokens[i] != "null") { cur->right = new TreeNode(stoi(tokens[i])); q.push(cur->right); } i++;\n    }\n    Codec codec;\n    TreeNode* r2 = codec.deserialize(codec.serialize(root));\n    queue<TreeNode*> pq; pq.push(r2);\n    vector<string> out;\n    while (!pq.empty()) {\n        TreeNode* cur = pq.front(); pq.pop();\n        if (!cur) { out.push_back("null"); continue; }\n        out.push_back(to_string(cur->val));\n        pq.push(cur->left); pq.push(cur->right);\n    }\n    while (!out.empty() && out.back() == "null") out.pop_back();\n    for (int j = 0; j < (int)out.size(); j++) { if (j) cout << " "; cout << out[j]; }\n    cout << endl; return 0;\n}`,
+      python: `import sys\nfrom collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\n__USER_CODE__\n\ntokens = sys.stdin.read().split()\nif not tokens or tokens[0] == 'null':\n    print('null')\nelse:\n    root = TreeNode(int(tokens[0]))\n    q, i = deque([root]), 1\n    while q and i < len(tokens):\n        cur = q.popleft()\n        if i < len(tokens) and tokens[i] != 'null':\n            cur.left = TreeNode(int(tokens[i])); q.append(cur.left)\n        i += 1\n        if i < len(tokens) and tokens[i] != 'null':\n            cur.right = TreeNode(int(tokens[i])); q.append(cur.right)\n        i += 1\n    codec = Codec()\n    r2 = codec.deserialize(codec.serialize(root))\n    out, q = [], deque([r2])\n    while q:\n        cur = q.popleft()\n        if not cur: out.append('null'); continue\n        out.append(str(cur.val)); q.append(cur.left); q.append(cur.right)\n    while out and out[-1] == 'null': out.pop()\n    print(' '.join(out))`,
+      java: `import java.util.*;\n\nclass TreeNode { int val; TreeNode left, right; TreeNode(int v){val=v;} }\n\n__USER_CODE__\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        List<String> tokens = new ArrayList<>();\n        while (sc.hasNext()) tokens.add(sc.next());\n        if (tokens.isEmpty() || tokens.get(0).equals("null")) { System.out.println("null"); return; }\n        TreeNode root = new TreeNode(Integer.parseInt(tokens.get(0)));\n        Queue<TreeNode> q = new LinkedList<>(); q.add(root); int i = 1;\n        while (!q.isEmpty() && i < tokens.size()) {\n            TreeNode cur = q.poll();\n            if (i < tokens.size() && !tokens.get(i).equals("null")) { cur.left = new TreeNode(Integer.parseInt(tokens.get(i))); q.add(cur.left); } i++;\n            if (i < tokens.size() && !tokens.get(i).equals("null")) { cur.right = new TreeNode(Integer.parseInt(tokens.get(i))); q.add(cur.right); } i++;\n        }\n        Codec codec = new Codec();\n        TreeNode r2 = codec.deserialize(codec.serialize(root));\n        Queue<TreeNode> pq = new LinkedList<>(); pq.add(r2);\n        List<String> out = new ArrayList<>();\n        while (!pq.isEmpty()) {\n            TreeNode cur = pq.poll();\n            if (cur == null) { out.add("null"); continue; }\n            out.add(String.valueOf(cur.val)); pq.add(cur.left); pq.add(cur.right);\n        }\n        while (!out.isEmpty() && out.get(out.size()-1).equals("null")) out.remove(out.size()-1);\n        System.out.println(String.join(" ", out));\n    }\n}`,
+      javascript: `const tokens = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/);\n\nfunction TreeNode(val, left, right) { this.val = val; this.left = left || null; this.right = right || null; }\n\n__USER_CODE__\n\nif (!tokens.length || tokens[0] === 'null') { console.log('null'); process.exit(); }\nconst root = new TreeNode(+tokens[0]);\nconst q = [root]; let i = 1;\nwhile (q.length && i < tokens.length) {\n    const cur = q.shift();\n    if (tokens[i] !== 'null') { cur.left = new TreeNode(+tokens[i]); q.push(cur.left); } i++;\n    if (i < tokens.length && tokens[i] !== 'null') { cur.right = new TreeNode(+tokens[i]); q.push(cur.right); } i++;\n}\nconst r2 = deserialize(serialize(root));\nconst out = [], pq = [r2];\nwhile (pq.length) {\n    const cur = pq.shift();\n    if (!cur) { out.push('null'); continue; }\n    out.push(String(cur.val)); pq.push(cur.left); pq.push(cur.right);\n}\nwhile (out.length && out[out.length-1] === 'null') out.pop();\nconsole.log(out.join(' '));`,
+      c: `#include <stdio.h>\n#include <stdlib.h>\n\nstruct TreeNode { int val; struct TreeNode *left, *right; };\n\n__USER_CODE__\n\nint main() { printf("1\\n"); return 0; }`,
+    },
+    aiContext: 'Serialize and Deserialize Binary Tree — BFS level-order with null markers O(n)',
+  },
+
+  // ── 161. Number of Connected Components in an Undirected Graph ────────────────
+  {
+    number: 161, title: 'Number of Connected Components in an Undirected Graph', slug: 'number-of-connected-components-in-an-undirected-graph', difficulty: 'Medium',
+    tags: ['Depth-First Search', 'Breadth-First Search', 'Union Find', 'Graph'],
+    companies: ['LinkedIn', 'Google', 'Amazon', 'Facebook'], acceptance: 61.4, premium: false,
+    description: `Given <code>n</code> nodes labeled <code>0</code> to <code>n-1</code> and a list of undirected edges, return the number of connected components in the graph.<br><br>Input: first line has <code>n</code> and <code>e</code> (edge count). Next <code>e</code> lines each have two integers <code>u v</code>.`,
+    examples: [
+      { input: 'n=5, edges=[[0,1],[1,2],[3,4]]',       output: '2' },
+      { input: 'n=5, edges=[[0,1],[1,2],[2,3],[3,4]]', output: '1' },
+    ],
+    constraints: ['1 ≤ n ≤ 2000', '0 ≤ edges.length ≤ 5000', 'No duplicate edges, no self-loops'],
+    testCases: [
+      { input: '5 3\n0 1\n1 2\n3 4', expected: '2', hidden: false },
+      { input: '5 4\n0 1\n1 2\n2 3\n3 4', expected: '1', hidden: false },
+      { input: '4 0',                      expected: '4', hidden: true  },
+      { input: '3 1\n0 2',                 expected: '2', hidden: true  },
+    ],
+    hints: [
+      'Union-Find: start with n components, decrement each time you union two different sets.',
+      'Alternatively DFS/BFS from each unvisited node — count how many times you start a new traversal.',
+      'Union-Find with path compression runs in nearly O(n) time.',
+    ],
+    starter: {
+      cpp: `class Solution {\npublic:\n    int countComponents(int n, vector<vector<int>>& edges) {\n\n    }\n};`,
+      python: `class Solution:\n    def countComponents(self, n: int, edges: List[List[int]]) -> int:\n        `,
+      java: `class Solution {\n    public int countComponents(int n, int[][] edges) {\n\n    }\n}`,
+      javascript: `/**\n * @param {number} n\n * @param {number[][]} edges\n * @return {number}\n */\nvar countComponents = function(n, edges) {\n\n};`,
+      c: `int countComponents(int n, int** edges, int edgesSize, int* edgesColSize) {\n\n}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\n__USER_CODE__\n\nint main() {\n    int n, e; cin >> n >> e;\n    vector<vector<int>> edges(e, vector<int>(2));\n    for (int i = 0; i < e; i++) cin >> edges[i][0] >> edges[i][1];\n    Solution sol;\n    cout << sol.countComponents(n, edges) << endl;\n    return 0;\n}`,
+      python: `import sys\nfrom typing import List\n\n__USER_CODE__\n\ndata = sys.stdin.read().split()\nidx = 0\nn, e = int(data[idx]), int(data[idx+1]); idx += 2\nedges = []\nfor _ in range(e):\n    edges.append([int(data[idx]), int(data[idx+1])]); idx += 2\nprint(Solution().countComponents(n, edges))`,
+      java: `import java.util.*;\n\n__USER_CODE__\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt(), e = sc.nextInt();\n        int[][] edges = new int[e][2];\n        for (int i = 0; i < e; i++) { edges[i][0] = sc.nextInt(); edges[i][1] = sc.nextInt(); }\n        System.out.println(new Solution().countComponents(n, edges));\n    }\n}`,
+      javascript: `const data = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split(/\\s+/).map(Number);\nlet idx = 0;\nconst n = data[idx++], e = data[idx++];\nconst edges = [];\nfor (let i = 0; i < e; i++) edges.push([data[idx++], data[idx++]]);\n\n__USER_CODE__\n\nconsole.log(countComponents(n, edges));`,
+      c: `#include <stdio.h>\n\n__USER_CODE__\n\nint main() {\n    int n, e; scanf("%d %d", &n, &e);\n    int buf[5000][2], cols[5000];\n    for (int i = 0; i < e; i++) { scanf("%d %d", &buf[i][0], &buf[i][1]); cols[i] = 2; }\n    int* ptrs[5000];\n    for (int i = 0; i < e; i++) ptrs[i] = buf[i];\n    printf("%d\\n", countComponents(n, (int**)ptrs, e, cols));\n    return 0;\n}`,
+    },
+    aiContext: 'Number of Connected Components — Union-Find or DFS/BFS O(n+e)',
+  },
+
+  // ── 162. Word Ladder ──────────────────────────────────────────────────────────
+  {
+    number: 162, title: 'Word Ladder', slug: 'word-ladder', difficulty: 'Hard',
+    tags: ['Hash Table', 'String', 'Breadth-First Search'],
+    companies: ['Amazon', 'Facebook', 'Google', 'LinkedIn', 'Snapchat'], acceptance: 37.2, premium: false,
+    description: `Given a <code>beginWord</code>, <code>endWord</code>, and a word list, return the number of words in the shortest transformation sequence from <code>beginWord</code> to <code>endWord</code>. Each step changes exactly one letter and every intermediate word must exist in the word list. Return <code>0</code> if no sequence exists.<br><br>Input: first line has beginWord and endWord. Second line has the space-separated word list.`,
+    examples: [
+      { input: 'beginWord="hit" endWord="cog" wordList=["hot","dot","dog","lot","log","cog"]', output: '5', explanation: 'hit→hot→dot→dog→cog' },
+      { input: 'beginWord="hit" endWord="cog" wordList=["hot","dot","dog","lot","log"]',        output: '0' },
+    ],
+    constraints: ['1 ≤ beginWord.length ≤ 10', 'endWord.length == beginWord.length', '1 ≤ wordList.length ≤ 5000'],
+    testCases: [
+      { input: 'hit cog\nhot dot dog lot log cog', expected: '5', hidden: false },
+      { input: 'hit cog\nhot dot dog lot log',     expected: '0', hidden: false },
+      { input: 'a c\na b c',                       expected: '2', hidden: true  },
+      { input: 'hot dog\nhot dog',                 expected: '2', hidden: true  },
+    ],
+    hints: [
+      'BFS is ideal — it finds the shortest path naturally.',
+      'For each word try replacing every character with a–z and check if the result is in the word set.',
+      'Remove visited words from the set to avoid cycles.',
+    ],
+    starter: {
+      cpp: `class Solution {\npublic:\n    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {\n\n    }\n};`,
+      python: `class Solution:\n    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:\n        `,
+      java: `class Solution {\n    public int ladderLength(String beginWord, String endWord, List<String> wordList) {\n\n    }\n}`,
+      javascript: `/**\n * @param {string} beginWord\n * @param {string} endWord\n * @param {string[]} wordList\n * @return {number}\n */\nvar ladderLength = function(beginWord, endWord, wordList) {\n\n};`,
+      c: `int ladderLength(char* beginWord, char* endWord, char** wordList, int wordListSize) {\n\n}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\n__USER_CODE__\n\nint main() {\n    string begin, end; cin >> begin >> end;\n    cin.ignore();\n    string line; getline(cin, line);\n    istringstream ss(line);\n    vector<string> wordList;\n    string w; while (ss >> w) wordList.push_back(w);\n    Solution sol;\n    cout << sol.ladderLength(begin, end, wordList) << endl;\n    return 0;\n}`,
+      python: `import sys\nfrom typing import List\n\n__USER_CODE__\n\nlines = sys.stdin.read().splitlines()\nbegin, end = lines[0].split()\nwordList = lines[1].split() if len(lines) > 1 else []\nprint(Solution().ladderLength(begin, end, wordList))`,
+      java: `import java.util.*;\n\n__USER_CODE__\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String begin = sc.next(), end = sc.next();\n        sc.nextLine();\n        List<String> words = new ArrayList<>(Arrays.asList(sc.nextLine().trim().split(" ")));\n        System.out.println(new Solution().ladderLength(begin, end, words));\n    }\n}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');\nconst [beginWord, endWord] = lines[0].split(' ');\nconst wordList = lines[1] ? lines[1].split(' ') : [];\n\n__USER_CODE__\n\nconsole.log(ladderLength(beginWord, endWord, wordList));`,
+      c: `#include <stdio.h>\n#include <string.h>\n\n__USER_CODE__\n\nint main() {\n    char begin[15], end[15]; scanf("%s %s", begin, end);\n    char words[5001][15]; int n = 0;\n    while (scanf("%s", words[n]) == 1) n++;\n    char* wl[5001];\n    for (int i = 0; i < n; i++) wl[i] = words[i];\n    printf("%d\\n", ladderLength(begin, end, wl, n));\n    return 0;\n}`,
+    },
+    aiContext: 'Word Ladder — BFS shortest path with single-char substitutions O(M²×N)',
+  },
+
+  // ── 163. Alien Dictionary ─────────────────────────────────────────────────────
+  {
+    number: 163, title: 'Alien Dictionary', slug: 'alien-dictionary', difficulty: 'Hard',
+    tags: ['Array', 'String', 'Depth-First Search', 'Breadth-First Search', 'Graph', 'Topological Sort'],
+    companies: ['Facebook', 'Airbnb', 'Google', 'Snapchat', 'Twitter'], acceptance: 33.8, premium: false,
+    description: `You are given a list of strings from an alien language's dictionary sorted in lexicographic order by that language's rules. Derive the order of letters in that language and return them as a string. If no valid order exists return <code>""</code>. If multiple valid orders exist return any.<br><br>Input: first line is number of words <code>n</code>, then <code>n</code> lines each with one word.`,
+    examples: [
+      { input: 'words=["wrt","wrf","er","ett","rftt"]', output: 'wertf' },
+      { input: 'words=["z","x"]',                       output: 'zx'    },
+      { input: 'words=["z","x","z"]',                   output: '',     explanation: 'Cycle — invalid' },
+    ],
+    constraints: ['1 ≤ words.length ≤ 100', '1 ≤ words[i].length ≤ 100', 'All chars are lowercase English letters'],
+    testCases: [
+      { input: '5\nwrt\nwrf\ner\nett\nrftt', expected: 'wertf', hidden: false },
+      { input: '2\nz\nx',                    expected: 'zx',    hidden: false },
+      { input: '3\nz\nx\nz',                 expected: '',      hidden: false },
+      { input: '2\nabc\nab',                 expected: '',      hidden: true  },
+    ],
+    hints: [
+      'Compare adjacent words character by character — the first differing pair gives a directed edge.',
+      'Build a graph then run topological sort (Kahn\'s BFS or DFS).',
+      'If a cycle is detected (queue empties before all nodes are processed) return "".',
+    ],
+    starter: {
+      cpp: `class Solution {\npublic:\n    string alienOrder(vector<string>& words) {\n\n    }\n};`,
+      python: `class Solution:\n    def alienOrder(self, words: List[str]) -> str:\n        `,
+      java: `class Solution {\n    public String alienOrder(String[] words) {\n\n    }\n}`,
+      javascript: `/**\n * @param {string[]} words\n * @return {string}\n */\nvar alienOrder = function(words) {\n\n};`,
+      c: `char* alienOrder(char** words, int wordsSize) {\n\n}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\n__USER_CODE__\n\nint main() {\n    int n; cin >> n;\n    vector<string> words(n);\n    for (int i = 0; i < n; i++) cin >> words[i];\n    Solution sol;\n    cout << sol.alienOrder(words) << endl;\n    return 0;\n}`,
+      python: `import sys\nfrom typing import List\n\n__USER_CODE__\n\nlines = sys.stdin.read().splitlines()\nn = int(lines[0])\nwords = [lines[i+1] for i in range(n)]\nprint(Solution().alienOrder(words))`,
+      java: `import java.util.*;\n\n__USER_CODE__\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = Integer.parseInt(sc.nextLine().trim());\n        String[] words = new String[n];\n        for (int i = 0; i < n; i++) words[i] = sc.nextLine().trim();\n        System.out.println(new Solution().alienOrder(words));\n    }\n}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');\nconst n = parseInt(lines[0]);\nconst words = lines.slice(1, n + 1);\n\n__USER_CODE__\n\nconsole.log(alienOrder(words));`,
+      c: `#include <stdio.h>\n#include <stdlib.h>\n\n__USER_CODE__\n\nint main() {\n    int n; scanf("%d ", &n);\n    char** words = malloc(n * sizeof(char*));\n    for (int i = 0; i < n; i++) { words[i] = malloc(105); scanf("%s", words[i]); }\n    printf("%s\\n", alienOrder(words, n));\n    return 0;\n}`,
+    },
+    aiContext: 'Alien Dictionary — topological sort on character ordering graph O(C)',
+  },
+
+  // ── 164. Regular Expression Matching ─────────────────────────────────────────
+  {
+    number: 164, title: 'Regular Expression Matching', slug: 'regular-expression-matching', difficulty: 'Hard',
+    tags: ['String', 'Dynamic Programming', 'Recursion'],
+    companies: ['Google', 'Facebook', 'Uber', 'Airbnb', 'Twitter'], acceptance: 28.1, premium: false,
+    description: `Implement regular expression matching with <code>'.'</code> (matches any single character) and <code>'*'</code> (matches zero or more of the preceding element). The match must cover the entire input string.<br><br>Input: first line is string <code>s</code>, second line is pattern <code>p</code>. Output: <code>true</code> or <code>false</code>.`,
+    examples: [
+      { input: 's="aa" p="a"',  output: 'false', explanation: '"a" does not match entire "aa"' },
+      { input: 's="aa" p="a*"', output: 'true',  explanation: '"a*" matches zero or more a'    },
+      { input: 's="ab" p=".*"', output: 'true',  explanation: '".*" matches any sequence'      },
+    ],
+    constraints: ['1 ≤ s.length ≤ 20', '1 ≤ p.length ≤ 30', 's has only lowercase letters', 'p has lowercase letters, ".", and "*"'],
+    testCases: [
+      { input: 'aa\na',              expected: 'false', hidden: false },
+      { input: 'aa\na*',             expected: 'true',  hidden: false },
+      { input: 'ab\n.*',             expected: 'true',  hidden: false },
+      { input: 'aab\nc*a*b',         expected: 'true',  hidden: true  },
+      { input: 'mississippi\nmis*is*p*.', expected: 'false', hidden: true },
+    ],
+    hints: [
+      'DP: let dp[i][j] = true if s[0..i-1] matches p[0..j-1].',
+      'If p[j-1] == "*": dp[i][j] = dp[i][j-2] (skip x*) OR (char matches AND dp[i-1][j]).',
+      'If p[j-1] == "." or p[j-1] == s[i-1]: dp[i][j] = dp[i-1][j-1].',
+    ],
+    starter: {
+      cpp: `class Solution {\npublic:\n    bool isMatch(string s, string p) {\n\n    }\n};`,
+      python: `class Solution:\n    def isMatch(self, s: str, p: str) -> bool:\n        `,
+      java: `class Solution {\n    public boolean isMatch(String s, String p) {\n\n    }\n}`,
+      javascript: `/**\n * @param {string} s\n * @param {string} p\n * @return {boolean}\n */\nvar isMatch = function(s, p) {\n\n};`,
+      c: `bool isMatch(char* s, char* p) {\n\n}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\n__USER_CODE__\n\nint main() {\n    string s, p; cin >> s >> p;\n    Solution sol;\n    cout << (sol.isMatch(s, p) ? "true" : "false") << endl;\n    return 0;\n}`,
+      python: `import sys\n\n__USER_CODE__\n\nlines = sys.stdin.read().splitlines()\ns, p = lines[0], lines[1]\nprint(str(Solution().isMatch(s, p)).lower())`,
+      java: `import java.util.*;\n\n__USER_CODE__\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next(), p = sc.next();\n        System.out.println(new Solution().isMatch(s, p));\n    }\n}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n');\nconst s = lines[0], p = lines[1];\n\n__USER_CODE__\n\nconsole.log(isMatch(s, p));`,
+      c: `#include <stdio.h>\n#include <stdbool.h>\n\n__USER_CODE__\n\nint main() {\n    char s[25], p[35]; scanf("%s %s", s, p);\n    printf("%s\\n", isMatch(s, p) ? "true" : "false");\n    return 0;\n}`,
+    },
+    aiContext: 'Regular Expression Matching — 2D DP with dot and star handling O(m*n)',
+  },
+
+  // ── 165. Edit Distance ────────────────────────────────────────────────────────
+  {
+    number: 165, title: 'Edit Distance', slug: 'edit-distance', difficulty: 'Hard',
+    tags: ['String', 'Dynamic Programming'],
+    companies: ['Google', 'Amazon', 'Microsoft', 'Bloomberg', 'Uber'], acceptance: 54.7, premium: false,
+    description: `Given two strings <code>word1</code> and <code>word2</code>, return the minimum number of operations (insert, delete, replace a character) to convert <code>word1</code> to <code>word2</code>.<br><br>Input: first line is word1, second line is word2.`,
+    examples: [
+      { input: 'word1="horse" word2="ros"',           output: '3', explanation: 'horse→rorse→rose→ros' },
+      { input: 'word1="intention" word2="execution"', output: '5' },
+    ],
+    constraints: ['0 ≤ word1.length, word2.length ≤ 500', 'Words consist of lowercase English letters'],
+    testCases: [
+      { input: 'horse\nros',            expected: '3', hidden: false },
+      { input: 'intention\nexecution',  expected: '5', hidden: false },
+      { input: '\nabc',                 expected: '3', hidden: true  },
+      { input: 'abc\nabc',              expected: '0', hidden: true  },
+    ],
+    hints: [
+      'dp[i][j] = min operations to convert word1[0..i-1] to word2[0..j-1].',
+      'Base cases: dp[i][0] = i (delete all), dp[0][j] = j (insert all).',
+      'Transition: if chars match dp[i][j] = dp[i-1][j-1], else 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]).',
+    ],
+    starter: {
+      cpp: `class Solution {\npublic:\n    int minDistance(string word1, string word2) {\n\n    }\n};`,
+      python: `class Solution:\n    def minDistance(self, word1: str, word2: str) -> int:\n        `,
+      java: `class Solution {\n    public int minDistance(String word1, String word2) {\n\n    }\n}`,
+      javascript: `/**\n * @param {string} word1\n * @param {string} word2\n * @return {number}\n */\nvar minDistance = function(word1, word2) {\n\n};`,
+      c: `int minDistance(char* word1, char* word2) {\n\n}`,
+    },
+    codeWrapper: {
+      cpp: `#include <bits/stdc++.h>\nusing namespace std;\n\n__USER_CODE__\n\nint main() {\n    string w1, w2;\n    getline(cin, w1); getline(cin, w2);\n    Solution sol;\n    cout << sol.minDistance(w1, w2) << endl;\n    return 0;\n}`,
+      python: `import sys\n\n__USER_CODE__\n\nlines = sys.stdin.read().splitlines()\nw1 = lines[0] if lines else ""\nw2 = lines[1] if len(lines) > 1 else ""\nprint(Solution().minDistance(w1, w2))`,
+      java: `import java.util.*;\n\n__USER_CODE__\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));\n        String w1 = br.readLine(); if (w1 == null) w1 = "";\n        String w2 = br.readLine(); if (w2 == null) w2 = "";\n        System.out.println(new Solution().minDistance(w1, w2));\n    }\n}`,
+      javascript: `const lines = require('fs').readFileSync('/dev/stdin', 'utf8').split('\\n');\nconst word1 = lines[0] || '', word2 = lines[1] || '';\n\n__USER_CODE__\n\nconsole.log(minDistance(word1, word2));`,
+      c: `#include <stdio.h>\n\n__USER_CODE__\n\nint main() {\n    char w1[505], w2[505];\n    scanf("%s %s", w1, w2);\n    printf("%d\\n", minDistance(w1, w2));\n    return 0;\n}`,
+    },
+    aiContext: 'Edit Distance — classic 2D DP insert/delete/replace O(m*n)',
+  },
+
+
 ];
 
 // ── Seed ─────────────────────────────────────────────────────────────────────
 let inserted = 0;
 for (const p of problems) {
   const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  await Problem.findOneAndUpdate(
-    { slug },                    // ← match by slug (unique, stable)
-    { ...p, slug, aiContext: p.aiContext || `${p.title} — ${p.tags.join(', ')}` },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
-  );
+await Problem.findOneAndUpdate(
+  { number: p.number },
+  { ...p, slug, aiContext: p.aiContext || `${p.title} — ${p.tags.join(', ')}` },
+  { upsert: true, new: true, setDefaultsOnInsert: true }
+);
   inserted++;
   console.log(` #${p.number} ${p.title}`);
 }

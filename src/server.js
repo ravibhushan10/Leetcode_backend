@@ -52,7 +52,8 @@ app.use(cookieParser()); // Required for refresh token cookie
 
 // ── Routes ────────────────────────────────────
 app.get('/',       (_, res) => res.json({ name: 'CodeForge API', version: '1.0.0', status: 'running', time: new Date() }));
-app.get('/health', (_, res) => res.json({ status: 'ok', time: new Date() }));
+app.get('/api/health', (_, res) => res.json({ status: 'ok', time: new Date() }));
+
 
 app.use('/api/problems',    problemsRouter);
 app.use('/api/users',       usersRouter);
