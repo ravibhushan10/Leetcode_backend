@@ -1040,19 +1040,26 @@ router.get('/ml-insights', authMiddleware, async (req, res) => {
 
 
 
-
+// routes/users.js — leaderboard route
 router.get('/leaderboard', async (req, res) => {
   try {
     const users = await User.find({ isAdmin: false, isVerified: true })
-      .select('name initials avatarUrl rating ratingTitle plan streak solved')
+      .select('_id name initials avatarUrl rating ratingTitle plan streak solved')
       .sort({ rating: -1 })
       .limit(50);
-   return res.json(users.map((u, i) => ({
-  rank: i + 1, name: u.name, initials: u.initials,
-  avatarUrl: u.avatarUrl || '',
-  rating: u.rating, ratingTitle: u.ratingTitle,
-  plan: u.plan, streak: u.streak, solved: u.solved.length,
-})));
+
+    return res.json(users.map((u, i) => ({
+      _id:         u._id.toString(),
+      rank:        i + 1,
+      name:        u.name,
+      initials:    u.initials,
+      avatarUrl:   u.avatarUrl || '',
+      rating:      u.rating,
+      ratingTitle: u.ratingTitle,
+      plan:        u.plan,
+      streak:      u.streak,
+      solved:      u.solved.length,
+    })));
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong loading the leaderboard.' });
   }
