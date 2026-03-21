@@ -1163,4 +1163,37 @@ function sanitize(user) {
   return u;
 }
 
+
+// POST /api/users/contact — Help & Support contact form
+
+
+router.post('/contact', async (req, res) => {
+  try {
+    const { name, email, category, subject, message } = req.body;
+
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ error: 'Please fill in all required fields.' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address.' });
+    }
+
+    if (message.trim().length < 10) {
+      return res.status(400).json({ error: 'Message must be at least 10 characters.' });
+    }
+
+    // Send email using existing nodemailer setup
+    const { sendContactEmail } = await import('../utils/sendEmail.js');
+    await sendContactEmail({ name, email, category, subject, message });
+
+    return res.json({ message: 'Your message has been sent. We\'ll get back to you within 24 hours.' });
+
+  } catch (err) {
+    console.error('Contact form error:', err);
+    res.status(500).json({ error: 'Failed to send message. Please try again or email us directly.' });
+  }
+});
+
 export default router;

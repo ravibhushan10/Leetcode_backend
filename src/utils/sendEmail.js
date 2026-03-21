@@ -13,8 +13,9 @@ export async function sendVerificationEmail(toEmail, name, token) {
   const url = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
   await transporter.sendMail({
-    from: `"CodeForge" <${process.env.GMAIL_USER}>`,
-    to:   toEmail,
+    from:    `"CodeForge" <${process.env.GMAIL_USER}>`,
+    replyTo: 'noreply@codeforge.dev',
+    to:      toEmail,
     subject: 'Verify your CodeForge email address',
     html: `
       <div style="font-family:sans-serif;max-width:500px;margin:0 auto;background:#0f0f0f;color:#e0e0e0;border-radius:12px;padding:40px;">
@@ -46,8 +47,9 @@ export async function sendVerificationEmail(toEmail, name, token) {
 // ── Registration OTP email ─────────────────────────────────────────────────
 export async function sendVerificationOtp(toEmail, name, otp) {
   await transporter.sendMail({
-    from: `"CodeForge" <${process.env.GMAIL_USER}>`,
-    to:   toEmail,
+    from:    `"CodeForge" <${process.env.GMAIL_USER}>`,
+    replyTo: 'noreply@codeforge.dev',
+    to:      toEmail,
     subject: 'Your CodeForge verification code',
     html: `
       <div style="font-family:sans-serif;max-width:500px;margin:0 auto;background:#0f0f0f;color:#e0e0e0;border-radius:12px;padding:40px;">
@@ -81,8 +83,9 @@ export async function sendVerificationOtp(toEmail, name, otp) {
 // ── Password reset OTP email ───────────────────────────────────────────────
 export async function sendPasswordResetOtp(toEmail, name, otp) {
   await transporter.sendMail({
-    from: `"CodeForge" <${process.env.GMAIL_USER}>`,
-    to:   toEmail,
+    from:    `"CodeForge" <${process.env.GMAIL_USER}>`,
+    replyTo: 'noreply@codeforge.dev',
+    to:      toEmail,
     subject: 'Your CodeForge password reset code',
     html: `
       <div style="font-family:sans-serif;max-width:500px;margin:0 auto;background:#0f0f0f;color:#e0e0e0;border-radius:12px;padding:40px;">
@@ -107,6 +110,45 @@ export async function sendPasswordResetOtp(toEmail, name, otp) {
         <hr style="border:none;border-top:1px solid #222;margin:32px 0"/>
         <p style="color:#333;font-size:11px;margin:0;">
           CodeForge · The platform built for developers who want to get hired
+        </p>
+      </div>
+    `,
+  });
+}
+
+// ── Contact form email ─────────────────────────────────────────────────────
+export async function sendContactEmail({ name, email, category, subject, message }) {
+  await transporter.sendMail({
+    from:    `"CodeForge Support" <${process.env.GMAIL_USER_CONTACT}>`,
+    to:      process.env.GMAIL_USER_CONTACT,
+    replyTo: email,
+    subject: `[CodeForge Support] ${category}: ${subject}`,
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#f9f9f9;border-radius:8px;">
+        <h2 style="color:#00d084;margin:0 0 20px;">New Support Message</h2>
+
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="padding:8px 0;color:#666;width:100px;font-size:14px;">From</td>
+            <td style="padding:8px 0;font-size:14px;font-weight:600;">${name} &lt;${email}&gt;</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;color:#666;font-size:14px;">Category</td>
+            <td style="padding:8px 0;font-size:14px;">${category}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;color:#666;font-size:14px;">Subject</td>
+            <td style="padding:8px 0;font-size:14px;font-weight:600;">${subject}</td>
+          </tr>
+        </table>
+
+        <hr style="border:none;border-top:1px solid #e0e0e0;margin:16px 0;" />
+
+        <h3 style="font-size:14px;color:#333;margin:0 0 10px;">Message</h3>
+        <div style="background:#fff;border:1px solid #e0e0e0;border-radius:6px;padding:16px;font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap;">${message}</div>
+
+        <p style="font-size:12px;color:#999;margin-top:20px;">
+          Hit reply to respond directly to ${name} at ${email}
         </p>
       </div>
     `,

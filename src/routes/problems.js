@@ -5,14 +5,7 @@ import { authMiddleware, adminMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// helper — shuffle array in place (Fisher-Yates)
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
+
 
 // GET /api/problems — list with filters
 router.get('/', async (req, res) => {
@@ -70,34 +63,18 @@ router.get('/', async (req, res) => {
       return res.json({ problems, total, page: parseInt(page) });
     }
 
-    // ── Free user: random 20 Easy + 15 Medium + 5 Hard ───────────
-    const baseQuery = { hidden: false };
-    if (tag    && tag    !== 'all') baseQuery.tags  = { $in: [new RegExp(tag, 'i')] };
-    if (search) baseQuery.title = { $regex: search, $options: 'i' };
 
-    if (difficulty && difficulty !== 'all') {
-      baseQuery.difficulty = difficulty;
-      const pool = await Problem.find(baseQuery).select('-testCases -starter -hints');
-      const shuffled = shuffle([...pool]);
-      const cap = difficulty === 'Easy' ? 20 : difficulty === 'Medium' ? 15 : 5;
-      const result = shuffled.slice(0, cap);
-      result.sort((a, b) => a.number - b.number);
-      return res.json({ problems: result, total: result.length, page: 1 });
-    }
+  // ── Free user: problems 1–40, sorted by number ───────────────
+const baseQuery = { hidden: false, number: { $lte: 40 } };
+if (tag       && tag       !== 'all') baseQuery.tags       = { $in: [new RegExp(tag, 'i')] };
+if (search)                           baseQuery.title      = { $regex: search, $options: 'i' };
+if (difficulty && difficulty !== 'all') baseQuery.difficulty = difficulty;
 
-    // No difficulty filter — fetch all and pick random 20E+15M+5H
-    const [easyPool, medPool, hardPool] = await Promise.all([
-      Problem.find({ ...baseQuery, difficulty: 'Easy'   }).select('-testCases -starter -hints'),
-      Problem.find({ ...baseQuery, difficulty: 'Medium' }).select('-testCases -starter -hints'),
-      Problem.find({ ...baseQuery, difficulty: 'Hard'   }).select('-testCases -starter -hints'),
-    ]);
+const problems = await Problem.find(baseQuery)
+  .select('-testCases -starter -hints')
+  .sort({ number: 1 });
 
-    const easy   = shuffle([...easyPool]).slice(0, 20);
-    const medium = shuffle([...medPool]).slice(0, 15);
-    const hard   = shuffle([...hardPool]).slice(0, 5);
-
-    const problems = [...easy, ...medium, ...hard].sort((a, b) => a.number - b.number);
-    return res.json({ problems, total: problems.length, page: 1 });
+return res.json({ problems, total: problems.length, page: 1 });
 
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -123,6 +100,15 @@ router.get('/counts', async (req, res) => {
       Problem.countDocuments({ hidden: false, difficulty: 'Hard' }),
     ]);
     res.json({ Easy: easy, Medium: medium, Hard: hard });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/total', async (req, res) => {
+  try {
+    const total = await Problem.countDocuments({ hidden: false });
+    res.json({ total });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
