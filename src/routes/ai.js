@@ -4,9 +4,9 @@ import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/ai/hint
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 router.post('/hint', authMiddleware, async (req, res) => {
   try {
     const { message, problemContext, history = [] } = req.body;
@@ -16,7 +16,7 @@ router.post('/hint', authMiddleware, async (req, res) => {
       return res.json({ reply: `I'm having trouble connecting right now. Please try again in a moment!` });
     }
 
-    // Extract just the title (everything before " — ")
+
     const problemTitle = problemContext?.split(' — ')[0]?.trim() || problemContext || 'this problem';
 
     const systemPrompt = `You are CodeForge AI Tutor — a focused coding interview coach embedded inside a coding platform.
@@ -77,9 +77,9 @@ YOUR RULES:
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/ai/analyze  — code review endpoint
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 router.post('/analyze', authMiddleware, async (req, res) => {
   try {
     const { code, language = 'python', problemContext } = req.body;
@@ -128,7 +128,7 @@ Be precise and encouraging. Under 150 words.`;
     });
 
     const data = await response.json();
-    
+
 
     res.json({ reply: data.choices?.[0]?.message?.content || 'Could not analyze code at this time.' });
 

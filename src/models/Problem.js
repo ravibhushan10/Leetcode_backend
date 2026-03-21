@@ -20,8 +20,6 @@ const StarterCodeSchema = new mongoose.Schema({
   c:          { type: String, default: 'void solve() {\n    // your code here\n}' },
 }, { _id: false });
 
-// ── NEW: wrapper template per language ────────────────────────────────────────
-// __USER_CODE__ is replaced with the user's Solution class at runtime
 const CodeWrapperSchema = new mongoose.Schema({
   python:     { type: String, default: '' },
   cpp:        { type: String, default: '' },
@@ -40,7 +38,7 @@ const ProblemSchema = new mongoose.Schema({
   constraints: { type: [String], default: [] },
   testCases:   { type: [TestCaseSchema], default: [] },
   starter:     { type: StarterCodeSchema,    default: () => ({}) },
-  codeWrapper: { type: CodeWrapperSchema,    default: () => ({}) }, // ← NEW
+  codeWrapper: { type: CodeWrapperSchema,    default: () => ({}) },
   hints:       { type: [String], default: [] },
   tags:        { type: [String], default: [] },
   companies:   { type: [String], default: [] },
@@ -56,7 +54,6 @@ const ProblemSchema = new mongoose.Schema({
   autoIndex: false,
 });
 
-// Auto-generate slug from title
 ProblemSchema.pre('save', function(next) {
   if (this.isModified('title') && !this.slug) {
     this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -67,7 +64,6 @@ ProblemSchema.pre('save', function(next) {
   next();
 });
 
-// Auto-set aiContext if not provided
 ProblemSchema.pre('save', function(next) {
   if (!this.aiContext) {
     this.aiContext = `${this.title} — ${this.tags.join(', ')} — ${this.difficulty}`;

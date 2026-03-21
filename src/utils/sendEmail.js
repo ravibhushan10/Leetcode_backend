@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ── Verification email (2 min expiry) ─────────────────────────────────────
+
 export async function sendVerificationEmail(toEmail, name, token) {
   const url = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
@@ -44,7 +44,7 @@ export async function sendVerificationEmail(toEmail, name, token) {
   });
 }
 
-// ── Registration OTP email ─────────────────────────────────────────────────
+
 export async function sendVerificationOtp(toEmail, name, otp) {
   await transporter.sendMail({
     from:    `"CodeForge" <${process.env.GMAIL_USER}>`,
@@ -80,7 +80,7 @@ export async function sendVerificationOtp(toEmail, name, otp) {
   });
 }
 
-// ── Password reset OTP email ───────────────────────────────────────────────
+
 export async function sendPasswordResetOtp(toEmail, name, otp) {
   await transporter.sendMail({
     from:    `"CodeForge" <${process.env.GMAIL_USER}>`,
@@ -116,7 +116,7 @@ export async function sendPasswordResetOtp(toEmail, name, otp) {
   });
 }
 
-// ── Contact form email ─────────────────────────────────────────────────────
+
 export async function sendContactEmail({ name, email, category, subject, message }) {
   await transporter.sendMail({
     from:    `"CodeForge Support" <${process.env.GMAIL_USER_CONTACT}>`,

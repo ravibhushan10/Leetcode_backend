@@ -26,9 +26,9 @@ const judge0Headers = () => ({
 
 const fixInput = s => s.replace(/\\n/g, '\n');
 
-// ── NEW: inject user code into wrapper template ───────────────────────────────
-// If the problem has a codeWrapper for this language, replace __USER_CODE__
-// with the user's Solution class. Otherwise fall back to raw code (old behavior).
+
+
+
 const applyWrapper = (userCode, wrapper) => {
   if (!wrapper || !wrapper.trim()) return userCode;
   return wrapper.replace('__USER_CODE__', userCode);
@@ -101,7 +101,7 @@ async function runBatch(code, lang, inputs) {
   }
 }
 
-// ── POST /api/submissions/run ─────────────────────────────────────────────────
+
 router.post('/run', authMiddleware, async (req, res) => {
   try {
     const { code, language, problemId } = req.body;
@@ -117,10 +117,10 @@ router.post('/run', authMiddleware, async (req, res) => {
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ error: 'Problem not found' });
 
-    // ── inject wrapper ──────────────────────────────────────────────────────
+
     const wrapper = problem.codeWrapper?.[language] || '';
     const finalCode = applyWrapper(code, wrapper);
-    // ───────────────────────────────────────────────────────────────────────
+
 
     const testCases = problem.testCases.filter(tc => !tc.hidden);
     if (testCases.length === 0) return res.json({ results: [] });
@@ -148,7 +148,7 @@ router.post('/run', authMiddleware, async (req, res) => {
   }
 });
 
-// ── POST /api/submissions ─────────────────────────────────────────────────────
+
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { code, language, problemId } = req.body;
@@ -158,10 +158,10 @@ router.post('/', authMiddleware, async (req, res) => {
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ error: 'Problem not found' });
 
-    // ── inject wrapper ──────────────────────────────────────────────────────
+
     const wrapper = problem.codeWrapper?.[language] || '';
     const finalCode = applyWrapper(code, wrapper);
-    // ───────────────────────────────────────────────────────────────────────
+
 
     const testCases = problem.testCases;
     if (testCases.length === 0) {
@@ -220,7 +220,7 @@ router.post('/', authMiddleware, async (req, res) => {
       user:        req.user.id,
       problem:     problemId,
       language,
-      code,          // ← save original user code (not wrapped)
+      code,
       verdict,
       runtime:     `${Math.round(totalRuntime / testCases.length)}ms`,
       testsPassed: passed,
@@ -241,7 +241,7 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// ── GET /api/submissions/me ───────────────────────────────────────────────────
+
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const { problemId, limit = 20 } = req.query;
@@ -257,7 +257,7 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+
 async function updateUserStats(userId, problem, accepted) {
   try {
     const user = await User.findById(userId);
@@ -292,5 +292,3 @@ function getRatingTitle(r) {
 }
 
 export default router;
-
-

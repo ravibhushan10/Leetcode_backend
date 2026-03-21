@@ -9,9 +9,9 @@ import { sendVerificationEmail, sendVerificationOtp, sendPasswordResetOtp } from
 
 const router = express.Router();
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Token helpers
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 function makeAccessToken(user) {
   return jwt.sign(
@@ -29,40 +29,40 @@ function makeRefreshToken(user) {
   );
 }
 
-// Issue both tokens: access token in JSON body + refresh token in httpOnly cookie
+
 async function issueTokens(user, res) {
   const accessToken  = makeAccessToken(user);
   const refreshToken = makeRefreshToken(user);
 
-  // Hash refresh token before storing (DB leak = useless tokens)
+
   const hash = await bcrypt.hash(refreshToken, 10);
   await User.findByIdAndUpdate(user._id, { refreshTokenHash: hash });
 
-  // In production the frontend and backend are on different origins (e.g. Vercel + Render).
-  // Cross-origin cookies require sameSite:'none' + secure:true.
-  // In development (same origin via Vite proxy) 'lax' works fine, but 'none' also works
-  // as long as you're on localhost with a browser that allows it.
+
+
+
+
   const isProd = process.env.NODE_ENV === 'production';
   res.cookie('cf_refresh', refreshToken, {
     httpOnly: true,
-    secure:   isProd,          // must be true when sameSite:'none'
+    secure:   isProd,
     sameSite: isProd ? 'none' : 'lax',
-    maxAge:   365 * 24 * 60 * 60 * 1000, // 1 year
+    maxAge:   365 * 24 * 60 * 60 * 1000,
   });
 
   return accessToken;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Rate limiting (in-memory, per IP)
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 const loginAttempts = {};
 
 function checkRateLimit(ip) {
   const now = Date.now();
   if (!loginAttempts[ip]) loginAttempts[ip] = [];
-  loginAttempts[ip] = loginAttempts[ip].filter(t => now - t < 15 * 60 * 1000); // 15 min window
+  loginAttempts[ip] = loginAttempts[ip].filter(t => now - t < 15 * 60 * 1000);
   if (loginAttempts[ip].length >= 10) return false;
   loginAttempts[ip].push(now);
   return true;
@@ -74,15 +74,15 @@ function remainingAttempts(ip) {
   return Math.max(0, 10 - recent.length);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/register
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // ── Field validation ─────────────────────────────────────────
+
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'All fields are required.' });
     }
@@ -90,18 +90,18 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Name must be at least 2 characters.' });
     }
 
-    // ── Email format check ───────────────────────────────────────
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ error: 'Please enter a valid email address.' });
     }
 
-    // ── Password strength ────────────────────────────────────────
+
     if (password.length < 6) {
       return res.status(400).json({ error: 'Password must be at least 6 characters.' });
     }
 
-    // ── Check if email already exists ────────────────────────────
+
     const existing = await User.findOne({ email: email.toLowerCase().trim() });
 
     if (existing) {
@@ -112,15 +112,15 @@ router.post('/register', async (req, res) => {
         });
       }
       if (!existing.isVerified) {
-        // Check resend cooldown
+
         if (existing.verifyOtpSentAt && (Date.now() - existing.verifyOtpSentAt.getTime()) < 2 * 60 * 1000) {
           return res.status(409).json({
-            error: 'This email is registered but not yet verified. A code was recently sent — check your inbox.',
+            error: 'This email is registered but not yet verified. A code was recently sent  check your inbox.',
             code:  'UNVERIFIED_EXISTS',
             email: existing.email,
           });
         }
-        // Re-send a fresh OTP
+
         const otp    = String(Math.floor(100000 + Math.random() * 900000));
         const hashed = await bcrypt.hash(otp, 10);
         existing.verifyOtp            = hashed;
@@ -130,7 +130,7 @@ router.post('/register', async (req, res) => {
         existing.verifyOtpSentAt      = new Date();
         await existing.save();
         try { await sendVerificationOtp(existing.email, existing.name, otp); } catch (e) {
-          console.error('⚠️  Re-send OTP failed:', e.message);
+          console.error('Re-send OTP failed:', e.message);
         }
         return res.status(409).json({
           error: 'This email is registered but not yet verified. A new code has been sent to your inbox.',
@@ -144,10 +144,10 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // ── Create unverified account ─────────────────────────────────
+
     const passwordHash = await bcrypt.hash(password, 12);
 
-    // Generate 6-digit OTP
+
     const otp    = String(Math.floor(100000 + Math.random() * 900000));
     const hashed = await bcrypt.hash(otp, 10);
 
@@ -165,11 +165,11 @@ router.post('/register', async (req, res) => {
     });
     await user.save();
 
-    // ── Send OTP email ────────────────────────────────────────────
+
     try {
       await sendVerificationOtp(user.email, user.name, otp);
     } catch (emailErr) {
-      console.error('⚠️  Verification OTP email failed:', emailErr.message);
+      console.error('  Verification OTP email failed:', emailErr.message);
     }
 
     return res.status(201).json({
@@ -184,15 +184,15 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/login
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/login', async (req, res) => {
   try {
     const ip = req.ip;
 
-    // ── Rate limiting ─────────────────────────────────────────────
+
     if (!checkRateLimit(ip)) {
       return res.status(429).json({
         error: 'Too many login attempts. Please wait 15 minutes and try again.',
@@ -211,7 +211,7 @@ router.post('/login', async (req, res) => {
       .populate('attempted',  'number title difficulty slug')
       .populate('bookmarked', 'number title difficulty slug');
 
-    // ── User not found — generic message (security: don't reveal if email exists) ──
+
     if (!user) {
       return res.status(401).json({
         error: 'Incorrect email or password.',
@@ -219,7 +219,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // ── OAuth account trying password login ───────────────────────
+
     if (user.oauthProvider === 'google' && !user.passwordHash) {
       return res.status(401).json({
         error: 'This account uses Google sign-in. Please click "Continue with Google".',
@@ -233,7 +233,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // ── Password check ────────────────────────────────────────────
+
     const match = await bcrypt.compare(password, user.passwordHash || '');
     if (!match) {
       const left = remainingAttempts(ip);
@@ -248,7 +248,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // ── Unverified account ────────────────────────────────────────
+
     if (!user.isVerified) {
       return res.status(403).json({
         error: 'Please verify your email before signing in. Check your inbox for the verification link.',
@@ -257,7 +257,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // ── All checks passed — issue tokens ─────────────────────────
+
     const accessToken = await issueTokens(user, res);
 
     return res.json({
@@ -271,9 +271,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/refresh — silent token refresh
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/refresh', async (req, res) => {
   try {
@@ -282,7 +282,7 @@ router.post('/refresh', async (req, res) => {
       return res.status(401).json({ error: 'No refresh token.', code: 'NO_REFRESH_TOKEN' });
     }
 
-    // Verify JWT signature
+
     let payload;
     try {
       payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
@@ -297,14 +297,14 @@ router.post('/refresh', async (req, res) => {
       return res.status(401).json({ error: 'Session invalid. Please sign in again.', code: 'INVALID_SESSION' });
     }
 
-    // Verify token matches stored hash
+
     const valid = await bcrypt.compare(token, user.refreshTokenHash);
     if (!valid) {
       res.clearCookie('cf_refresh');
       return res.status(401).json({ error: 'Session invalid. Please sign in again.', code: 'INVALID_SESSION' });
     }
 
-    // Issue new access token (rotate refresh token too)
+
     const accessToken = await issueTokens(user, res);
     return res.json({ token: accessToken });
 
@@ -314,13 +314,13 @@ router.post('/refresh', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/logout
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/logout', authMiddleware, async (req, res) => {
   try {
-    // Invalidate stored refresh token
+
     await User.findByIdAndUpdate(req.user.id, { refreshTokenHash: null });
     res.clearCookie('cf_refresh');
     return res.json({ message: 'Signed out successfully.' });
@@ -329,9 +329,9 @@ router.post('/logout', authMiddleware, async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET /api/users/verify-email?token=xxx
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.get('/verify-email', async (req, res) => {
   try {
@@ -364,13 +364,13 @@ router.get('/verify-email', async (req, res) => {
       });
     }
 
-    // Activate account
+
     user.isVerified          = true;
     user.verificationToken   = null;
     user.verificationExpires = null;
     await user.save();
 
-    // Auto-login after verification
+
     const accessToken = await issueTokens(user, res);
 
     return res.json({
@@ -386,9 +386,9 @@ router.get('/verify-email', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/resend-verification
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/resend-verification', async (req, res) => {
   try {
@@ -399,7 +399,7 @@ router.post('/resend-verification', async (req, res) => {
 
     const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    // Always return success even if email not found (security: don't reveal existence)
+
     if (!user || user.oauthProvider !== 'local') {
       return res.json({
         message: 'If that email is registered, a new verification link has been sent.',
@@ -413,19 +413,19 @@ router.post('/resend-verification', async (req, res) => {
       });
     }
 
-    // Throttle: don't allow resend if last token was issued < 2 minutes ago
+
     const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
     if (user.verificationExpires && user.verificationExpires > new Date(Date.now())) {
-      // Token was created less than 2 minutes ago
+
       return res.status(429).json({
         error: 'A verification email was just sent. Please wait 2 minutes before requesting another.',
         code:  'RESEND_TOO_SOON',
       });
     }
 
-    // Generate fresh token
+
     const verificationToken   = crypto.randomBytes(32).toString('hex');
-    const verificationExpires = new Date(Date.now() + 2 * 60 * 1000); // 2 min
+    const verificationExpires = new Date(Date.now() + 2 * 60 * 1000);
     user.verificationToken   = verificationToken;
     user.verificationExpires = verificationExpires;
     await user.save();
@@ -433,7 +433,7 @@ router.post('/resend-verification', async (req, res) => {
     try {
       await sendVerificationEmail(user.email, user.name, verificationToken);
     } catch (emailErr) {
-      console.error('⚠️  Resend email failed:', emailErr.message);
+      console.error('  Resend email failed:', emailErr.message);
       return res.status(500).json({ error: 'Failed to send email. Please try again in a moment.' });
     }
 
@@ -448,9 +448,9 @@ router.post('/resend-verification', async (req, res) => {
 });
 
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/verify-otp-register — verify 6-digit OTP during registration
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/verify-otp-register', async (req, res) => {
   try {
@@ -472,7 +472,7 @@ router.post('/verify-otp-register', async (req, res) => {
       return res.status(400).json({ error: 'This account is already verified. Please sign in.', code: 'ALREADY_VERIFIED' });
     }
 
-    // Check if locked
+
     if (user.verifyOtpLockedUntil && user.verifyOtpLockedUntil > new Date()) {
       const minutesLeft = Math.ceil((user.verifyOtpLockedUntil - Date.now()) / 60000);
       return res.status(429).json({
@@ -482,7 +482,7 @@ router.post('/verify-otp-register', async (req, res) => {
       });
     }
 
-    // Check expiry
+
     if (user.verifyOtpExpires < new Date()) {
       return res.status(400).json({
         error: 'This code has expired. Please request a new one.',
@@ -490,7 +490,7 @@ router.post('/verify-otp-register', async (req, res) => {
       });
     }
 
-    // Verify OTP
+
     const valid = await bcrypt.compare(String(otp), user.verifyOtp);
     if (!valid) {
       user.verifyOtpAttempts = (user.verifyOtpAttempts || 0) + 1;
@@ -514,7 +514,7 @@ router.post('/verify-otp-register', async (req, res) => {
       });
     }
 
-    // OTP valid — activate account
+
     user.isVerified           = true;
     user.verifyOtp            = null;
     user.verifyOtpExpires     = null;
@@ -523,7 +523,7 @@ router.post('/verify-otp-register', async (req, res) => {
     user.verifyOtpSentAt      = null;
     await user.save();
 
-    // Issue tokens and log them in immediately
+
     const accessToken = await issueTokens(user, res);
 
     return res.json({
@@ -538,9 +538,9 @@ router.post('/verify-otp-register', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/resend-verify-otp — resend registration OTP
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/resend-verify-otp', async (req, res) => {
   try {
@@ -557,7 +557,7 @@ router.post('/resend-verify-otp', async (req, res) => {
       return res.status(400).json({ error: 'This account is already verified. Please sign in.', code: 'ALREADY_VERIFIED' });
     }
 
-    // Check if locked
+
     if (user.verifyOtpLockedUntil && user.verifyOtpLockedUntil > new Date()) {
       const minutesLeft = Math.ceil((user.verifyOtpLockedUntil - Date.now()) / 60000);
       return res.status(429).json({
@@ -567,7 +567,7 @@ router.post('/resend-verify-otp', async (req, res) => {
       });
     }
 
-    // Resend cooldown — 2 minutes between sends
+
     if (user.verifyOtpSentAt && (Date.now() - user.verifyOtpSentAt.getTime()) < 2 * 60 * 1000) {
       const secondsLeft = Math.ceil((2 * 60 * 1000 - (Date.now() - user.verifyOtpSentAt.getTime())) / 1000);
       return res.status(429).json({
@@ -577,7 +577,7 @@ router.post('/resend-verify-otp', async (req, res) => {
       });
     }
 
-    // Generate fresh OTP
+
     const otp    = String(Math.floor(100000 + Math.random() * 900000));
     const hashed = await bcrypt.hash(otp, 10);
 
@@ -591,7 +591,7 @@ router.post('/resend-verify-otp', async (req, res) => {
     try {
       await sendVerificationOtp(user.email, user.name, otp);
     } catch (emailErr) {
-      console.error('⚠️  Resend OTP email failed:', emailErr.message);
+      console.error('  Resend OTP email failed:', emailErr.message);
       return res.status(500).json({ error: 'Failed to send code. Please try again.' });
     }
 
@@ -607,9 +607,9 @@ router.post('/resend-verify-otp', async (req, res) => {
 });
 
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/forgot-password — send OTP to email
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/forgot-password', async (req, res) => {
   try {
@@ -618,14 +618,14 @@ router.post('/forgot-password', async (req, res) => {
 
     const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    // Always respond the same — don't reveal if email exists
+
     if (!user || user.oauthProvider !== 'local') {
       return res.json({
         message: 'If that email has an account, a reset code has been sent.',
       });
     }
 
-    // Check resend cooldown — only 1 resend allowed per 2 min
+
     if (user.resetOtpSentAt && (Date.now() - user.resetOtpSentAt.getTime()) < 2 * 60 * 1000) {
       const secondsLeft = Math.ceil((2 * 60 * 1000 - (Date.now() - user.resetOtpSentAt.getTime())) / 1000);
       return res.status(429).json({
@@ -635,12 +635,12 @@ router.post('/forgot-password', async (req, res) => {
       });
     }
 
-    // Generate 6-digit OTP
+
     const otp    = String(Math.floor(100000 + Math.random() * 900000));
     const hashed = await bcrypt.hash(otp, 10);
 
     user.resetOtp           = hashed;
-    user.resetOtpExpires    = new Date(Date.now() + 2 * 60 * 1000); // 2 min
+    user.resetOtpExpires    = new Date(Date.now() + 2 * 60 * 1000);
     user.resetOtpAttempts   = 0;
     user.resetOtpLockedUntil = null;
     user.resetOtpSentAt     = new Date();
@@ -664,9 +664,9 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/verify-otp — verify the 6-digit OTP
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/verify-otp', async (req, res) => {
   try {
@@ -678,7 +678,7 @@ router.post('/verify-otp', async (req, res) => {
       return res.status(400).json({ error: 'No reset code found. Please request a new one.', code: 'NO_OTP' });
     }
 
-    // Check if locked
+
     if (user.resetOtpLockedUntil && user.resetOtpLockedUntil > new Date()) {
       const minutesLeft = Math.ceil((user.resetOtpLockedUntil - Date.now()) / 60000);
       return res.status(429).json({
@@ -688,7 +688,7 @@ router.post('/verify-otp', async (req, res) => {
       });
     }
 
-    // Check expiry
+
     if (user.resetOtpExpires < new Date()) {
       return res.status(400).json({
         error: 'This code has expired. Please request a new one.',
@@ -696,13 +696,13 @@ router.post('/verify-otp', async (req, res) => {
       });
     }
 
-    // Verify OTP
+
     const valid = await bcrypt.compare(String(otp), user.resetOtp);
     if (!valid) {
       user.resetOtpAttempts = (user.resetOtpAttempts || 0) + 1;
 
       if (user.resetOtpAttempts >= 3) {
-        user.resetOtpLockedUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 min lock
+        user.resetOtpLockedUntil = new Date(Date.now() + 15 * 60 * 1000);
         user.resetOtp            = null;
         user.resetOtpExpires     = null;
         await user.save();
@@ -722,14 +722,14 @@ router.post('/verify-otp', async (req, res) => {
       });
     }
 
-    // OTP valid — issue a short-lived reset session token
+
     const resetToken = jwt.sign(
       { id: user._id, purpose: 'password_reset' },
       process.env.JWT_SECRET,
-      { expiresIn: '10m' } // 10 min to complete the reset
+      { expiresIn: '10m' }
     );
 
-    // Clear OTP fields
+
     user.resetOtp            = null;
     user.resetOtpExpires     = null;
     user.resetOtpAttempts    = 0;
@@ -747,9 +747,9 @@ router.post('/verify-otp', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/reset-password — set new password using reset token
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/reset-password', async (req, res) => {
   try {
@@ -758,7 +758,7 @@ router.post('/reset-password', async (req, res) => {
       return res.status(400).json({ error: 'Reset token and new password are required.' });
     }
 
-    // Verify reset token
+
     let payload;
     try {
       payload = jwt.verify(resetToken, process.env.JWT_SECRET);
@@ -773,7 +773,7 @@ router.post('/reset-password', async (req, res) => {
       return res.status(401).json({ error: 'Invalid reset token.' });
     }
 
-    // Strong password validation
+
     const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\|,.<>\/?]).{8,}$/;
     if (!pwdRegex.test(password)) {
       return res.status(400).json({
@@ -798,9 +798,9 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/oauth — Google / GitHub OAuth
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/oauth', async (req, res) => {
   try {
@@ -816,25 +816,25 @@ router.post('/oauth', async (req, res) => {
     let user = await User.findOne({ email: email.toLowerCase().trim() });
 
     if (user) {
-      // Account exists — allow any OAuth provider for same email.
-      // This lets users log in with Google OR GitHub interchangeably,
-      // which is the standard behaviour on LeetCode, GitHub, etc.
-      // Just update the provider to whichever they used most recently
-      // and keep their existing data intact.
+
+
+
+
+
       user.oauthProvider = oauthProvider;
       user.oauthId       = oauthId;
       if (avatarUrl && !user.avatarUrl) user.avatarUrl = avatarUrl;
-      user.isVerified    = true; // OAuth = email verified by provider
+      user.isVerified    = true;
       await user.save();
     } else {
-      // New user via OAuth — auto-verified
+
       user = new User({
         name:          name || email.split('@')[0],
         email:         email.toLowerCase().trim(),
         oauthProvider,
         oauthId,
         avatarUrl:     avatarUrl || '',
-        isVerified:    true, // OAuth emails are verified by the provider
+        isVerified:    true,
       });
       await user.save();
     }
@@ -852,9 +852,9 @@ router.post('/oauth', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET /api/users/me
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.get('/me', authMiddleware, async (req, res) => {
   try {
@@ -872,9 +872,9 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PUT /api/users/me — update profile
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.put('/me', authMiddleware, async (req, res) => {
   try {
@@ -899,9 +899,9 @@ router.put('/me', authMiddleware, async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POST /api/users/bookmark/:problemId
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.post('/bookmark/:problemId', authMiddleware, async (req, res) => {
   try {
@@ -920,9 +920,9 @@ router.post('/bookmark/:problemId', authMiddleware, async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET /api/users/ml-insights
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.get('/ml-insights', authMiddleware, async (req, res) => {
   try {
@@ -1037,9 +1037,9 @@ router.get('/ml-insights', authMiddleware, async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET /api/users/leaderboard
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.get('/leaderboard', async (req, res) => {
   try {
@@ -1058,9 +1058,9 @@ router.get('/leaderboard', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ADMIN routes
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 router.get('/', adminMiddleware, async (req, res) => {
   try {
@@ -1116,10 +1116,10 @@ router.post('/admin-login', async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Cleanup job — delete unverified accounts older than 24h
-// Call this from a cron or on server startup
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
+
 
 export async function cleanupUnverifiedAccounts() {
   try {
@@ -1129,31 +1129,31 @@ export async function cleanupUnverifiedAccounts() {
       createdAt:  { $lt: cutoff },
     });
     if (result.deletedCount > 0) {
-      console.log(`🧹 Cleaned up ${result.deletedCount} unverified account(s)`);
+      console.log(` Cleaned up ${result.deletedCount} unverified account(s)`);
     }
   } catch (err) {
     console.error('Cleanup job error:', err.message);
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sanitize — strip sensitive fields before sending to client
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
 
 function sanitize(user) {
   const u = user.toObject ? user.toObject() : { ...user };
   delete u.passwordHash;
   delete u.refreshTokenHash;
-  // verification link fields
+
   delete u.verificationToken;
   delete u.verificationExpires;
-  // registration OTP fields
+
   delete u.verifyOtp;
   delete u.verifyOtpExpires;
   delete u.verifyOtpAttempts;
   delete u.verifyOtpLockedUntil;
   delete u.verifyOtpSentAt;
-  // password reset OTP fields
+
   delete u.resetOtp;
   delete u.resetOtpExpires;
   delete u.resetOtpAttempts;
@@ -1164,7 +1164,7 @@ function sanitize(user) {
 }
 
 
-// POST /api/users/contact — Help & Support contact form
+
 
 
 router.post('/contact', async (req, res) => {
@@ -1184,7 +1184,7 @@ router.post('/contact', async (req, res) => {
       return res.status(400).json({ error: 'Message must be at least 10 characters.' });
     }
 
-    // Send email using existing nodemailer setup
+
     const { sendContactEmail } = await import('../utils/sendEmail.js');
     await sendContactEmail({ name, email, category, subject, message });
 

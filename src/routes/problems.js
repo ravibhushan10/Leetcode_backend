@@ -7,12 +7,12 @@ const router = express.Router();
 
 
 
-// GET /api/problems — list with filters
+
 router.get('/', async (req, res) => {
   try {
     const { difficulty, tag, search, premium, page = 1, limit = 500 } = req.query;
 
-    // ── Detect user plan — always fetch fresh from DB ─────────────
+
     const token = req.headers.authorization?.split(' ')[1];
     let isPro   = false;
     let isAdmin = false;
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
       try {
         const jwt = await import('jsonwebtoken');
         const decoded = jwt.default.verify(token, process.env.JWT_SECRET);
-        // Always fetch fresh from DB so stale tokens don't cause issues
+
         const freshUser = await User.findById(decoded.id).select('plan isAdmin');
         if (freshUser) {
           isPro   = freshUser.plan === 'pro' || freshUser.isAdmin;
@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
       } catch {}
     }
 
-    // ── Admin: full access + premium filter support ───────────────
+
     if (isAdmin) {
       const query = { hidden: false };
       if (difficulty && difficulty !== 'all') query.difficulty = difficulty;
@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
       return res.json({ problems, total, page: parseInt(page) });
     }
 
-    // ── Pro user: all problems, no restriction ────────────────────
+
     if (isPro) {
       const query = { hidden: false };
       if (difficulty && difficulty !== 'all') query.difficulty = difficulty;
@@ -64,7 +64,7 @@ router.get('/', async (req, res) => {
     }
 
 
-  // ── Free user: problems 1–40, sorted by number ───────────────
+
 const baseQuery = { hidden: false, number: { $lte: 40 } };
 if (tag       && tag       !== 'all') baseQuery.tags       = { $in: [new RegExp(tag, 'i')] };
 if (search)                           baseQuery.title      = { $regex: search, $options: 'i' };
@@ -81,7 +81,7 @@ return res.json({ problems, total: problems.length, page: 1 });
   }
 });
 
-// GET /api/problems/tags — all unique tags
+
 router.get('/tags', async (req, res) => {
   try {
     const tags = await Problem.distinct('tags', { hidden: false });
@@ -91,7 +91,7 @@ router.get('/tags', async (req, res) => {
   }
 });
 
-// GET /api/problems/counts — problem counts by difficulty
+
 router.get('/counts', async (req, res) => {
   try {
     const [easy, medium, hard] = await Promise.all([
@@ -114,7 +114,7 @@ router.get('/total', async (req, res) => {
   }
 });
 
-// GET /api/problems/:slug — single problem (full data)
+
 router.get('/:slug', async (req, res) => {
   try {
     const problem = await Problem.findOne({ slug: req.params.slug, hidden: false });
@@ -130,7 +130,7 @@ router.get('/:slug', async (req, res) => {
       try {
         const jwt = await import('jsonwebtoken');
         const decoded = jwt.default.verify(token, process.env.JWT_SECRET);
-        // Fresh DB check here too
+
         const freshUser = await User.findById(decoded.id).select('plan isAdmin');
         if (!freshUser || (freshUser.plan !== 'pro' && !freshUser.isAdmin)) {
           const safe = problem.toObject();
@@ -150,7 +150,7 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
-// ── ADMIN ROUTES ──────────────────────────────
+
 
 router.post('/', adminMiddleware, async (req, res) => {
   try {

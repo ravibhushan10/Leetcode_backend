@@ -6,39 +6,39 @@ import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// ── Razorpay instance ─────────────────────────
+
 const razorpay = new Razorpay({
   key_id:     process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ── Fee calculator ────────────────────────────
-// base price (rupees) → total in paise including 2% gateway + 18% GST on gateway
+
+
 const calcTotal = (baseRupees) => {
   const gateway = Math.round(baseRupees * 0.02);
   const gst     = Math.round(gateway * 0.18);
-  return (baseRupees + gateway + gst) * 100; // convert to paise
+  return (baseRupees + gateway + gst) * 100;
 };
 
-// ── Plan config ───────────────────────────────
+
 const PLANS = {
   monthly: {
-    amount:      calcTotal(100), // ₹100 + ₹2 gateway + ₹0 GST = ₹102 → 10200 paise
+    amount:      calcTotal(100),
     currency:    'INR',
     name:        'CodeForge Pro',
     description: 'Monthly Pro — unlimited problems, AI tutor, priority support',
   },
   yearly: {
-    amount:      calcTotal(800), // ₹800 + ₹16 gateway + ₹3 GST = ₹819 → 81900 paise
+    amount:      calcTotal(800),
     currency:    'INR',
     name:        'CodeForge Pro',
     description: 'Yearly Pro — unlimited problems, AI tutor, priority support',
   },
 };
 
-// ─────────────────────────────────────────────
-//  POST /api/payments/order
-// ─────────────────────────────────────────────
+
+
+
 router.post('/order', authMiddleware, async (req, res) => {
   try {
     const { plan = 'monthly' } = req.body;
@@ -77,9 +77,9 @@ router.post('/order', authMiddleware, async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────
-//  POST /api/payments/verify
-// ─────────────────────────────────────────────
+
+
+
 router.post('/verify', authMiddleware, async (req, res) => {
   try {
     const {
@@ -93,7 +93,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Missing payment verification fields' });
     }
 
-    // ── HMAC-SHA256 signature check ───────────
+
     const body     = razorpay_order_id + '|' + razorpay_payment_id;
     const expected = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
@@ -101,11 +101,11 @@ router.post('/verify', authMiddleware, async (req, res) => {
       .digest('hex');
 
     if (expected !== razorpay_signature) {
-      console.warn('⚠️  Signature mismatch for user', req.user.id);
+      console.warn('Signature mismatch for user', req.user.id);
       return res.status(400).json({ error: 'Payment verification failed — invalid signature' });
     }
 
-    // ── Upgrade user ──────────────────────────
+
     const user = await User.findByIdAndUpdate(
       req.user.id,
       {
@@ -119,7 +119,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
 
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    console.log(`✅ Payment verified — ${user.email} upgraded to pro (${plan} plan)`);
+    console.log(`Payment verified — ${user.email} upgraded to pro (${plan} plan)`);
     res.json({ success: true, plan: user.plan, user });
   } catch (err) {
     console.error('Verify error:', err);
@@ -127,9 +127,9 @@ router.post('/verify', authMiddleware, async (req, res) => {
   }
 });
 
-// ─────────────────────────────────────────────
-//  POST /api/payments/webhook
-// ─────────────────────────────────────────────
+
+
+
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
     const secret    = process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -145,14 +145,14 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       .digest('hex');
 
     if (expected !== signature) {
-      console.warn('⚠️  Webhook signature mismatch');
+      console.warn('Webhook signature mismatch');
       return res.status(400).json({ error: 'Invalid webhook signature' });
     }
 
     const event   = JSON.parse(req.body.toString());
     const payload = event.payload;
 
-    console.log(`📬 Webhook: ${event.event}`);
+    console.log(`Webhook: ${event.event}`);
 
     switch (event.event) {
 
@@ -167,14 +167,14 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
             proSince:      new Date(),
             lastPaymentId: payment.id,
           });
-          console.log(`✅ ${event.event} → user ${userId} is now pro`);
+          console.log(`${event.event} → user ${userId} is now pro`);
         }
         break;
       }
 
       case 'payment.failed': {
         const payment = payload.payment?.entity;
-        console.warn(`❌ payment.failed — id: ${payment?.id}, reason: ${payment?.error_description}`);
+        console.warn(`payment.failed — id: ${payment?.id}, reason: ${payment?.error_description}`);
         break;
       }
 
@@ -184,14 +184,14 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const userId = sub?.notes?.userId;
         if (userId) {
           await User.findByIdAndUpdate(userId, { plan: 'pro', proSince: new Date() });
-          console.log(`✅ ${event.event} → user ${userId} Pro kept`);
+          console.log(`${event.event} → user ${userId} Pro kept`);
         }
         break;
       }
 
       case 'subscription.halted': {
         const sub = payload.subscription?.entity;
-        console.warn(`⚠️  subscription.halted — id: ${sub?.id}`);
+        console.warn(`subscription.halted — id: ${sub?.id}`);
         break;
       }
 
@@ -201,7 +201,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const userId = sub?.notes?.userId;
         if (userId) {
           await User.findByIdAndUpdate(userId, { plan: 'free' });
-          console.log(`🔽 ${event.event} → user ${userId} downgraded to free`);
+          console.log(`${event.event} → user ${userId} downgraded to free`);
         }
         break;
       }
@@ -211,7 +211,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const userId = sub?.notes?.userId;
         if (userId) {
           await User.findByIdAndUpdate(userId, { plan: 'free' });
-          console.log(`⏸️  subscription.paused → user ${userId} → free`);
+          console.log(`subscription.paused → user ${userId} → free`);
         }
         break;
       }
@@ -221,7 +221,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const userId = sub?.notes?.userId;
         if (userId) {
           await User.findByIdAndUpdate(userId, { plan: 'pro' });
-          console.log(`▶️  subscription.resumed → user ${userId} → pro`);
+          console.log(`subscription.resumed → user ${userId} → pro`);
         }
         break;
       }
@@ -235,14 +235,14 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
             { plan: 'free' },
             { new: true }
           );
-          if (user) console.log(`💸 refund.processed → user ${user.email} → free`);
+          if (user) console.log(`refund.processed → user ${user.email} → free`);
         }
         break;
       }
 
       case 'refund.failed': {
         const refund = payload.refund?.entity;
-        console.warn(`❌ refund.failed — id: ${refund?.id}`);
+        console.warn(`refund.failed — id: ${refund?.id}`);
         break;
       }
 
@@ -251,13 +251,13 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         const userId = order?.notes?.userId;
         if (userId) {
           await User.findByIdAndUpdate(userId, { plan: 'pro', proSince: new Date() });
-          console.log(`✅ order.paid → user ${userId} → pro`);
+          console.log(`order.paid → user ${userId} → pro`);
         }
         break;
       }
 
       default:
-        console.log(`ℹ️  Unhandled webhook event: ${event.event}`);
+        console.log(`Unhandled webhook event: ${event.event}`);
     }
 
     res.json({ received: true });
@@ -267,9 +267,9 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   }
 });
 
-// ─────────────────────────────────────────────
-//  GET /api/payments/status
-// ─────────────────────────────────────────────
+
+
+
 router.get('/status', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('plan proSince lastPaymentId');

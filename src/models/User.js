@@ -12,27 +12,27 @@ const UserSchema = new mongoose.Schema({
   oauthProvider:{ type: String, enum: ['google', 'github', 'local', 'admin'], default: 'local' },
   oauthId:      { type: String, default: null, sparse: true },
 
-  // ── Email verification OTP ─────────────────────────────────────
-  isVerified:            { type: Boolean, default: false },
-  verifyOtp:             { type: String,  default: null }, // hashed 6-digit OTP
-  verifyOtpExpires:      { type: Date,    default: null }, // 2 min expiry
-  verifyOtpAttempts:     { type: Number,  default: 0    }, // wrong attempts
-  verifyOtpLockedUntil:  { type: Date,    default: null }, // locked after 3 wrong
-  verifyOtpSentAt:       { type: Date,    default: null }, // resend cooldown
 
-  // ── Legacy link-based verification fields (kept for DB compatibility) ──
+  isVerified:            { type: Boolean, default: false },
+  verifyOtp:             { type: String,  default: null },
+  verifyOtpExpires:      { type: Date,    default: null },
+  verifyOtpAttempts:     { type: Number,  default: 0    },
+  verifyOtpLockedUntil:  { type: Date,    default: null },
+  verifyOtpSentAt:       { type: Date,    default: null },
+
+
   verificationToken:     { type: String,  default: null },
   verificationExpires:   { type: Date,    default: null },
 
-  // ── Refresh token (stored hashed) ─────────────────────────────
+
   refreshTokenHash: { type: String, default: null },
 
-  // ── Password reset OTP ─────────────────────────────────────────
-  resetOtp:          { type: String,  default: null }, // 6-digit OTP (hashed)
-  resetOtpExpires:   { type: Date,    default: null }, // 2 min expiry
-  resetOtpAttempts:  { type: Number,  default: 0    }, // wrong attempts counter
-  resetOtpLockedUntil:{ type: Date,   default: null }, // locked after 3 wrong attempts
-  resetOtpSentAt:    { type: Date,    default: null }, // for 2-min resend cooldown
+
+  resetOtp:          { type: String,  default: null },
+  resetOtpExpires:   { type: Date,    default: null },
+  resetOtpAttempts:  { type: Number,  default: 0    },
+  resetOtpLockedUntil:{ type: Date,   default: null },
+  resetOtpSentAt:    { type: Date,    default: null },
 
   rating:       { type: Number, default: 0 },
   ratingTitle:  { type: String, default: 'Beginner' },
